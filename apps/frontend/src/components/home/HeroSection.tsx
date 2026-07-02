@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/Button';
 
 interface HeroSectionProps {
   onOpenInfo: () => void;
+  totalCount?: number | null;
 }
 
-export function HeroSection({ onOpenInfo }: HeroSectionProps) {
+export function HeroSection({ onOpenInfo, totalCount }: HeroSectionProps) {
   return (
     <motion.section 
       initial={{ opacity: 0, y: 20 }}
@@ -18,6 +19,12 @@ export function HeroSection({ onOpenInfo }: HeroSectionProps) {
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900 text-xs font-semibold text-slate-600 dark:text-slate-400 mb-8 border border-slate-200/50 dark:border-slate-800/50">
         <Sparkles size={14} className="text-amber-500" />
         <span>Generato dall&apos;Intelligenza Artificiale</span>
+        {totalCount !== undefined && totalCount !== null && (
+          <>
+            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+            <span className="font-bold text-indigo-600 dark:text-indigo-400">{totalCount.toLocaleString('it-IT')} esercizi nel database</span>
+          </>
+        )}
       </div>
       
       <h1 className="text-5xl sm:text-7xl font-bold tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-br from-slate-900 via-slate-800 to-slate-500 dark:from-white dark:via-slate-200 dark:to-slate-500">

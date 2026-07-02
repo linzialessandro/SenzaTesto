@@ -27,6 +27,7 @@ interface Exercise {
 export default function Home() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
   
   // Info Modal state
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
@@ -48,6 +49,24 @@ export default function Home() {
     const handler = setTimeout(() => setDebouncedQuery(searchQuery), 500);
     return () => clearTimeout(handler);
   }, [searchQuery]);
+
+  // Fetch total count only once
+  useEffect(() => {
+    const fetchTotalCount = async () => {
+      try {
+        const { count, error } = await supabase
+          .from('exercises')
+          .select('*', { count: 'exact', head: true });
+        
+        if (!error && count !== null) {
+          setTotalCount(count);
+        }
+      } catch (err) {
+        console.error("Errore durante il recupero del conteggio totale:", err);
+      }
+    };
+    fetchTotalCount();
+  }, []);
 
   useEffect(() => {
     let ignore = false;
@@ -166,7 +185,7 @@ export default function Home() {
       />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24">
-        <HeroSection onOpenInfo={() => setIsInfoModalOpen(true)} />
+        <HeroSection onOpenInfo={() => setIsInfoModalOpen(true)} totalCount={totalCount} />
 
         <FilterSection 
           searchQuery={searchQuery}
