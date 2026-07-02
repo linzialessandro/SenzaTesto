@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavBar } from '@/components/layout/NavBar';
 import { HeroSection } from '@/components/home/HeroSection';
-import { FilterSection } from '@/components/home/FilterSection';
+import { SearchSection } from '@/components/home/SearchSection';
+import { CollectionsGrid } from '@/components/home/CollectionsGrid';
 import { ExercisesGrid } from '@/components/home/ExercisesGrid';
 import { InfoModal } from '@/components/home/modals/InfoModal';
 import { ContributeModal } from '@/components/home/modals/ContributeModal';
 import { DonationModal } from '@/components/home/modals/DonationModal';
 import { supabase } from '@/lib/supabase';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface Exercise {
   id: number;
@@ -26,7 +28,7 @@ interface Exercise {
 
 export default function Home() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState<number | null>(null);
   
   // Info Modal state
@@ -37,9 +39,7 @@ export default function Home() {
   // Solutions visibility tracking
   const [visibleSolutions, setVisibleSolutions] = useState<Set<string>>(new Set());
 
-  // Filter states
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  const [selectedSubTopic, setSelectedSubTopic] = useState<string | null>(null);
+  // Search & Filter states
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -68,24 +68,43 @@ export default function Home() {
     fetchTotalCount();
   }, []);
 
+  // Fetch exercises only when there is a search or year selected
   useEffect(() => {
     let ignore = false;
     const fetchExercises = async () => {
+      const query = debouncedQuery.trim() || null;
+      
+      if (!query && selectedYear === null) {
+        setExercises([]);
+        return;
+      }
+
       setLoading(true);
       try {
-        const query = debouncedQuery.trim() || null;
-        const { data, error } = await supabase.rpc('search_exercises', {
-          search_query: query,
-          filter_year: null
-        });
+        // Fetch base using rpc
+        let resultData = [];
         
-        if (error) {
-          console.error("Errore rpc Supabase:", error);
-          throw error;
+        if (query) {
+          const { data, error } = await supabase.rpc('search_exercises', {
+            search_query: query,
+            filter_year: selectedYear
+          });
+          if (error) throw error;
+          resultData = data || [];
+        } else if (selectedYear !== null) {
+          // If only year is selected, just fetch by year
+          const { data, error } = await supabase
+            .from('exercises')
+            .select('*')
+            .eq('year_number', selectedYear)
+            .order('id', { ascending: false })
+            .limit(100);
+          if (error) throw error;
+          resultData = data || [];
         }
 
-        if (!ignore && data) {
-          setExercises(data as Exercise[]);
+        if (!ignore) {
+          setExercises(resultData as Exercise[]);
         }
       } catch (error) {
         console.error("Errore durante il recupero degli esercizi:", error);
@@ -95,71 +114,7 @@ export default function Home() {
     };
     fetchExercises();
     return () => { ignore = true; };
-  }, [debouncedQuery]);
-
-  // Curriculum Map for offline exploration
-  const CURRICULUM_MAP = useMemo(() => ({
-    1: {
-      "Geometria e Numeri": ["geometria triangoli", "numeri naturali, interi e razionali", "MCD, mcm"],
-      "Calcolo Letterale": ["monomi", "polinomi", "operazioni tra essi ed MCD, mcm", "divisioni tra polinomi e teorema e metodo di ruffini"]
-    },
-    2: {
-      "Algebra Base": ["equazioni di primo grado", "equazioni di secondo grado"],
-      "Sistemi": ["sistemi lineari con metodo di sostituzione, confronto, riduzione e Cramer"]
-    },
-    3: {
-      "Geometria Analitica": ["Il piano cartesiano", "distanza tra punti e punto medio", "perimetro e area triangoli o quadrilateri sul piano cartesiano", "retta sul piano cartesiano (equazione, intersezione fra rette, parallelismo)"],
-      "Coniche": ["la parabola (equazione, calcolo vertice fuoco, direttrice asse, posizione reciproca retta-parabola)", "Circonferenza (come parabola)", "Ellisssi (come parabola)", "iperbole (come parabola)"]
-    },
-    4: {
-      "Equazioni e Disequazioni Avanzate": ["disequazioni di primo e secondo grado", "equazioni e disequazioni razionali fratte", "valore assoluto equazioni e disequazioni con valore assoluto"],
-      "Funzioni Trascendenti": ["Funzioni goniometriche seno coseno tangente ed equazioni e disequazioni con esse", "esponenziali e logaritmi equazioni e disequazioni con essi"]
-    },
-    5: {
-      "Limiti e Continuità": ["definizione di limiti e continuità", "discussione continuita funzioni definite a tratti", "verifica di limiti con la definizione", "forme indeterminate calcolo limiti"],
-      "Derivate": ["derivata prima definizione e significato geometrico", "calcolo delle derivate delle funzioni fondamentali", "calcolo di derivate più complesse usando formule come derivata della composta o del rapporto o del prodotto"],
-      "Studio e Integrali": ["studio di funzione", "integrali indefiniti e definiti"]
-    }
-  }), []);
-
-  const uniqueYears = [1, 2, 3, 4, 5];
-  
-  const uniqueTopics = useMemo(() => {
-    if (selectedYear) {
-      return Object.keys(CURRICULUM_MAP[selectedYear as keyof typeof CURRICULUM_MAP] || {});
-    }
-    const allTopics = new Set<string>();
-    Object.values(CURRICULUM_MAP).forEach(yearData => {
-      Object.keys(yearData).forEach(topic => allTopics.add(topic));
-    });
-    return Array.from(allTopics).sort();
-  }, [selectedYear, CURRICULUM_MAP]);
-
-  const uniqueSubTopics = useMemo(() => {
-    if (!selectedTopic) return [];
-    
-    if (selectedYear) {
-      const yearData = CURRICULUM_MAP[selectedYear as keyof typeof CURRICULUM_MAP];
-      return (yearData as any)[selectedTopic] || [];
-    }
-    
-    const subs = new Set<string>();
-    Object.values(CURRICULUM_MAP).forEach(yearData => {
-      if ((yearData as any)[selectedTopic]) {
-        (yearData as any)[selectedTopic].forEach((sub: string) => subs.add(sub));
-      }
-    });
-    return Array.from(subs).sort();
-  }, [selectedTopic, selectedYear, CURRICULUM_MAP]);
-
-  const filteredExercises = useMemo(() => {
-    return exercises.filter(ex => {
-      const matchTopic = selectedTopic ? ex.topic_macro_area === selectedTopic : true;
-      const matchSubTopic = selectedSubTopic ? ex.topic_name === selectedSubTopic : true;
-      const matchYear = selectedYear ? ex.year_number === selectedYear : true;
-      return matchTopic && matchSubTopic && matchYear;
-    });
-  }, [exercises, selectedTopic, selectedSubTopic, selectedYear]);
+  }, [debouncedQuery, selectedYear]);
 
   const toggleSolution = (hash: string) => {
     setVisibleSolutions(prev => {
@@ -172,10 +127,10 @@ export default function Home() {
 
   const resetFilters = () => {
     setSearchQuery('');
-    setSelectedTopic(null);
-    setSelectedSubTopic(null);
     setSelectedYear(null);
   };
+
+  const isExploring = searchQuery.trim().length > 0 || selectedYear !== null;
 
   return (
     <div className="min-h-screen text-slate-900 dark:text-slate-50 relative pb-32">
@@ -187,27 +142,42 @@ export default function Home() {
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24">
         <HeroSection onOpenInfo={() => setIsInfoModalOpen(true)} totalCount={totalCount} />
 
-        <FilterSection 
+        <SearchSection 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
-          uniqueYears={uniqueYears}
-          selectedTopic={selectedTopic}
-          setSelectedTopic={setSelectedTopic}
-          uniqueTopics={uniqueTopics}
-          selectedSubTopic={selectedSubTopic}
-          setSelectedSubTopic={setSelectedSubTopic}
-          uniqueSubTopics={uniqueSubTopics}
+          onClear={resetFilters}
         />
 
-        <ExercisesGrid 
-          loading={loading}
-          filteredExercises={filteredExercises}
-          visibleSolutions={visibleSolutions}
-          toggleSolution={toggleSolution}
-          resetFilters={resetFilters}
-        />
+        <AnimatePresence mode="wait">
+          {!isExploring ? (
+            <motion.div
+              key="collections"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <CollectionsGrid onSelectYear={setSelectedYear} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="exercises"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <ExercisesGrid 
+                loading={loading}
+                filteredExercises={exercises}
+                visibleSolutions={visibleSolutions}
+                toggleSolution={toggleSolution}
+                resetFilters={resetFilters}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       <InfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} />
