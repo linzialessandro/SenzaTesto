@@ -35,10 +35,11 @@ export function ShareWidget() {
         variant="secondary" 
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2"
+        className="flex items-center justify-center gap-1.5 sm:gap-2 w-9 h-9 sm:w-auto sm:h-auto !p-0 sm:!px-4 sm:!py-2 shrink-0 border border-slate-200/50 dark:border-slate-800/50"
+        aria-label="Condividi"
       >
         <Share size={16} />
-        <span>Condividi</span>
+        <span className="hidden sm:inline">Condividi</span>
       </Button>
 
       <AnimatePresence>
