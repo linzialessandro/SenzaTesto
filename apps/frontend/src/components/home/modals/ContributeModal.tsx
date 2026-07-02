@@ -27,7 +27,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
           <a 
-            href="https://github.com/linzialessandro/SenzaTesto/new/main/submissions?filename=nuovo_esercizio.md&value=---%0Ayear%3A%20%5B1-5%5D%0Amacro_area%3A%20%5BArea%20Macro%5D%0Atopic%3A%20%5BArgomento%5D%0Adifficulty%3A%20%5B1-5%5D%0Atags%3A%0A%20%20-%20tag1%0A%20%20-%20tag2%0A---%0A%23%20Problem%20Text%0A%5BTesto%20del%20problema%20qui%5D%0A%0A%23%20Latex%20Problem%0A%5BProblema%20in%20LaTeX%20qui%5D%0A%0A%23%20Latex%20Solution%0A%5BSoluzione%20in%20LaTeX%20qui%5D%0A" 
+            href="https://github.com/linzialessandro/SenzaTesto/new/main/submissions/pending?filename=nuovo_esercizio.md&value=---%0Ayear%3A%20%5B1-5%5D%0Amacro_area%3A%20%5BArea%20Macro%5D%0Atopic%3A%20%5BArgomento%5D%0Adifficulty%3A%20%5B1-5%5D%0Atags%3A%0A%20%20-%20tag1%0A%20%20-%20tag2%0A---%0A%23%20Problem%20Text%0A%5BTesto%20del%20problema%20qui%5D%0A%0A%23%20Latex%20Problem%0A%5BProblema%20in%20LaTeX%20qui%5D%0A%0A%23%20Latex%20Solution%0A%5BSoluzione%20in%20LaTeX%20qui%5D%0A" 
 
             target="_blank" 
             rel="noopener noreferrer"
@@ -48,7 +48,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
               <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3-.3 6-1.5 6-6.5a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 5 3 6.2 6 6.5a4.8 4.8 0 0 0-1 3.2v4" />
             </svg>
             <span className="font-semibold text-slate-900 dark:text-white">Invia via GitHub</span>
-            <span className="text-sm text-center">Fai una Pull Request inserendo un .md in submissions/</span>
+            <span className="text-sm text-center">Fai una Pull Request inserendo un .md in submissions/pending/</span>
           </a>
 
           <a 
