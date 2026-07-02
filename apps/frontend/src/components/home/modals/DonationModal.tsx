@@ -1,5 +1,6 @@
 import React from 'react';
 import { Coffee, Info } from 'lucide-react';
+import Image from 'next/image';
 import { Modal } from '@/components/ui/Modal';
 
 interface DonationModalProps {
@@ -27,7 +28,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
           </h4>
           <div className="flex justify-center mb-6">
             <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 inline-block">
-              <img src="/paypal_pure.svg" alt="PayPal QR Code" className="w-48 h-48" />
+              <Image src="/paypal_pure.svg" alt="PayPal QR Code" width={192} height={192} className="w-48 h-48" />
             </div>
           </div>
           
