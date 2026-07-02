@@ -6,16 +6,20 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 interface NavBarProps {
   onOpenContribute: () => void;
   onOpenDonation: () => void;
+  onLogoClick?: () => void;
 }
 
-export function NavBar({ onOpenContribute, onOpenDonation }: NavBarProps) {
+export function NavBar({ onOpenContribute, onOpenDonation, onLogoClick }: NavBarProps) {
   return (
     <nav className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/60 dark:bg-black/60 border-b border-slate-200/50 dark:border-slate-800/50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <button 
+          onClick={onLogoClick || (() => window.location.href = '/')} 
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none"
+        >
           <BookOpen size={24} className="text-indigo-600 dark:text-indigo-400" />
           <span className="font-bold text-lg tracking-tight">SenzaTesto</span>
-        </div>
+        </button>
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <ShareWidget />

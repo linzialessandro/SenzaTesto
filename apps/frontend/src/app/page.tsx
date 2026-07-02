@@ -81,33 +81,21 @@ export default function Home() {
 
       setLoading(true);
       try {
-        // Fetch base using rpc
-        let resultData = [];
+        const params: any = {};
+        if (query) params.search_query = query;
+        if (selectedYear !== null) params.filter_year = selectedYear;
+
+        const { data, error } = await supabase.rpc('search_exercises', params);
         
-        if (query) {
-          const { data, error } = await supabase.rpc('search_exercises', {
-            search_query: query,
-            filter_year: selectedYear
-          });
-          if (error) throw error;
-          resultData = data || [];
-        } else if (selectedYear !== null) {
-          // If only year is selected, just fetch by year
-          const { data, error } = await supabase
-            .from('exercises')
-            .select('*')
-            .eq('year_number', selectedYear)
-            .order('id', { ascending: false })
-            .limit(100);
-          if (error) throw error;
-          resultData = data || [];
-        }
+        if (error) throw error;
+        
+        const resultData = data || [];
 
         if (!ignore) {
           setExercises(resultData as Exercise[]);
         }
-      } catch (error) {
-        console.error("Errore durante il recupero degli esercizi:", error);
+      } catch (error: any) {
+        console.error("Errore durante il recupero degli esercizi:", JSON.stringify(error, null, 2) || error.message);
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -137,6 +125,7 @@ export default function Home() {
       <NavBar 
         onOpenContribute={() => setIsContributeModalOpen(true)} 
         onOpenDonation={() => setIsDonationModalOpen(true)} 
+        onLogoClick={resetFilters}
       />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24">
