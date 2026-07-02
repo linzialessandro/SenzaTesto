@@ -1,4 +1,5 @@
 {
+  "author": "Alessandro Linzi <alessandro.linzi.phd@icloud.com>",
   "dependencies": {
     "jsqr": "^1.4.0",
     "pngjs": "^7.0.0"

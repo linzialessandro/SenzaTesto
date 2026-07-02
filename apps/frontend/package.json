@@ -11,6 +11,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",
     "@tailwindcss/typography": "^0.5.20",
+    "dotenv": "^17.4.2",
     "framer-motion": "^12.42.2",
     "katex": "^0.17.0",
     "lucide-react": "^1.22.0",

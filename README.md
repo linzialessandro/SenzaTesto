@@ -71,3 +71,17 @@ Lo script prenderà in carico automaticamente l'inserimento dell'esercizio, l'in
 
 ---
 *Progetto open-source dedicato agli studenti italiani.*
+
+## Autore e Licenza
+
+**Autore:** Alessandro Linzi <alessandro.linzi.phd@icloud.com>  
+**Copyright (C)** 2026 Alessandro Linzi
+
+Questo progetto è rilasciato sotto licenza **GNU Affero General Public License v3.0 (AGPLv3)**.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Per maggiori dettagli, consulta il file `LICENSE` o visita [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).

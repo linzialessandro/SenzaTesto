@@ -15,8 +15,8 @@ RETURNS TABLE (
 BEGIN
   RETURN QUERY
   SELECT e.id, e.topic_id, e.difficulty_level, e.problem_text, e.solution_text, 
-         e.generated_hash, e.short_code, e.tags,
-         m.name as topic_macro_area, t.name as topic_name, c.year_number
+         e.generated_hash::text, e.short_code::text, e.tags,
+         m.name::text as topic_macro_area, t.name::text as topic_name, c.year_number
   FROM exercises e
   JOIN topics t ON e.topic_id = t.id
   JOIN macro_areas m ON t.macro_area_id = m.id
