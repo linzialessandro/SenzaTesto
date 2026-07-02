@@ -8,6 +8,7 @@ import { ExercisesGrid } from '@/components/home/ExercisesGrid';
 import { InfoModal } from '@/components/home/modals/InfoModal';
 import { ContributeModal } from '@/components/home/modals/ContributeModal';
 import { DonationModal } from '@/components/home/modals/DonationModal';
+import { supabase } from '@/lib/supabase';
 
 interface Exercise {
   id: number;
@@ -48,21 +49,24 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
   useEffect(() => {
     let ignore = false;
     const fetchExercises = async () => {
       setLoading(true);
       try {
-        const url = new URL(`${API_URL}/api/exercises`);
-        if (debouncedQuery.trim()) {
-          url.searchParams.append('q', debouncedQuery.trim());
+        const query = debouncedQuery.trim() || null;
+        const { data, error } = await supabase.rpc('search_exercises', {
+          search_query: query,
+          filter_year: null
+        });
+        
+        if (error) {
+          console.error("Errore rpc Supabase:", error);
+          throw error;
         }
-        const response = await fetch(url.toString());
-        if (response.ok) {
-          const data = await response.json();
-          if (!ignore) setExercises(data);
+
+        if (!ignore && data) {
+          setExercises(data as Exercise[]);
         }
       } catch (error) {
         console.error("Errore durante il recupero degli esercizi:", error);
@@ -72,7 +76,7 @@ export default function Home() {
     };
     fetchExercises();
     return () => { ignore = true; };
-  }, [API_URL, debouncedQuery]);
+  }, [debouncedQuery]);
 
   // Curriculum Map for offline exploration
   const CURRICULUM_MAP = useMemo(() => ({
