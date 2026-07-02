@@ -11,8 +11,9 @@
 
 ## Architecture
 
-- **Framework**: FastAPI (Python).
-- **Database Access**: `asyncpg` directly (no ORM) for maximum performance with raw SQL queries.
+- **Primary Data Fetching**: The frontend now connects directly to PostgreSQL (Supabase) using RPC functions (e.g., `search_exercises`) for search queries.
+- **Framework**: FastAPI (Python) is maintained for potential server-side operations, but primary read queries bypass it for performance.
+- **Database Access**: `asyncpg` directly (no ORM) when using the Python API. Raw SQL inside Supabase RPC for direct queries.
 - **Deployment**: Configured for AWS Lambda using `Mangum`.
 - **Database Engine**: PostgreSQL (Supabase) using Row Level Security (RLS) for public read-only access.
-- **Rate Limiting**: Uses `slowapi` to restrict the number of requests per IP and prevent abuse (DDoS).
+- **Rate Limiting**: Uses `slowapi` on the FastAPI layer to restrict the number of requests per IP and prevent abuse (DDoS).

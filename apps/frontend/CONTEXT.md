@@ -10,8 +10,9 @@
 ## Architecture
 
 - **Framework**: Next.js (App Router).
+- **Data Fetching**: Direct connection to Supabase via `@supabase/supabase-js`, using PostgreSQL RPC functions (`search_exercises`) for optimized search.
 - **Styling**: Tailwind CSS with custom `globals.css` utilities (e.g., `.glass-panel`).
 - **Icons**: Lucide React.
 - **Animations**: Framer Motion for list transitions, modals, and hover effects.
 - **State Management**: React `useState` and `useEffect` with debouncing for the search query to minimize API calls.
-- **Component Structure**: Divided into `layout`, `home` (Hero, Filters, Grid), and `modals` to keep `page.tsx` clean.
+- **Component Structure**: Divided into `layout`, `home` (HeroSection, SearchSection, CollectionsGrid, ExercisesGrid), and `modals` to keep `page.tsx` clean.
