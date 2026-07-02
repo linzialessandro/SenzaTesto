@@ -7,8 +7,8 @@ export function ShareWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Fallback if window is not available (SSR)
-  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://senzatesto.it';
+  // Use the correct app URL for sharing
+  const shareUrl = 'https://linzialessandro.github.io/SenzaTesto/';
   const shareText = "Scopri SenzaTesto: il nuovo database di esercizi di matematica open-source generato con l'Intelligenza Artificiale. Preparati al meglio, gratis.";
 
   const handleCopy = async () => {
