@@ -27,7 +27,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
           <a 
-            href="https://github.com/linzialessandro/SenzaTesto/new/main/submissions/pending?filename=nuovo_esercizio.md&value=---%0Ayear%3A%20%5B1-5%5D%0Amacro_area%3A%20%5BArea%20Macro%5D%0Atopic%3A%20%5BArgomento%5D%0Adifficulty%3A%20%5B1-5%5D%0Atags%3A%0A%20%20-%20tag1%0A%20%20-%20tag2%0A---%0A%23%20Problem%20Text%0A%5BTesto%20del%20problema%20qui%5D%0A%0A%23%20Latex%20Problem%0A%5BProblema%20in%20LaTeX%20qui%5D%0A%0A%23%20Latex%20Solution%0A%5BSoluzione%20in%20LaTeX%20qui%5D%0A" 
+            href="https://github.com/linzialessandro/SenzaTesto/new/main/submissions/pending?filename=nuovo_esercizio.md&value=---%0Ayear%3A%20%5B1-5%5D%0Amacro_area%3A%20%5BArea%20Macro%5D%0Atopic%3A%20%5BArgomento%5D%0Adifficulty%3A%20%5B1-5%5D%0Atags%3A%0A%20%20-%20tag1%0A%20%20-%20tag2%0A---%0A%23%20Problem%20Text%0A%5BTesto%20del%20problema%20qui%5D%0A%0A%23%20Solution%0A%5BSoluzione%20qui%5D%0A" 
 
             target="_blank" 
             rel="noopener noreferrer"
@@ -52,7 +52,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
           </a>
 
           <a 
-            href={`mailto:alessandro.linzi.phd@icloud.com?subject=SenzaTesto%20-%20Nuovo%20Esercizio&body=---%0Ayear%3A%20%5B1-5%5D%0Amacro_area%3A%20%5BArea%20Macro%5D%0Atopic%3A%20%5BArgomento%5D%0Adifficulty%3A%20%5B1-5%5D%0Atags%3A%0A%20%20-%20tag1%0A%20%20-%20tag2%0A---%0A%23%20Problem%20Text%0A%5BTesto%20del%20problema%20qui%5D%0A%0A%23%20Latex%20Problem%0A%5BProblema%20in%20LaTeX%20qui%5D%0A%0A%23%20Latex%20Solution%0A%5BSoluzione%20in%20LaTeX%20qui%5D%0A`}
+            href={`mailto:alessandro.linzi.phd@icloud.com?subject=SenzaTesto%20-%20Nuovo%20Esercizio&body=---%0Ayear%3A%20%5B1-5%5D%0Amacro_area%3A%20%5BArea%20Macro%5D%0Atopic%3A%20%5BArgomento%5D%0Adifficulty%3A%20%5B1-5%5D%0Atags%3A%0A%20%20-%20tag1%0A%20%20-%20tag2%0A---%0A%23%20Problem%20Text%0A%5BTesto%20del%20problema%20qui%5D%0A%0A%23%20Solution%0A%5BSoluzione%20qui%5D%0A`}
             className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-indigo-200 dark:border-indigo-900/50 hover:border-indigo-500 dark:hover:border-indigo-400 transition-colors bg-indigo-50/30 dark:bg-indigo-900/10"
           >
             <Mail size={32} className="text-indigo-600 dark:text-indigo-400" />
