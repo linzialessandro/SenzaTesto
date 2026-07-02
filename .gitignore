@@ -1,0 +1,42 @@
+# Ambienti e Segreti
+.env
+.env.*
+!.env.example
+
+# File di sistema macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Next.js
+.next/
+out/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Editor e IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Log
+logs/
+*.log
+
+# Docker
+.docker/
+docker-compose.override.yml
