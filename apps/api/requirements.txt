@@ -6,4 +6,4 @@ asyncpg==0.29.0
 python-dotenv==1.0.1
 pydantic==2.6.3
 slowapi==0.1.9
-certifi==2024.2.2
+certifi==2024.7.4
