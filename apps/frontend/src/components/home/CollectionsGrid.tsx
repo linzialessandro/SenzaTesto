@@ -8,15 +8,15 @@ interface CollectionsGridProps {
 
 const collections = [
   // 1 (Top)
-  { year: 1, title: "1° Anno", desc: "Algebra base", icon: Calculator, color: "from-blue-500 to-cyan-400", pos: { left: '50%', top: '10%' } },
+  { year: 1, title: "1° Anno", icon: Calculator, color: "from-blue-500 to-cyan-400", pos: { left: '50%', top: '10%' } },
   // 2 (Right-Top)
-  { year: 2, title: "2° Anno", desc: "Sistemi e Radicali", icon: BookOpen, color: "from-emerald-500 to-teal-400", pos: { left: '88%', top: '38%' } },
+  { year: 2, title: "2° Anno", icon: BookOpen, color: "from-emerald-500 to-teal-400", pos: { left: '88%', top: '38%' } },
   // 3 (Right-Bottom)
-  { year: 3, title: "3° Anno", desc: "Geometria Analitica", icon: Compass, color: "from-amber-500 to-orange-400", pos: { left: '74%', top: '85%' } },
+  { year: 3, title: "3° Anno", icon: Compass, color: "from-amber-500 to-orange-400", pos: { left: '74%', top: '85%' } },
   // 4 (Left-Bottom)
-  { year: 4, title: "4° Anno", desc: "Goniometria", icon: FunctionSquare, color: "from-pink-500 to-rose-400", pos: { left: '26%', top: '85%' } },
+  { year: 4, title: "4° Anno", icon: FunctionSquare, color: "from-pink-500 to-rose-400", pos: { left: '26%', top: '85%' } },
   // 5 (Left-Top)
-  { year: 5, title: "5° Anno", desc: "Analisi Matematica", icon: Infinity, color: "from-indigo-500 to-violet-400", pos: { left: '12%', top: '38%' } },
+  { year: 5, title: "5° Anno", icon: Infinity, color: "from-indigo-500 to-violet-400", pos: { left: '12%', top: '38%' } },
 ];
 
 export function CollectionsGrid({ onSelectYear }: CollectionsGridProps) {
@@ -46,7 +46,6 @@ export function CollectionsGrid({ onSelectYear }: CollectionsGridProps) {
           </div>
           
           <h3 className="text-sm sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-1 z-10 leading-tight">{col.title}</h3>
-          <p className="text-[10px] sm:text-sm font-medium text-slate-500 dark:text-slate-400 z-10 hidden sm:block">{col.desc}</p>
         </motion.button>
       ))}
     </div>
