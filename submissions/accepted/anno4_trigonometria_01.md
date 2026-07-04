@@ -30,7 +30,7 @@ $$
 $$
 
 **2. Applicazione della formula di addizione:**
-Ricordando la formula del seno della somma, $\sin(lpha + \beta) = \sinlpha\cos\beta + \coslpha\sin\beta$, otteniamo:
+Ricordando la formula del seno della somma, $\sin(\alpha + \beta) = \sin\alpha\cos\beta + \cos\alpha\sin\beta$, otteniamo:
 $$
 \sin\left(x + \frac{\pi}{4} \right) = \frac{\sqrt{2}}{2}
 $$

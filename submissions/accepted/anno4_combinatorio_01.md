@@ -40,7 +40,7 @@ Ci sono 60 triplette di colori diversi che si possono formare.
 **3. Calcolo della probabilità:**
 Secondo la definizione classica, la probabilità $P$ di un evento è il rapporto tra casi favorevoli e casi possibili:
 $$
-P = \frac{	ext{Casi favorevoli}}{	ext{Casi possibili}} = \frac{60}{220}
+P = \frac{\text{Casi favorevoli}}{\text{Casi possibili}} = \frac{60}{220}
 $$
 Semplificando la frazione:
 $$

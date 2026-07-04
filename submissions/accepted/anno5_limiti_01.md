@@ -51,7 +51,7 @@ $$
 **4. Semplificazione e calcolo:**
 Semplifichiamo i termini algebrici restanti fuori dalle parentesi:
 $$
-\frac{4x^2}{x \cdot 3x} = \frac{4x^2}{3x^2} = \frac{4}{3} \quad (	ext{per } x \neq 0)
+\frac{4x^2}{x \cdot 3x} = \frac{4x^2}{3x^2} = \frac{4}{3} \quad (\text{per } x \neq 0)
 $$
 Quindi il limite diventa:
 $$

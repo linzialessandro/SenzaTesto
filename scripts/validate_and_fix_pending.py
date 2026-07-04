@@ -46,6 +46,29 @@ def fix_math_blocks(content):
             
     return re.sub(r'\$\$(.*?)\$\$', replacer, content, flags=re.DOTALL)
 
+def fix_latex_escapes(content):
+    """
+    Ripristina i caratteri di escape LaTeX distrutti da parser poco attenti
+    (es. \\alpha diventato \\x07lpha, \\right diventato \\right).
+    """
+    text = content
+    text = text.replace('\x07lpha', '\\alpha')
+    text = text.replace('\x08eta', '\\beta')
+    text = text.replace('\x0crac', '\\frac')
+    text = text.replace('\theta', '\\theta')
+    text = text.replace('\tan', '\\tan')
+    text = text.replace('\to ', '\\to ')
+    text = text.replace('\to\n', '\\to\n')
+    text = text.replace('\times', '\\times')
+    text = text.replace('\text', '\\text')
+    text = text.replace('\right', '\\right')
+    text = text.replace('\rho', '\\rho')
+    text = text.replace('\nabla', '\\nabla')
+    text = text.replace('\nu ', '\\nu ')
+    text = text.replace('\nu\n', '\\nu\n')
+    text = text.replace('\notin', '\\notin')
+    return text
+
 def process_file(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -53,6 +76,7 @@ def process_file(file_path):
             
         new_content = fix_yaml_frontmatter(content)
         new_content = fix_math_blocks(new_content)
+        new_content = fix_latex_escapes(new_content)
         
         # Verify YAML is now syntactically valid
         yaml_match = re.match(r'^---\n(.*?)\n---\n(.*)', new_content, re.DOTALL)
