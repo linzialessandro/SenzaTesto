@@ -132,8 +132,8 @@ async def main():
             Aim for an optimal balance between didactic value and simplicity. Keep the solution under 10 clear, essential steps."""
             else:
                 complexity_instructions = """
-            IMPORTANT: For this specific exercise, you can be more creative and elaborate. Provide a challenging problem that requires deeper critical thinking or combines multiple concepts.
-            The solution can be longer and more detailed, but still perfectly rigorous."""
+            IMPORTANT: For this specific exercise, provide a slightly more involved problem that combines standard concepts or requires deeper reasoning.
+            Keep the scenario realistic and avoid artificially convoluted creativity. The solution can be longer but must remain strictly rigorous and educational."""
 
             prompt = f"""
             You are a math professor in Italy creating high-quality, copyright-free math exercises for high school students.
