@@ -31,17 +31,17 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
             style={{ willChange: 'opacity' }}
-            className="fixed inset-0 z-50 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm sm:backdrop-blur-md"
+            className="fixed inset-0 z-50 bg-slate-900/40 dark:bg-slate-950/60 sm:backdrop-blur-md"
             onClick={onClose}
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
               style={{ willChange: 'opacity, transform' }}
-              className="w-full max-w-2xl bg-white dark:bg-slate-900 sm:bg-white/80 sm:dark:bg-slate-900/80 sm:backdrop-blur-xl border border-slate-100 sm:border-white/40 dark:border-slate-800 sm:dark:border-slate-700/50 shadow-2xl rounded-3xl overflow-hidden pointer-events-auto flex flex-col max-h-[90vh]"
+              className="w-full max-w-2xl bg-white dark:bg-slate-900 sm:bg-white/80 sm:dark:bg-slate-900/80 sm:backdrop-blur-xl border border-slate-100 sm:border-white/40 dark:border-slate-800 sm:dark:border-slate-700/50 shadow-xl sm:shadow-2xl rounded-3xl overflow-hidden pointer-events-auto flex flex-col max-h-[90vh]"
             >
               <div className="flex justify-between items-center p-6 sm:p-8 border-b border-slate-200/50 dark:border-slate-800/50">
                 {title && (

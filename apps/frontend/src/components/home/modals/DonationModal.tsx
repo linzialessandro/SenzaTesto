@@ -33,7 +33,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       {view === 'main' ? (
-        <div className="animate-in fade-in zoom-in-95 duration-300 ease-out">
+        <div className="animate-in fade-in duration-300 ease-out">
           <ScrollToTop />
           {/* Headline & Emotional Hook */}
           <div className="text-center mb-8">
