@@ -38,6 +38,7 @@ Per ogni file:
 Uno script ausiliario per sanare gli errori più comuni prima del caricamento nel database:
 - Aggiunge automaticamente le virgolette attorno a stringhe YAML (come `topic`) se contengono caratteri speciali come `:` che romperebbero il parser.
 - Assicura che i delimitatori LaTeX a blocco `$$` multilinea o complessi (es. contenenti `\begin{cases}`) siano posti su righe indipendenti, prevenendo errori di rendering nel frontend.
+- Ripristina eventuali caratteri di escape LaTeX (es. `\alpha`, `\right`, `\theta`) che l'SDK potrebbe aver inavvertitamente distrutto e convertito in "bell character", "carriage return" o "tabulazioni" durante il salvataggio dei file.
 
 ## Come Eseguire il Workflow
 
