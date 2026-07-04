@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Sparkles, Mail, AlertTriangle, ChevronLeft, Plus } from 'lucide-react';
+import { Sparkles, Mail, AlertTriangle, ChevronLeft, Plus, Cpu } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type ContributionType = 'new' | 'error' | null;
+type ContributionType = 'new' | 'error' | 'byok' | null;
 
 interface ContributeModalProps {
   isOpen: boolean;
@@ -34,29 +34,44 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 sm:mb-4">Come vuoi contribuire?</h2>
         <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-lg mx-auto">
-          Scegli se aggiungere nuovo materiale al database o aiutarci a correggere eventuali refusi in esercizi esistenti.
+          Scegli se aggiungere materiale manualmente, correggere refusi o usare l'Intelligenza Artificiale.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 mt-2">
         <button
           onClick={() => setContributionType('new')}
-          className="flex flex-row sm:flex-col items-start gap-4 p-4 sm:p-6 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all text-left group"
+          className="flex flex-row items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all text-left group"
         >
           <div className="p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-xl group-hover:scale-110 transition-transform shrink-0">
             <Plus className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
           </div>
           <div>
-            <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-1">Nuovo Esercizio</h3>
+            <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-1">Nuovo Esercizio (Manuale)</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Proponi un nuovo problema, completo di testo in LaTeX e soluzione, per arricchire il database.
+              Proponi un singolo problema, completo di testo in LaTeX e soluzione, per arricchire il database.
+            </p>
+          </div>
+        </button>
+
+        <button
+          onClick={() => setContributionType('byok')}
+          className="flex flex-row items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500/50 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all text-left group"
+        >
+          <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl group-hover:scale-110 transition-transform shrink-0">
+            <Cpu className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />
+          </div>
+          <div>
+            <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-1">Genera con IA (BYOK)</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Usa la tua chiave API per generare decine di esercizi automaticamente con il nostro script.
             </p>
           </div>
         </button>
 
         <button
           onClick={() => setContributionType('error')}
-          className="flex flex-row sm:flex-col items-start gap-4 p-4 sm:p-6 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-amber-500 dark:hover:border-amber-500/50 hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-all text-left group"
+          className="flex flex-row items-center gap-4 p-4 sm:p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:border-amber-500 dark:hover:border-amber-500/50 hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-all text-left group"
         >
           <div className="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-xl group-hover:scale-110 transition-transform shrink-0">
             <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-500" />
@@ -64,7 +79,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
           <div>
             <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-1">Segnala Errore</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              Hai trovato un refuso o un errore matematico? Segnalacelo per aiutarci a mantenere i contenuti corretti.
+              Hai trovato un refuso o un errore? Segnalacelo per aiutarci a mantenere i contenuti corretti.
             </p>
           </div>
         </button>
@@ -73,6 +88,56 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
   );
 
   const renderStep2 = () => {
+    if (contributionType === 'byok') {
+      return (
+        <motion.div
+          key="step2-byok"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 20 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-col h-full"
+        >
+          <button 
+            onClick={() => setContributionType(null)}
+            className="flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 w-fit mb-4 px-2 py-1 -ml-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" /> Indietro
+          </button>
+  
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 sm:mb-4">
+              Generazione Massiva con IA
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-lg mx-auto">
+              Puoi contribuire a SenzaTesto usando la tua chiave API (Bring Your Own Key) ed eseguendo uno script Python che farà tutto da solo.
+            </p>
+          </div>
+
+          <div className="bg-emerald-50/50 dark:bg-emerald-900/20 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 text-sm text-slate-700 dark:text-slate-300">
+            <ol className="list-decimal list-inside space-y-3">
+              <li>Clona o esegui il fork della <a href="https://github.com/linzialessandro/SenzaTesto" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline">repository GitHub</a>.</li>
+              <li>Vai nella cartella <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">scripts/generator</code>.</li>
+              <li>Installa i requisiti e crea un file <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">.env</code> inserendo la tua <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">GEMINI_API_KEY</code>.</li>
+              <li>Avvia <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">python generate_and_pr.py</code>.</li>
+              <li>Lo script creerà un branch locale, genererà gli esercizi e aprirà automaticamente una Pull Request!</li>
+            </ol>
+          </div>
+          
+          <div className="mt-6 flex justify-center">
+            <a 
+              href="https://github.com/linzialessandro/SenzaTesto/blob/main/CONTRIBUTING.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-full font-bold transition-colors shadow-sm"
+            >
+              Leggi la guida completa
+            </a>
+          </div>
+        </motion.div>
+      );
+    }
+
     const isNew = contributionType === 'new';
 
     const githubLink = isNew 
@@ -193,7 +258,7 @@ tipo_errore: [Testo del problema / Soluzione / Altro]
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
-      <div className="overflow-hidden relative min-h-[380px] sm:min-h-[440px]">
+      <div className="overflow-hidden relative min-h-[420px] sm:min-h-[480px]">
         <AnimatePresence mode="wait" initial={false}>
           {contributionType === null ? renderStep1() : renderStep2()}
         </AnimatePresence>
