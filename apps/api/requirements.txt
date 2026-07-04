@@ -3,7 +3,7 @@ uvicorn==0.27.1
 mangum==0.17.0
 sympy==1.12
 asyncpg==0.29.0
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 pydantic==2.6.3
 slowapi==0.1.9
 certifi==2024.2.2
