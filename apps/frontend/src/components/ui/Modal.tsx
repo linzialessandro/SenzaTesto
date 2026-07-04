@@ -27,24 +27,24 @@ export function Modal({ isOpen, onClose, title, children, scrollId = "modal-scro
       <motion.div
         initial={false}
         animate={{ 
-          opacity: isOpen ? 1 : 0,
-          visibility: isOpen ? 'visible' : 'hidden'
+          opacity: isOpen ? 1 : 0
         }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         style={{ willChange: 'opacity', pointerEvents: isOpen ? 'auto' : 'none' }}
         className="fixed inset-0 z-50 bg-slate-900/40 dark:bg-slate-950/60 sm:backdrop-blur-md"
         onClick={onClose}
+        aria-hidden="true"
       />
       <motion.div
         initial={false}
         animate={{ 
           opacity: isOpen ? 1 : 0, 
-          y: isOpen ? 0 : 20,
-          visibility: isOpen ? 'visible' : 'hidden'
+          y: isOpen ? 0 : 20
         }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         style={{ willChange: 'opacity, transform', pointerEvents: 'none' }}
         className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+        aria-hidden={!isOpen}
       >
         <div
           style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
