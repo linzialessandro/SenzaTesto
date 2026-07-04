@@ -100,7 +100,8 @@ async def main():
     
     config = LocalAgentConfig(
         model="gemini-3.5-flash",
-        response_schema=ExerciseOutput
+        response_schema=ExerciseOutput,
+        max_output_tokens=1500
     )
     
     os.makedirs(SUBMISSIONS_DIR, exist_ok=True)
