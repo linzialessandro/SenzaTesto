@@ -1,41 +1,33 @@
 ---
 type: Concept
 title: Flusso di Popolamento Database
-description: Guida dettagliata per gli agenti LLM su come popolare autonomamente il database di esercizi.
-tags: [agents, workflow, database, population, seeding]
-timestamp: 2026-07-01T13:38:00Z
+description: Guida dettagliata per gli agenti LLM su come popolare autonomamente il database di esercizi, inclusa la gestione sicura del contesto.
+tags: [agents, workflow, database, population, seeding, llm-costs]
+timestamp: 2026-07-04T19:00:00Z
 ---
 
-# Flusso di Popolamento Database
+# Flusso di Popolamento Database (Pipeline Automatica)
 
-Questo documento delinea il flusso di lavoro standard che ogni agente delegato alla generazione degli esercizi deve seguire.
+Questo documento delinea il flusso di lavoro aggiornato che ogni agente delegato alla generazione degli esercizi deve seguire. La pipeline si basa su un sistema in due passaggi: Generazione automatizzata con Git PR, e Popolamento a valle.
 
-## Prerequisiti
+## Step 1: Generazione degli Esercizi (Agenti LLM)
 
-Prima di iniziare la generazione degli esercizi, l'agente deve:
-1. Consultare il [Curriculum Italiano](../curriculum/curriculum-italiano.md) per selezionare un anno, una macro-area e un topic specifici.
-2. Comprendere lo schema a 4 livelli definito in [Schema del Database](../database/schema.md) (`curriculum_years` -> `macro_areas` -> `topics` -> `exercises`).
+Gli esercizi vengono generati tramite lo script `scripts/generator/generate_and_pr.py`. 
 
-## Step di Generazione
+### Sicurezza e Costi (Best Practices)
+Quando l'agente esegue lo script per generare batch di esercizi (es. 50 o 100), è fondamentale rispettare due regole critiche per evitare costi astronomici e crash delle API:
+1. **Isolamento del Contesto (O(1) Cost):** L'istanza dell'agente LLM (`async with Agent(config) as agent:`) deve essere creata **all'interno** del ciclo `for` di generazione. Se viene creata fuori, il framework accumulerà l'intera cronologia degli esercizi precedenti come contesto della chat, portando a costi O(N²) ed esaurendo rapidamente il budget e la finestra di contesto.
+2. **Prevenzione Loop (`max_output_tokens`):** I modelli LLM possono talvolta incastrarsi in loop infiniti generando codice LaTeX molto lungo. Bisogna impostare un limite stringente (es. `max_output_tokens=1500`) all'interno di `LocalAgentConfig`. In questo modo, se il modello deraglia, raggiunge il limite, produce un JSON non valido e lo script scarta l'esercizio passando al successivo con un semplice blocco `try/except`, evitando crash di sistema ("The maximum token limit was reached").
 
-### 1. Inserimento Aree e Topic
-Se la `macro_area` o il `topic` per cui si intende generare l'esercizio non esistono nel database, l'agente deve prima crearli. Per farlo, può utilizzare lo script Python fornito `scripts/seed_db.py` o eseguire direttamente delle query SQL `INSERT ... ON CONFLICT DO NOTHING`.
+Lo script scriverà l'output formattato in file Markdown nella cartella `submissions/pending/` e creerà in automatico un branch e una Pull Request.
 
-### 2. Generazione dell'Esercizio
-L'agente deve formulare un esercizio matematico seguendo questi vincoli:
-- **Difficoltà (`difficulty_level`)**: Da 1 (molto facile) a 5 (molto difficile). Siate creativi ma generati una buona dose di esercizi di difficoltà standard (2-3).
-- **Testo Problema (`problem_text`)**: Testo in chiaro dell'esercizio (formattato adeguatamente in italiano).
-- **Formattazione LaTeX (`latex_problem`, `latex_solution`)**: Le formule devono essere rigorosamente in LaTeX valido, evitando errori di sintassi.
+## Step 2: Popolamento del Database
 
-### 3. Calcolo dell'Hash
-Per evitare duplicati, ogni esercizio deve avere un `generated_hash` univoco. Questo hash dovrebbe essere calcolato (ad esempio, usando SHA-256) partendo da una concatenazione normalizzata di `topic_id`, `difficulty_level` e stringhe chiave del problema (o la formula stessa).
+Una volta che gli esercizi generati (in `submissions/pending/`) sono stati revisionati tramite Pull Request e il merge è completato nel branch `main`, si utilizza lo script `scripts/populate_from_md.py` per l'inserimento definitivo.
 
-### 4. Inserimento nel Database
-Inserire l'esercizio nella tabella `exercises` legandolo al `topic_id` corretto.
-
-## Esempio di Utilizzo Script
-Gli agenti possono avvalersi dello script ausiliario:
-```bash
-python scripts/seed_db.py --year 1 --macro_area "Algebra" --topic "Monomi"
-```
-Questo script garantisce che i livelli superiori della gerarchia (anno, macro_area, topic) siano inizializzati prima dell'inserimento dell'esercizio.
+Lo script si occuperà di:
+1. Leggere i file `.md`.
+2. Verificare l'esistenza di `macro_area` e `topic` nel database (e crearli se mancanti).
+3. Calcolare un hash univoco (`generated_hash`) basato sul contenuto.
+4. Inserire gli esercizi nella tabella `exercises`.
+5. Spostare i file completati in `submissions/accepted/`.
