@@ -102,7 +102,7 @@ async def main():
     config = LocalAgentConfig(
         model="gemini-3.5-flash",
         response_schema=ExerciseOutput,
-        max_output_tokens=1500
+        max_output_tokens=1000
     )
     
     os.makedirs(SUBMISSIONS_DIR, exist_ok=True)
@@ -128,20 +128,24 @@ async def main():
             
             if complexity_profile == "standard_accessible":
                 complexity_instructions = """
-            IMPORTANT: To guarantee accessibility for most students, ensure this specific exercise is direct and not overly elaborate.
-            The solution should be concise, easy to follow, and avoid unnecessarily long or convoluted algebraic manipulations.
-            Aim for an optimal balance between didactic value and simplicity. Keep the solution under 10 clear, essential steps."""
+            IMPORTANT: To guarantee accessibility, ensure this specific exercise is extremely direct.
+            The solution MUST be concise, easy to follow, and under 5-8 clear steps."""
             else:
                 complexity_instructions = """
-            IMPORTANT: For this specific exercise, provide a slightly more involved problem that combines standard concepts or requires deeper reasoning.
-            Keep the scenario realistic and avoid artificially convoluted creativity. The solution can be longer but must remain strictly rigorous and educational."""
+            IMPORTANT: For this specific exercise, provide a slightly more involved problem combining standard concepts.
+            However, it MUST REMAIN A SINGLE FOCUSED QUESTION, not a multi-part exam."""
 
             prompt = f"""
             You are a math professor in Italy creating high-quality, copyright-free math exercises for high school students.
             Select a specific sub-topic or problem related to the following curriculum area: {selected_topic}
             {complexity_instructions}
             
-            Generate a relevant exercise. Make sure it is realistic, elegant, and uses proper mathematical notation.
+            CRITICAL RULES TO PREVENT OVER-GENERATION:
+            1. Generate a SINGLE, highly focused question.
+            2. DO NOT generate multi-part problems (e.g., no "1. ... 2. ... 3. ...").
+            3. DO NOT generate long "Problemi di Maturità" or exhaustive real-world scenarios.
+            4. Keep the text and solution strictly under 400 words total.
+            
             Provide both the problem text and a complete step-by-step solution in Italian language.
             Use LaTeX formatting for mathematical expressions.
             CRITICAL INSTRUCTION FOR MATH BLOCKS: When writing block/centered math using $$ ... $$ or environments like \\begin{{cases}}, you MUST place the $$ delimiters on their own independent, empty lines.
