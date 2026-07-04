@@ -36,6 +36,7 @@ class ExerciseOutput(BaseModel):
     tags: list[str] = Field(description="List of relevant tags for the exercise")
     problem_text: str = Field(description="The full problem text using LaTeX where appropriate")
     solution: str = Field(description="The complete step-by-step solution using LaTeX where appropriate")
+    generation_completed: str = Field(description="MUST be exactly the string 'COMPLETED'")
 
 def get_topics():
     if not os.path.exists(CURRICULUM_PATH):
@@ -146,6 +147,7 @@ async def main():
             CRITICAL INSTRUCTION FOR MATH BLOCKS: When writing block/centered math using $$ ... $$ or environments like \\begin{{cases}}, you MUST place the $$ delimiters on their own independent, empty lines.
             The `problem_text` must contain ONLY the mathematical problem itself. 
             The `solution` must contain ONLY the mathematical steps to solve it.
+            You MUST set the `generation_completed` field exactly to "COMPLETED".
             """
             
             print(f"[{i+1}/{NUM_EXERCISES}] Generazione esercizio su: {selected_topic}...")
