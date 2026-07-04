@@ -28,7 +28,7 @@ export function Modal({ isOpen, onClose, title, children, scrollId = "modal-scro
         initial={false}
         animate={{ 
           opacity: isOpen ? 1 : 0,
-          display: isOpen ? 'block' : 'none'
+          visibility: isOpen ? 'visible' : 'hidden'
         }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         style={{ willChange: 'opacity', pointerEvents: isOpen ? 'auto' : 'none' }}
@@ -40,11 +40,11 @@ export function Modal({ isOpen, onClose, title, children, scrollId = "modal-scro
         animate={{ 
           opacity: isOpen ? 1 : 0, 
           y: isOpen ? 0 : 20,
-          display: isOpen ? 'flex' : 'none'
+          visibility: isOpen ? 'visible' : 'hidden'
         }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
         style={{ willChange: 'opacity, transform', pointerEvents: 'none' }}
-        className="fixed inset-0 z-50 items-center justify-center p-4 sm:p-6"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
       >
         <div
           style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
