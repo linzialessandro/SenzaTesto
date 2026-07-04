@@ -20,7 +20,6 @@ Il numero è in forma algebrica $z = a + ib$, con $a = 1$ e $b = -\sqrt{3}$.
 Il modulo $
 ho$ (o $|z|$) è dato da:
 $$
-
 ho = \sqrt{a^2 + b^2} = \sqrt{1^2 + (-\sqrt{3})^2} = \sqrt{1 + 3} = \sqrt{4} = 2
 $$
 
@@ -33,7 +32,7 @@ $$
 $$
 Il coseno è positivo e il seno è negativo, quindi l'angolo si trova nel quarto quadrante. L'angolo notevole associato è $\frac{\pi}{3}$, per cui nel quarto quadrante abbiamo:
 $$
-	heta = 2\pi - \frac{\pi}{3} = \frac{5\pi}{3} \quad 	ext{oppure} \quad 	heta = -\frac{\pi}{3}
+heta = 2\pi - \frac{\pi}{3} = \frac{5\pi}{3} \quad 	ext{oppure} \quad 	heta = -\frac{\pi}{3}
 $$
 Utilizziamo $	heta = -\frac{\pi}{3}$ per comodità di calcolo.
 

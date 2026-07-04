@@ -3,8 +3,9 @@ import psycopg2
 
 def load_env():
     env_vars = {}
-    if os.path.exists('.env'):
-        with open('.env', 'r') as f:
+    env_path = '/Users/alessandro/secrets/SenzaTesto/.env'
+    if os.path.exists(env_path):
+        with open(env_path, 'r') as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith('#'):

@@ -53,3 +53,26 @@ Il corpo del documento DEVE contenere i seguenti 2 header di primo livello (`#`)
 - `# Solution`: La soluzione passo-passo. Anch'essa supporta testo Markdown misto a formule LaTeX.
 
 Tutto il testo sotto a un header verrà considerato parte di quel blocco, fino all'header successivo.
+
+## 4. Linee Guida di Formattazione LaTeX e YAML
+
+Per garantire che gli esercizi vengano parsati correttamente dallo script ed evitare bug grafici nel frontend, rispetta queste regole:
+
+### Quotatura YAML (Frontmatter)
+Se un campo di testo nel frontmatter (es. `topic`) contiene caratteri speciali, in particolare i due punti `:`, deve essere obbligatoriamente racchiuso tra doppi apici `""`.
+- **Sbagliato:** `topic: Equazioni: casi particolari` (provoca un errore di parsing YAML).
+- **Corretto:** `topic: "Equazioni: casi particolari"`
+
+### LaTeX Block Math
+I delimitatori `$$` per le equazioni a blocco (soprattutto se su più righe o contenenti matrici/sistemi come `\begin{cases}`) devono risiedere su **righe separate** rispetto alla formula.
+- **Sbagliato:**
+  $$g(x) = \begin{cases}
+  x & x \ge 0
+  \end{cases}$$
+- **Corretto:**
+  $$
+  g(x) = \begin{cases}
+  x & x \ge 0
+  \end{cases}
+  $$
+In caso contrario, il parser del frontend interpreterà la formula come matematica "inline", formattando l'intero sistema su una sola riga e rompendone il rendering.

@@ -11,7 +11,7 @@ tags:
 ---
 # Problem Text
 
-Siano dati gli insiemi $A = \{x \in \mathbb{N} \mid 1 \le x < 10 	ext{ e } x 	ext{ è dispari}\}$, $B = \{x \in \mathbb{N} \mid x 	ext{ è un divisore di } 15\}$ e $C = \{2, 3, 5, 7\}$. 
+Siano dati gli insiemi $A = \{x \in \mathbb{N} \mid 1 \le x < 10 \text{ e } x \text{ è dispari}\}$, $B = \{x \in \mathbb{N} \mid x \text{ è un divisore di } 15\}$ e $C = \{2, 3, 5, 7\}$. 
 Determinare l'insieme $(A \cup B) \setminus (B \cap C)$.
 
 # Solution

@@ -15,7 +15,7 @@ import asyncpg
 from dotenv import load_dotenv
 
 
-load_dotenv()
+load_dotenv('/Users/alessandro/secrets/SenzaTesto/apps/api/.env')
 
 db_pool = None
 
