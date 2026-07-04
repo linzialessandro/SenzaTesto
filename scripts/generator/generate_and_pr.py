@@ -115,8 +115,8 @@ async def main():
     
     generated_files = []
     
-    async with Agent(config) as agent:
-        for i in range(NUM_EXERCISES):
+    for i in range(NUM_EXERCISES):
+        async with Agent(config) as agent:
             selected_topic = random.choice(topics)
             prompt = f"""
             You are a math professor in Italy creating high-quality, copyright-free math exercises for high school students.
