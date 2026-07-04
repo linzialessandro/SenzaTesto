@@ -1,6 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+
+const ScrollToTop = () => {
+  useEffect(() => {
+    const el = document.getElementById('modal-scroll-container');
+    if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  return null;
+};
 import { Coffee, Info, HelpCircle, Heart, Sparkles, Server, Zap, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import paypalQr from '@/assets/paypal_pure.svg';
@@ -26,6 +34,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
     <Modal isOpen={isOpen} onClose={onClose}>
       {view === 'main' ? (
         <div className="animate-in fade-in zoom-in-95 duration-300 ease-out">
+          <ScrollToTop />
           {/* Headline & Emotional Hook */}
           <div className="text-center mb-8">
             <div className="mx-auto w-16 h-16 bg-rose-100 dark:bg-rose-900/40 rounded-3xl flex items-center justify-center mb-6 shadow-xl transform -rotate-3">
@@ -80,6 +89,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
         </div>
       ) : (
         <div className="animate-in fade-in slide-in-from-right-4 duration-300 ease-out">
+          <ScrollToTop />
           <button 
             onClick={() => setView('main')}
             className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"

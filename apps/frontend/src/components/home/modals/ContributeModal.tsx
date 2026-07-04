@@ -1,4 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+const ScrollToTop = () => {
+  useEffect(() => {
+    const el = document.getElementById('modal-scroll-container');
+    if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  return null;
+};
 import { Sparkles, Mail, AlertTriangle, ChevronLeft, Plus, Cpu } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,6 +36,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
       transition={{ duration: 0.3 }}
       className="flex flex-col h-full"
     >
+      <ScrollToTop />
       <div className="text-center mb-6 sm:mb-8">
         <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-xl transform rotate-3">
           <Sparkles size={28} className="text-white sm:w-8 sm:h-8" />
@@ -98,6 +107,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
           transition={{ duration: 0.3 }}
           className="flex flex-col h-full"
         >
+          <ScrollToTop />
           <button 
             onClick={() => setContributionType(null)}
             className="flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 w-fit mb-4 px-2 py-1 -ml-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
@@ -184,6 +194,7 @@ tipo_errore: [Testo del problema / Soluzione / Altro]
         transition={{ duration: 0.3 }}
         className="flex flex-col h-full"
       >
+        <ScrollToTop />
         <button 
           onClick={() => setContributionType(null)}
           className="flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 w-fit mb-4 px-2 py-1 -ml-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
