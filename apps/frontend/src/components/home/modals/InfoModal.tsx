@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { BookOpen, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -9,8 +9,8 @@ interface InfoModalProps {
 }
 
 export function InfoModal({ isOpen, onClose }: InfoModalProps) {
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+  const content = useMemo(() => (
+    <>
       <div className="text-center mb-8">
         <div className="mx-auto w-16 h-16 bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center mb-6 shadow-xl transform -rotate-6">
           <BookOpen size={32} className="text-white dark:text-slate-900" />
@@ -46,6 +46,12 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
           <Button onClick={onClose}>Inizia a Esplorare</Button>
         </div>
       </div>
+    </>
+  ), [onClose]);
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} scrollId="info-scroll-container">
+      {content}
     </Modal>
   );
 }

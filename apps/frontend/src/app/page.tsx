@@ -11,6 +11,7 @@ import { ContributeModal } from '@/components/home/modals/ContributeModal';
 import { DonationModal } from '@/components/home/modals/DonationModal';
 import { supabase } from '@/lib/supabase';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useMemo } from 'react';
 
 interface Exercise {
   id: number;
@@ -104,70 +105,89 @@ export default function Home() {
     return () => { ignore = true; };
   }, [debouncedQuery, selectedYear]);
 
-  const toggleSolution = (hash: string) => {
+  const toggleSolution = useCallback((hash: string) => {
     setVisibleSolutions(prev => {
       const newSet = new Set(prev);
       if (newSet.has(hash)) newSet.delete(hash);
       else newSet.add(hash);
       return newSet;
     });
-  };
+  }, []);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setSearchQuery('');
     setSelectedYear(null);
-  };
+  }, []);
 
   const isExploring = searchQuery.trim().length > 0 || selectedYear !== null;
+
+  const handleOpenInfo = useCallback(() => setIsInfoModalOpen(true), []);
+  const handleOpenContribute = useCallback(() => setIsContributeModalOpen(true), []);
+  const handleOpenDonation = useCallback(() => setIsDonationModalOpen(true), []);
+
+  const mainContent = useMemo(() => (
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24">
+      <HeroSection onOpenInfo={handleOpenInfo} totalCount={totalCount} />
+
+      <SearchSection 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        selectedYear={selectedYear}
+        onClear={resetFilters}
+      />
+
+      <AnimatePresence mode="wait">
+        {!isExploring ? (
+          <motion.div
+            key="collections"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+          >
+            <CollectionsGrid onSelectYear={setSelectedYear} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="exercises"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+          >
+            <ExercisesGrid 
+              loading={loading}
+              filteredExercises={exercises}
+              visibleSolutions={visibleSolutions}
+              toggleSolution={toggleSolution}
+              resetFilters={resetFilters}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
+  ), [
+    totalCount, 
+    searchQuery, 
+    selectedYear, 
+    isExploring, 
+    loading, 
+    exercises, 
+    visibleSolutions, 
+    handleOpenInfo, 
+    resetFilters, 
+    toggleSolution
+  ]);
 
   return (
     <div className="min-h-screen text-slate-900 dark:text-slate-50 relative pb-32">
       <NavBar 
-        onOpenContribute={() => setIsContributeModalOpen(true)} 
-        onOpenDonation={() => setIsDonationModalOpen(true)} 
+        onOpenContribute={handleOpenContribute} 
+        onOpenDonation={handleOpenDonation} 
         onLogoClick={resetFilters}
       />
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24">
-        <HeroSection onOpenInfo={() => setIsInfoModalOpen(true)} totalCount={totalCount} />
-
-        <SearchSection 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedYear={selectedYear}
-          onClear={resetFilters}
-        />
-
-        <AnimatePresence mode="wait">
-          {!isExploring ? (
-            <motion.div
-              key="collections"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            >
-              <CollectionsGrid onSelectYear={setSelectedYear} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="exercises"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            >
-              <ExercisesGrid 
-                loading={loading}
-                filteredExercises={exercises}
-                visibleSolutions={visibleSolutions}
-                toggleSolution={toggleSolution}
-                resetFilters={resetFilters}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
+      {mainContent}
 
       <InfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} />
       <ContributeModal isOpen={isContributeModalOpen} onClose={() => setIsContributeModalOpen(false)} />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Sparkles, Mail, AlertTriangle, ChevronLeft, Plus, Cpu } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -263,13 +263,17 @@ tipo_errore: [Testo del problema / Soluzione / Altro]
     );
   };
 
+  const content = useMemo(() => (
+    <div className="overflow-hidden relative min-h-[420px] sm:min-h-[480px]">
+      <AnimatePresence mode="wait" initial={false}>
+        {contributionType === null ? renderStep1() : renderStep2()}
+      </AnimatePresence>
+    </div>
+  ), [contributionType]);
+
   return (
     <Modal isOpen={isOpen} onClose={handleClose} scrollId="contribute-scroll-container">
-      <div className="overflow-hidden relative min-h-[420px] sm:min-h-[480px]">
-        <AnimatePresence mode="wait" initial={false}>
-          {contributionType === null ? renderStep1() : renderStep2()}
-        </AnimatePresence>
-      </div>
+      {content}
     </Modal>
   );
 }
