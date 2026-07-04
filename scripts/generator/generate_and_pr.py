@@ -119,9 +119,26 @@ async def main():
     for i in range(NUM_EXERCISES):
         async with Agent(config) as agent:
             selected_topic = random.choice(topics)
+            complexity_profile = random.choices(
+                ["standard_accessible", "elaborate_challenging"],
+                weights=[0.7, 0.3],
+                k=1
+            )[0]
+            
+            if complexity_profile == "standard_accessible":
+                complexity_instructions = """
+            IMPORTANT: To guarantee accessibility for most students, ensure this specific exercise is direct and not overly elaborate.
+            The solution should be concise, easy to follow, and avoid unnecessarily long or convoluted algebraic manipulations.
+            Aim for an optimal balance between didactic value and simplicity. Keep the solution under 10 clear, essential steps."""
+            else:
+                complexity_instructions = """
+            IMPORTANT: For this specific exercise, you can be more creative and elaborate. Provide a challenging problem that requires deeper critical thinking or combines multiple concepts.
+            The solution can be longer and more detailed, but still perfectly rigorous."""
+
             prompt = f"""
             You are a math professor in Italy creating high-quality, copyright-free math exercises for high school students.
             Select a specific sub-topic or problem related to the following curriculum area: {selected_topic}
+            {complexity_instructions}
             
             Generate a relevant exercise. Make sure it is realistic, elegant, and uses proper mathematical notation.
             Provide both the problem text and a complete step-by-step solution in Italian language.
