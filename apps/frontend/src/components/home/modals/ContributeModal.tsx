@@ -20,7 +20,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
   };
 
   useEffect(() => {
-    const el = document.getElementById('modal-scroll-container');
+    const el = document.getElementById('contribute-scroll-container');
     if (el) {
       el.scrollTop = 0;
     }
@@ -264,7 +264,7 @@ tipo_errore: [Testo del problema / Soluzione / Altro]
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose}>
+    <Modal isOpen={isOpen} onClose={handleClose} scrollId="contribute-scroll-container">
       <div className="overflow-hidden relative min-h-[420px] sm:min-h-[480px]">
         <AnimatePresence mode="wait" initial={false}>
           {contributionType === null ? renderStep1() : renderStep2()}

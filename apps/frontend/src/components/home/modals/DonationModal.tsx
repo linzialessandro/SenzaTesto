@@ -24,14 +24,14 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
 
   // Reset scroll when view changes
   useEffect(() => {
-    const el = document.getElementById('modal-scroll-container');
+    const el = document.getElementById('donation-scroll-container');
     if (el) {
       el.scrollTop = 0;
     }
   }, [view]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} scrollId="donation-scroll-container">
       {view === 'main' ? (
         <div className="animate-in fade-in sm:zoom-in-95 duration-300 ease-out">
           {/* Headline & Emotional Hook */}
