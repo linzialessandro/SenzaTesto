@@ -31,3 +31,6 @@ Se lo script di generazione (`generate_and_pr.py`) dovesse incontrare errori e s
 
 ## Conclusione
 Sebbene la spesa assoluta per singola esecuzione da 50 esercizi rimanga sotto la soglia di 1 €, rendendo sostenibile il debugging e i test automatizzati, l'ordine di grandezza è cresciuto di circa 30 volte rispetto alle stime dei modelli del 2024. Se la pipeline esegue molti cicli di test giornalieri su volumi più ampi, lo scostamento diventa finanziariamente rilevante. È obbligatorio mantenere attivo il limite `max_output_tokens=1000` per ogni operazione di batching.
+
+> [!NOTE]
+> Per i collaboratori che desiderano contribuire alla generazione di nuovi esercizi utilizzando la propria API Key di Google AI Studio, il costo medio effettivo registrato sul campo (con le attuali impostazioni anti-verbosità) è di circa **5 centesimi di dollaro per singolo esercizio generato con successo** (circa 0,05 $ ad esercizio). Questo rende le micro-contribuzioni estremamente economiche ed accessibili.
