@@ -149,7 +149,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
 
     const githubLink = isNew 
       ? "https://github.com/linzialessandro/SenzaTesto/new/main/submissions/pending?filename=nuovo_esercizio.md&value=---%0Ayear%3A%20%5B1-5%5D%0Amacro_area%3A%20%5BArea%20Macro%5D%0Atopic%3A%20%5BArgomento%5D%0Adifficulty%3A%20%5B1-5%5D%0Atags%3A%0A%20%20-%20tag1%0A%20%20-%20tag2%0A---%0A%23%20Problem%20Text%0A%5BTesto%20del%20problema%20qui%5D%0A%0A%23%20Solution%0A%5BSoluzione%20qui%5D%0A"
-      : "https://github.com/linzialessandro/SenzaTesto/issues/new?title=Segnalazione%20Errore:%20%5BID%20o%20Short%20Code%5D&body=---%0Aesercizio_id%3A%20%5BID%20o%20Short%20Code%20dell'esercizio%5D%0Atipo_errore%3A%20%5BTesto%20del%20problema%20%2F%20Soluzione%20%2F%20Altro%5D%0A---%0A%23%20Descrizione%20dell'errore%0A%5BDescrivi%20l'errore%20o%20il%20refuso%5D%0A%0A%23%20Correzione%20proposta%0A%5BInserisci%20la%20correzione%5D%0A";
+      : "https://github.com/linzialessandro/SenzaTesto/issues/new?title=Segnalazione%20Errore:%20%5BID%20o%20Short%20Code%5D&body=---%0Aesercizio_id%3A%20%5BID%20o%20Short%20Code%20dell'esercizio%5D%0Atipo_errore%3A%20%5BTesto%20del%20problema%20%2F%20Soluzione%20%2F%20Altro%5D%0A---%0A%23%20Descrizione%20dell'errore%0A%5BDescrivi%20l'errore%20o%20il%20refuso%5D%0A%0A%23%20Correzione%20proposta%0A%5BInserisci%20la%20correzione%5D%0A%0A%3E%20**%22Ho%20letto%20il%20documento%20CLA%20e%20con%20la%20presente%20accetto%20e%20firmo%20il%20Contributor%20License%20Agreement.%22**%0A";
 
     const emailSubject = isNew ? "SenzaTesto - Nuovo Esercizio" : "SenzaTesto - Segnalazione Errore";
     
@@ -167,6 +167,8 @@ tags:
 
 # Solution
 [Soluzione qui]
+
+> **"Ho letto il documento CLA e con la presente accetto e firmo il Contributor License Agreement."**
 `;
 
     const emailBodyError = `---
@@ -178,6 +180,8 @@ tipo_errore: [Testo del problema / Soluzione / Altro]
 
 # Correzione proposta
 [Inserisci la correzione]
+
+> **"Ho letto il documento CLA e con la presente accetto e firmo il Contributor License Agreement."**
 `;
 
     const emailLink = `mailto:alessandro.linzi.phd@icloud.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(isNew ? emailBodyNew : emailBodyError)}`;

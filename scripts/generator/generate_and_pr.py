@@ -206,7 +206,9 @@ async def main():
         # Pusha il branch sul fork origin/upstream (gh CLI handle forks for PRs nicely but usually needs the branch pushed)
         push_success = run_cmd(f"git push -u origin {branch_name}", ignore_error=True)
         if push_success:
-            pr_cmd = f'gh pr create --title "Nuovi Esercizi ({len(generated_files)})" --body "Esercizi generati automaticamente tramite lo script BYOK."'
+            import shlex
+            pr_body = "Esercizi generati automaticamente tramite lo script BYOK.\n\n> **\"Ho letto il documento CLA e con la presente accetto e firmo il Contributor License Agreement.\"**"
+            pr_cmd = f"gh pr create --title 'Nuovi Esercizi ({len(generated_files)})' --body {shlex.quote(pr_body)}"
             if run_cmd(pr_cmd):
                 print("✅ Pull Request creata con successo!")
             else:
