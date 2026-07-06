@@ -39,7 +39,7 @@ Moltiplicando per 2, il risultato è $x = 4$.
 
 | Field | Type | Description |
 |---|---|---|
-| `year` | Integer | L'anno scolastico di riferimento (1-5). |
+| `year` | Integer | L'anno scolastico di riferimento 1-5 (vedi il [Curriculum Italiano](/curriculum/curriculum-italiano.md)). |
 | `macro_area` | String | L'area tematica generale (es. "Geometria", "Algebra Base"). |
 | `topic` | String | L'argomento specifico (es. "triangoli", "sistemi lineari"). |
 | `difficulty` | Integer | Il livello di difficoltà dell'esercizio (1-5). |

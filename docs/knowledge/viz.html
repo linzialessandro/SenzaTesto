@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="it" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa della Conoscenza - OKF Graph</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cytoscape.js -->
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.29.2/dist/cytoscape.min.js"></script>
+    <!-- Marked.js (Markdown parser) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Font Outfit & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+        }
+        /* Personalizzazione stile scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="flex-none bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-4 flex items-center justify-between z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+                K
+            </div>
+            <div>
+                <h1 class="text-lg font-semibold tracking-tight text-white">Mappa della Conoscenza</h1>
+                <p class="text-xs text-slate-400">Grafo di Conoscenza OKF di SenzaTesto</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-medium">
+                OKF v0.1
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="flex-1 flex overflow-hidden relative">
+
+        <!-- Sidebar Sinistra: Controlli e Ricerca -->
+        <aside class="w-80 bg-slate-900 border-r border-slate-800 p-4 flex flex-col gap-4 flex-none z-10">
+            <!-- Search & Filters -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cerca Concetto</label>
+                <input type="text" id="search-input" placeholder="Cerca per titolo o tag..." 
+                       class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 transition-colors">
+            </div>
+
+            <!-- Legend & Type Filters -->
+            <div class="flex-1 flex flex-col overflow-hidden">
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Filtra per Tipo</label>
+                <div id="type-filters" class="flex-1 overflow-y-auto space-y-1 pr-1">
+                    <!-- Dinamicamente popolato -->
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-slate-400">
+                <p class="font-semibold text-slate-300 mb-1">Interazione:</p>
+                <ul class="list-disc pl-4 space-y-1">
+                    <li>Trascina i nodi per riorganizzarli.</li>
+                    <li>Usa la rotella per lo zoom.</li>
+                    <li>Clicca su un nodo per vederne i dettagli.</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Centrato: Graph Area -->
+        <main class="flex-1 relative bg-slate-950">
+            <div id="cy" class="w-full h-full"></div>
+            <!-- Loading Indicator -->
+            <div id="loading" class="absolute inset-0 flex items-center justify-center bg-slate-950/80 z-20 transition-opacity duration-300">
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-sm text-slate-400 font-medium">Caricamento del grafo...</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar Destra: Dettagli -->
+        <aside id="detail-panel" class="w-96 bg-slate-900 border-l border-slate-800 flex flex-col flex-none z-10 translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out">
+            <!-- Empty State -->
+            <div id="detail-empty" class="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500 gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-sm font-medium">Seleziona un nodo per visualizzarne i dettagli e le relazioni.</p>
+            </div>
+
+            <!-- Content State (Hidden by default) -->
+            <div id="detail-content" class="flex-1 flex flex-col overflow-hidden hidden">
+                <!-- Panel Header -->
+                <div class="p-6 border-b border-slate-800 relative bg-slate-900/50">
+                    <div id="detail-type-badge" class="inline-block text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full bg-indigo-950 text-indigo-400 border border-indigo-900/50 mb-3">
+                        TIPO
+                    </div>
+                    <h2 id="detail-title" class="text-xl font-bold text-white tracking-tight leading-tight">Titolo del Concetto</h2>
+                    <p id="detail-desc" class="text-sm text-slate-400 mt-2 leading-relaxed">Descrizione breve del concetto.</p>
+                </div>
+
+                <!-- Scrollable Body -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <!-- Tags -->
+                    <div id="detail-tags-section">
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tag</h3>
+                        <div id="detail-tags" class="flex flex-wrap gap-1.5">
+                            <!-- Tag badges -->
+                        </div>
+                    </div>
+
+                    <!-- Resource Link -->
+                    <div id="detail-resource-section" class="hidden">
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Risorsa Collegata</h3>
+                        <a id="detail-resource" href="#" target="_blank" class="text-sm text-indigo-400 hover:text-indigo-300 font-medium inline-flex items-center gap-1 hover:underline">
+                            Apri risorsa
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Markdown Body Content -->
+                    <div>
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-2 mb-3">Contenuto</h3>
+                        <article id="detail-body-html" class="prose prose-invert prose-sm max-w-none prose-headings:font-bold prose-a:text-indigo-400 hover:prose-a:text-indigo-300 prose-a:underline">
+                            <!-- Rendered Markdown -->
+                        </article>
+                    </div>
+
+                    <!-- Inbound Links (Cited by) -->
+                    <div>
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Citato Da (Backlinks)</h3>
+                        <div id="detail-backlinks" class="space-y-1">
+                            <!-- Backlinks list -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Inject Graph Data -->
+    <script>
+        const graphData = {"bundle": "docs/knowledge", "nodes": [{"id": "agents/database-population-workflow", "path": "agents/database-population-workflow.md", "type": "Concept", "title": "Flusso di Popolamento Database", "description": "Guida dettagliata per gli agenti LLM su come popolare autonomamente il database di esercizi, inclusa la gestione sicura del contesto.", "tags": ["agents", "workflow", "database", "population", "seeding", "llm-costs"], "resource": "", "status": "active", "body": "# Flusso di Popolamento Database (Pipeline Automatica)\n\nQuesto documento delinea il flusso di lavoro aggiornato che ogni agente delegato alla generazione degli esercizi deve seguire. La pipeline si basa su un sistema in due passaggi: Generazione automatizzata con Git PR, e Popolamento a valle.\n\n## Step 1: Generazione degli Esercizi (Agenti LLM)\n\nGli esercizi vengono generati tramite lo script `scripts/generator/generate_and_pr.py`. \n\n### Sicurezza e Costi (Best Practices)\nQuando l'agente esegue lo script per generare batch di esercizi (es. 50 o 100), \u00e8 fondamentale rispettare due regole critiche per evitare costi astronomici e crash delle API:\n1. **Isolamento del Contesto (O(1) Cost):** L'istanza dell'agente LLM (`async with Agent(config) as agent:`) deve essere creata **all'interno** del ciclo `for` di generazione. Se viene creata fuori, il framework accumuler\u00e0 l'intera cronologia degli esercizi precedenti come contesto della chat, portando a costi O(N\u00b2) ed esaurendo rapidamente il budget e la finestra di contesto (dettagliati in [Analisi Costi LLM](/agents/llm-pricing.md)).\n2. **Prevenzione Loop e Sentinel Field:** I modelli LLM possono talvolta incastrarsi in loop infiniti o divagare in problemi multi-parte estremamente lunghi. Bisogna impostare un limite stringente (es. `max_output_tokens=1000`) all'interno di `LocalAgentConfig`. Poich\u00e9 molti framework moderni (come l'SDK di Antigravity) tendono a *riparare* automaticamente il JSON troncato aggiungendo le parentesi di chiusura mancanti (bypassando quindi i nostri `try/except`), \u00e8 **obbligatorio** includere uno speciale \"campo sentinella\" alla fine del Pydantic model (es. `generation_completed: str`). In questo modo, se il limite di token viene raggiunto, il campo finale sar\u00e0 del tutto assente, garantendo che Pydantic sollevi un errore di validazione e permettendo allo script di scartare l'esercizio difettoso.\n\nLo script scriver\u00e0 l'output formattato in file Markdown seguendo lo [Standard Exercise Markdown Template](/architecture/exercise_template.md) nella cartella `submissions/pending/` e creer\u00e0 in automatico un branch e una Pull Request.\n\n## Step 2: Popolamento del Database\n\nUna volta che gli esercizi generati (in `submissions/pending/`) sono stati revisionati tramite Pull Request e il merge \u00e8 completato nel branch `main`, si utilizza lo script `scripts/populate_from_md.py` per l'inserimento definitivo.\n\nLo script si occuper\u00e0 di:\n1. Leggere i file `.md`.\n2. Verificare l'esistenza di `macro_area` e `topic` nel database (e crearli se mancanti).\n3. Calcolare un hash univoco (`generated_hash`) basato sul contenuto.\n4. Inserire gli esercizi nelle tabelle del database (vedi lo [Schema del Database](/database/schema.md)).\n5. Spostare i file completati in `submissions/accepted/`.", "links": ["agents/llm-pricing", "architecture/exercise_template", "database/schema"], "cited_by": []}, {"id": "agents/llm-pricing", "path": "agents/llm-pricing.md", "type": "Concept", "title": "LLM Pricing and Cost Analysis", "description": "Tariffe aggiornate per i modelli LLM (es. Gemini 3.5 Flash) e calcolo dei costi peggiori per batch.", "tags": ["agents", "costs", "pricing", "gemini-3.5"], "resource": "", "status": "active", "body": "# Analisi Costi LLM (Aggiornamento 2026)\n\nCon il rilascio ufficiale di **Gemini 3.5 Flash** (maggio 2026), Google ha riposizionato il modello su una fascia di performance pi\u00f9 alta, applicando un incremento tariffario significativo rispetto alle versioni precedenti (es. 1.5 Flash).\n\n## 1. Tariffe Ufficiali Attuali (Gemini 3.5 Flash)\n* **Costo Input (Testo):** 1,50 $ per 1.000.000 di token\n* **Costo Output (Testo):** 9,00 $ per 1.000.000 di token\n\nQueste tariffe rendono fondamentale l'adozione di tecniche di salvaguardia del budget, come l'isolamento del contesto (evitando la crescita O(N\u00b2) nei cicli) e l'impostazione di un `max_output_tokens`.\n\n## 2. Calcolo del Worst-Case Scenario (Batch 50 Esercizi in Loop)\nSe lo script di generazione (`generate_and_pr.py`) dovesse incontrare errori e spingere tutte e 50 le iterazioni fino al limite massimo di sicurezza (loop infinito troncato dal tetto):\n\n* Numero di chiamate (esercizi): N = 50\n* Token di input stimati per singola chiamata: Tin = 250\n* Tetto massimo di token di output: Tout = 1000\n\n### Calcolo dei Costi\n* Costo_input = 12.500 * (1,50 $ / 1.000.000) = 0,01875 $\n* Costo_output = 50.000 * (9,00 $ / 1.000.000) = 0,45000 $\n\n**Costo Totale della Run Pessimistica:** 0,46875 $ (circa 43 centesimi di Euro).\n\n## Conclusione\nSebbene la spesa assoluta per singola esecuzione da 50 esercizi rimanga sotto la soglia di 1 \u20ac, rendendo sostenibile il debugging e i test automatizzati, l'ordine di grandezza \u00e8 cresciuto di circa 30 volte rispetto alle stime dei modelli del 2024. Se la pipeline esegue molti cicli di test giornalieri su volumi pi\u00f9 ampi, lo scostamento diventa finanziariamente rilevante. \u00c8 obbligatorio mantenere attivo il limite `max_output_tokens=1000` per ogni operazione di batching.\n\n> [!NOTE]\n> Per i collaboratori che desiderano contribuire alla generazione di nuovi esercizi utilizzando la propria API Key di Google AI Studio, il costo medio effettivo registrato sul campo (con le attuali impostazioni anti-verbosit\u00e0) \u00e8 di circa **5 centesimi di dollaro per singolo esercizio generato con successo** (circa 0,05 $ ad esercizio). Questo rende le micro-contribuzioni estremamente economiche ed accessibili.", "links": [], "cited_by": ["agents/database-population-workflow"]}, {"id": "architecture/exercise_template", "path": "architecture/exercise_template.md", "type": "Concept", "title": "Exercise Markdown Template", "description": "Standard format for defining new exercises using Markdown and YAML frontmatter.", "tags": ["architecture", "markdown", "template", "exercises"], "resource": "", "status": "active", "body": "# Standard Exercise Markdown Template\n\nAll new exercises must be submitted using the following Markdown format. The system will automatically parse this format to ingest the exercise into the database.\n\n## 1. Structure\n\nEach exercise file MUST contain a YAML frontmatter block at the top, followed by specific Markdown headers.\n\n```markdown\n---\nyear: 1\nmacro_area: Algebra\ntopic: equazioni lineari\ndifficulty: 2\ntags:\n  - frazioni\n  - verifica\n---\n# Problem Text\nRisolvi la seguente equazione lineare:\n$$\n\\frac{x}{2} + 3 = 5\n$$\n\n# Solution\nSottraendo 3 da entrambi i membri otteniamo $\\frac{x}{2} = 2$.\nMoltiplicando per 2, il risultato \u00e8 $x = 4$.\n```\n\n## 2. Frontmatter Fields\n\n| Field | Type | Description |\n|---|---|---|\n| `year` | Integer | L'anno scolastico di riferimento 1-5 (vedi il [Curriculum Italiano](/curriculum/curriculum-italiano.md)). |\n| `macro_area` | String | L'area tematica generale (es. \"Geometria\", \"Algebra Base\"). |\n| `topic` | String | L'argomento specifico (es. \"triangoli\", \"sistemi lineari\"). |\n| `difficulty` | Integer | Il livello di difficolt\u00e0 dell'esercizio (1-5). |\n| `tags` | List[String] | Una lista di tag aggiuntivi per la ricerca. |\n\n## 3. Headers (Body)\n\nIl corpo del documento DEVE contenere i seguenti 2 header di primo livello (`#`):\n\n- `# Problem Text`: Il testo del problema. Pu\u00f2 contenere sia Markdown standard che formule LaTeX in-line (`$ $`) e a blocco (`$$ $$`).\n- `# Solution`: La soluzione passo-passo. Anch'essa supporta testo Markdown misto a formule LaTeX.\n\nTutto il testo sotto a un header verr\u00e0 considerato parte di quel blocco, fino all'header successivo.\n\n## 4. Linee Guida di Formattazione LaTeX e YAML\n\nPer garantire che gli esercizi vengano parsati correttamente dallo script ed evitare bug grafici nel frontend, rispetta queste regole:\n\n### Quotatura YAML (Frontmatter)\nSe un campo di testo nel frontmatter (es. `topic`) contiene caratteri speciali, in particolare i due punti `:`, deve essere obbligatoriamente racchiuso tra doppi apici `\"\"`.\n- **Sbagliato:** `topic: Equazioni: casi particolari` (provoca un errore di parsing YAML).\n- **Corretto:** `topic: \"Equazioni: casi particolari\"`\n\n### LaTeX Block Math\nI delimitatori `$$` per le equazioni a blocco (soprattutto se su pi\u00f9 righe o contenenti matrici/sistemi come `\\begin{cases}`) devono risiedere su **righe separate** rispetto alla formula.\n- **Sbagliato:**\n  $$g(x) = \\begin{cases}\n  x & x \\ge 0\n  \\end{cases}$$\n- **Corretto:**\n  $$\n  g(x) = \\begin{cases}\n  x & x \\ge 0\n  \\end{cases}\n  $$\nIn caso contrario, il parser del frontend interpreter\u00e0 la formula come matematica \"inline\", formattando l'intero sistema su una sola riga e rompendone il rendering.", "links": ["curriculum/curriculum-italiano"], "cited_by": ["agents/database-population-workflow", "architecture/population_workflow"]}, {"id": "architecture/frontend_performance", "path": "architecture/frontend_performance.md", "type": "Concept", "title": "Frontend Performance & Mobile UX", "description": "Tecniche avanzate di ottimizzazione per React, GPU rendering e UI lag su dispositivi mobili.", "tags": ["frontend", "react", "performance", "mobile", "framer-motion"], "resource": "", "status": "active", "body": "# Frontend Performance & Mobile UX\n\nQuesta guida documenta le scelte architetturali implementate in **SenzaTesto** per massimizzare la fluidit\u00e0 della UI (Specialmente su dispositivi mobili), eliminando i famigerati ritardi e \"jank\" dovuti al motore di rendering del browser o alla *reconciliation* di React.\n\n## 1. Aggressive Memoization (React Rendering)\n\nNelle applicazioni single-page moderne (SPA), i cambiamenti di stato nei nodi padre causano un \"re-render\" a cascata di tutti i componenti figli. Quando si maneggiano DOM molto grandi o complessi (ad esempio griglie con centinaia di formule LaTeX e componenti interattivi), il processo di *diffing* dell'albero virtuale di React pu\u00f2 bloccare il thread principale (Main Thread) per 100-300ms.\n\n### La Soluzione\nSenzaTesto utilizza `useMemo` e `useCallback` in maniera *aggressiva* per i blocchi principali (`<ExercisesGrid />`, `<CollectionsGrid />`). \nIn `page.tsx`, l'intero contenuto centrale della pagina viene congelato in un `useMemo` che ha come dipendenze unicamente gli stati di ricerca/filtro.\nQuando l'utente clicca su un bottone della NavBar per aprire un Modal (modificando `isContributeModalOpen` per esempio), la pagina **non** ricalcola il DOM, scendendo il costo computazionale a ~0.5ms.\n\n## 2. GPU Caching per i Modal (CSS & Framer Motion)\n\nUno dei problemi pi\u00f9 persistenti nello sviluppo web mobile \u00e8 il ritardo in apertura di grossi elementi a comparsa (Modals).\nSpesso, per nascondere i modal, si usa `AnimatePresence` (che smonta il nodo dal DOM) oppure la direttiva CSS `display: none`.\nTuttavia, passare da `display: none` a `display: flex` su un dispositivo mobile innesca un massiccio *Layout Reflow*: il browser deve calcolare la geometria di centinaia di nodi sincronicamente, congelando l'animazione di entrata.\n\nAnche la direttiva `visibility: hidden` pu\u00f2 creare lievi colli di bottiglia, in quanto i browser \"dimenticano\" il painting dell'elemento per risparmiare memoria video, forzando un ritardo di painting nel primo frame di animazione.\n\n### La Soluzione Definitiva (Modal \"Always-on\")\nIn `Modal.tsx`, non usiamo n\u00e9 `AnimatePresence`, n\u00e9 `display: none`, n\u00e9 `visibility: hidden`. \nIl modal \u00e8 **sempre renderizzato** nell'albero DOM e nella GPU, ma viene reso invisibile e non interagibile tramite:\n- `opacity: 0`\n- `pointer-events: none`\n- `aria-hidden=\"true\"` (per l'accessibilit\u00e0)\n\nIn questo modo l'elemento viene rasterizzato e caricato in memoria grafica al momento del caricamento della pagina (o durante il tempo di *idle*). Quando l'utente lo apre, il telefono non fa altro che cambiare istantaneamente la trasparenza di una texture gi\u00e0 pronta in memoria, a 0 costo di CPU.\n\n## 3. Disabilitazione del Tap-Highlight Delay\n\nSui browser mobile webkit (Safari iOS, Chrome Mobile), toccare elementi cliccabili pu\u00f2 causare un \"flash\" grigio o bluastro per 300ms. Oltre ad essere poco estetico, fornisce una percezione tattile di *ritardo* prima che il codice Javascript venga realmente eseguito.\n\n### Soluzione\nIl file globale `globals.css` implementa:\n```css\n* {\n  -webkit-tap-highlight-color: transparent;\n}\n```\nQuesto, abbinato al `touch-action: manipulation` implicito, permette click istantanei e fluidi come nelle applicazioni native.\n\n## 4. Backdrop Blur e Ombre su Mobile\n\nIl filtro CSS `backdrop-filter: blur(px)` \u00e8 incredibilmente oneroso su schede grafiche mobile a basso consumo, portando spesso le animazioni a 10-15 FPS. Lo stesso vale per le ombre diffuse (`box-shadow` multiple e grandi) su container con bordi arrotondati e `overflow: hidden`.\n\n### Soluzione\nTramite le utility classes di Tailwind (`sm:backdrop-blur-md`, `sm:shadow-xl`), questi pesanti effetti grafici di glassmorfismo sono stati limitati **esclusivamente** ai dispositivi con schermi `sm` o superiori (Tablet, Desktop). Sugli smartphone, il sistema degrada elegantemente a un background scuro semitrasparente (`bg-slate-900/40`), mantenendo per\u00f2 costanti i 60 FPS senza surriscaldare il dispositivo.", "links": [], "cited_by": ["architecture/setup"]}, {"id": "architecture/population_workflow", "path": "architecture/population_workflow.md", "type": "Concept", "title": "Population Workflow", "description": "Documentazione del nuovo flusso di acquisizione degli esercizi basato su file Markdown.", "tags": ["architecture", "workflow", "markdown", "database"], "resource": "", "status": "superseded", "body": "# Flusso di Popolamento del Database (Population Workflow)\n\nIl processo di inserimento dei nuovi esercizi nel database SenzaTesto \u00e8 stato rivoluzionato. \nInvece di inserire gli esercizi direttamente via codice (Python dict hardcoded), si utilizza un formato **Markdown Standardizzato** con metadati `YAML`.\n\n## Vantaggi del Nuovo Workflow\n\n1.  **Maggiore Controllo sul Formato:** Gli esercizi LaTeX vengono scritti in blocchi isolati all'interno di file Markdown, garantendo pulizia e facilit\u00e0 di modifica manuale.\n2.  **Scalabilit\u00e0 e Contributi:** Nuovi docenti e utenti possono contribuire facilmente inviando un file `.md` nella directory `submissions`. Non serve conoscere Python.\n3.  **Sistema a Tag Dinamico:** La presenza di array di tag aggiuntivi all'interno dei file Markdown si integra direttamente nel motore di ricerca Full-Text PostgreSQL tramite TSVector, rendendo molto pi\u00f9 potente la feature di \"Ricerca\" della piattaforma.\n\n## Componenti del Workflow\n\n### 1. File Markdown (Directory `submissions/`)\nOgni esercizio \u00e8 rappresentato da un file `.md` (es. `es_limite_01.md`). Il formato dettagliato di questo file \u00e8 documentato in [`exercise_template.md`](./exercise_template.md).\n\nLa cartella `submissions` \u00e8 organizzata in tre sottocartelle per un workflow \"frictionless\":\n- **`pending/`**: Inserisci qui i nuovi esercizi da pubblicare.\n- **`accepted/`**: Gli esercizi elaborati con successo dallo script verranno spostati qui automaticamente.\n- **`rejected/`**: Puoi spostare qui manualmente i file che contengono errori irrisolvibili.\n\n### 2. Lo Script di Popolamento (`scripts/populate_from_md.py`)\nUno script Python autonomo, che utilizza la libreria `PyYAML`, analizza tutti i file presenti in `submissions/pending/`.\nPer ogni file:\n- Verifica l'esistenza di `year`, `macro_area`, `topic`, `difficulty` e `tags` nel blocco YAML superiore.\n- Verifica i due header Markdown richiesti: `# Problem Text`, `# Solution`.\n- Si connette al database PostgreSQL configurato nel `.env` ed esegue l'upsert dell'esercizio (garantendo la corretta creazione delle referenze delle tabelle padre come `curriculum_years`, `macro_areas`, `topics`).\n\n### 3. Lo Script di Validazione e Correzione (`scripts/validate_and_fix_pending.py`)\nUno script ausiliario per sanare gli errori pi\u00f9 comuni prima del caricamento nel database:\n- Aggiunge automaticamente le virgolette attorno a stringhe YAML (come `topic`) se contengono caratteri speciali come `:` che romperebbero il parser.\n- Assicura che i delimitatori LaTeX a blocco `$$` multilinea o complessi (es. contenenti `\\begin{cases}`) siano posti su righe indipendenti, prevenendo errori di rendering nel frontend.\n- Ripristina eventuali caratteri di escape LaTeX (es. `\\alpha`, `\\right`, `\\theta`) che l'SDK potrebbe aver inavvertitamente distrutto e convertito in \"bell character\", \"carriage return\" o \"tabulazioni\" durante il salvataggio dei file.\n\n## Come Eseguire il Workflow\n\n1. Aggiungere uno o pi\u00f9 file `.md` nella cartella `submissions/pending/` seguendo il template.\n2. Attivare il virtual environment: `source venv/bin/activate`\n3. Installare le dipendenze se necessario (es. `pip install pyyaml`)\n4. Eseguire lo script di validazione per correggere preventivamente la sintassi del Markdown:\n   ```bash\n   python3 scripts/validate_and_fix_pending.py\n   ```\n5. Eseguire lo script di elaborazione per caricare i file su PostgreSQL:\n   ```bash\n   python3 scripts/populate_from_md.py\n   ```\n6. Gli esercizi validi verranno processati (calcolando gli hash e aggiornando PostgreSQL) e i relativi file `.md` verranno spostati automaticamente in `submissions/accepted/`. Gli esercizi con errori rimarranno in `pending/`.", "links": ["architecture/exercise_template"], "cited_by": []}, {"id": "architecture/setup", "path": "architecture/setup.md", "type": "Concept", "title": "Architettura di Sistema & Configurazione del Progetto", "description": "Lo scaffolding iniziale del progetto, i requisiti architetturali e il prompt di inizializzazione per la piattaforma educativa.", "tags": ["architecture", "setup", "nextjs", "fastapi", "sympy", "supabase"], "resource": "", "status": "active", "body": "# Architettura di Sistema & Prompt di Inizializzazione\n\n**Contesto del Progetto:** \nInizializzare una piattaforma educativa open-source, massivamente scalabile, che serve esercizi di matematica per le scuole superiori generati proceduralmente.\n\n**Vincolo Infrastrutturale (CRITICO):** \nIl progetto DEVE essere ingegnerizzato per avere zero costi di manutenzione. Deve basarsi esclusivamente su architetture serverless e database edge gratuiti per scalare infinitamente senza incorrere in costi mensili fissi per i server.\n\n**Mandato per lo Stack Tecnologico:**\n- **Backend:** Python (FastAPI) wrappato con `Mangum` per deployment serverless (es. Vercel Serverless Functions o AWS Lambda). Questo eseguir\u00e0 il motore di generazione procedurale `SymPy`.\n- **Database:** Supabase (PostgreSQL) o Cloudflare D1. Abbiamo bisogno di uno storage relazionale robusto con supporto JSON nativo per i dati complessi degli esercizi in LaTeX.\n- **Frontend:** Next.js distribuito su Vercel o Cloudflare Pages (vedi le [ottimizzazioni di performance](/architecture/frontend_performance.md)).\n- **Monetizzazione:** Integrare un componente leggero per le donazioni open-source (es. Ko-fi o link di pagamento Stripe) nell'interfaccia utente.\n\n**Passaggi di Esecuzione per l'Agente:**\n\n1. **Scaffolding del Monorepo:** \n   Inizializzare una struttura monorepo moderna contenente due directory principali: `/apps/api` (Python) e `/apps/frontend` (Next.js).\n\n2. **Design dello Schema del Database:** \n   Generare gli script SQL di inizializzazione (dettagliati nello [Schema del Database](/database/schema.md)). Creare tabelle normalizzate:\n   - `topics` (id, curriculum_year, macro_area)\n   - `exercises` (id, topic_id, difficulty_level, latex_problem, latex_solution, generated_hash)\n   *Includere un vincolo univoco su `generated_hash` per garantire che nessun problema duplicato venga mai salvato.*\n\n3. **Inizializzazione del Backend:** \n   Configurare il boilerplate di FastAPI. Implementare una struttura di routing di base. Includere la configurazione del middleware CORS per accettare richieste dal frontend, e aggiungere un endpoint segnaposto per la logica di generazione di SymPy. \n\n4. **Inizializzazione del Frontend:** \n   Configurare un progetto Next.js pulito con Tailwind CSS. Configurare una libreria di formattazione matematica (KaTeX o MathJax) per renderizzare l'output LaTeX dell'API nativamente nel browser. \n\n5. **Ambiente Locale & CI/CD:** \n   Creare un `docker-compose.yml` per avviare un'istanza PostgreSQL locale per lo sviluppo. Generare file `.env.example` per frontend e backend.\n\nEseguire lo scaffolding e mostrare l'albero iniziale dei file.\n\nL'intero progetto \u00e8 pensato per insegnanti e studenti ITALIANI della scuola secondaria di secondo grado (vedi il [Curriculum Italiano](/curriculum/curriculum-italiano.md)).", "links": ["architecture/frontend_performance", "database/schema", "curriculum/curriculum-italiano"], "cited_by": []}, {"id": "curriculum/curriculum-italiano", "path": "curriculum/curriculum-italiano.md", "type": "Concept", "title": "Curriculum di Matematica (Scuole Superiori)", "description": "Struttura degli argomenti di matematica dal primo al quinto anno delle scuole superiori italiane.", "tags": ["curriculum", "math", "education", "syllabus"], "resource": "", "status": "active", "body": "# Curriculum di Matematica (Scuole Superiori)\n\nQuesto documento definisce i vari argomenti di interesse suddivisi per anni di corso, allineati alle Indicazioni Nazionali e alle Linee Guida del Ministero dell'Istruzione italiano. Deve essere usato dagli agenti per identificare quali aree tematiche (`macro_areas`) e sotto-argomenti (`topics`) generare.\n\n## Obiettivo della Generazione\n\nL'obiettivo \u00e8 generare il maggior numero possibile di esercizi, strutturando profondamente il database per scalare. Bisogna generare esercizi di varie difficolt\u00e0, includendo molti esercizi standard che sono rappresentativi di ogni argomento, unitamente a problemi applicati e di modellizzazione del mondo reale.\n\n## Programma per Anno\n\n### 1\u00b0 Anno\n- **Logica e Insiemistica:** Proposizioni, connettivi logici, insiemi, operazioni tra insiemi (unione, intersezione, differenza, complementare), prodotto cartesiano, concetto di relazione.\n- **Aritmetica e Algebra:** Numeri naturali, interi e razionali; propriet\u00e0 delle operazioni; MCD e mcm; potenze e loro propriet\u00e0; proporzioni e percentuali.\n- **Calcolo letterale:** Monomi, polinomi, operazioni tra essi (somma, differenza, prodotto, prodotti notevoli), MCD e mcm tra polinomi. Divisioni tra polinomi, teorema del resto, teorema e metodo (regola) di Ruffini. Scomposizione di polinomi in fattori.\n- **Geometria piana (Euclidea):** Enti geometrici fondamentali (punto, retta, piano), assiomi e postulati. Segmenti e angoli. Triangoli (classificazione e propriet\u00e0, criteri di congruenza).\n- **Poligoni:** Quadrilateri (parallelogrammi, rettangoli, rombi, quadrati, trapezi). Somma degli angoli interni ed esterni.\n- **Statistica Descrittiva:** Raccolta dati, frequenze assolute e relative, rappresentazioni grafiche (istogrammi, aerogrammi, diagrammi a barre).\n\n### 2\u00b0 Anno\n- **Equazioni di primo grado:** Risoluzione di equazioni lineari intere e letterali (con discussione).\n- **Disequazioni di primo grado:** Disequazioni intere, rappresentazione delle soluzioni e sistemi di disequazioni di primo grado.\n- **Frazioni algebriche:** Semplificazione, operazioni tra frazioni algebriche, equazioni e disequazioni razionali fratte (con attenzione alle condizioni di esistenza).\n- **Sistemi lineari:** Sistemi di due o pi\u00f9 equazioni di primo grado (risolti con metodo di sostituzione, confronto, riduzione/addizione-sottrazione e regola di Cramer).\n- **Numeri reali e Radicali:** Propriet\u00e0 dei radicali, operazioni (prodotto, quoziente, potenza, radice), trasporto sotto e fuori dal segno di radice, razionalizzazione di denominatori, equazioni a coefficienti irrazionali.\n- **Equazioni di secondo grado:** Formula risolutiva (completa, pura, spuria), relazione tra soluzioni e coefficienti, regola di Cartesio, scomposizione del trinomio di secondo grado. Equazioni parametriche.\n- **Geometria piana (Euclidea avanzata):** Circonferenza e cerchio (teoremi sulle corde, tangenti, angoli al centro e alla circonferenza), poligoni inscritti e circoscritti. Equivalenza delle superfici piane (teorema di Pitagora e teoremi di Euclide). Similitudine e criteri di similitudine, teorema di Talete.\n- **Calcolo delle Probabilit\u00e0 (base):** Eventi certi, impossibili e aleatori, calcolo della probabilit\u00e0 classica.\n\n### 3\u00b0 Anno\n- **Geometria Analitica - Il piano cartesiano:** Coordinate cartesiane, distanza tra due punti e punto medio di un segmento, baricentro, perimetro e area di triangoli o quadrilateri sul piano cartesiano. Trasformazioni geometriche piane (simmetrie assiali e centrali, traslazioni, dilatazioni).\n- **La retta:** Equazione sul piano cartesiano (forma implicita ed esplicita), coefficiente angolare. Intersezione fra rette, condizioni di parallelismo e perpendicolarit\u00e0. Distanza di un punto da una retta, fasci di rette propri e impropri.\n- **Coniche:**\n  - La parabola (equazione, calcolo vertice, fuoco, direttrice, asse di simmetria, posizione reciproca retta-parabola, ricerca delle tangenti).\n  - Circonferenza (equazione, ricerca di centro e raggio, posizione reciproca con una retta, tangenti).\n  - Ellisse (equazione canonica, vertici, fuochi, eccentricit\u00e0).\n  - Iperbole (equazione canonica, vertici, fuochi, asintoti, iperbole equilatera e riferita agli asintoti - funzione omografica).\n- **Equazioni e disequazioni di grado superiore al secondo:** Equazioni biquadratiche, trinomie, scomponibili (metodo di Ruffini).\n- **Equazioni e disequazioni particolari:** Equazioni e disequazioni irrazionali.\n- **Statistica descrittiva (avanzata):** Indici di tendenza centrale (media, moda, mediana), indici di dispersione (varianza, scarto quadratico medio).\n\n### 4\u00b0 Anno\n- **Disequazioni di grado superiore e Fratte:** Disequazioni di primo e secondo grado (metodo grafico della parabola), disequazioni polinomiali di grado superiore al secondo (metodo dei segni). Equazioni e disequazioni razionali fratte.\n- **Valore assoluto:** Equazioni e disequazioni con valore assoluto.\n- **Esponenziali e logaritmi:** Propriet\u00e0 delle potenze ad esponente reale, la funzione esponenziale. Concetto di logaritmo, propriet\u00e0 dei logaritmi, cambiamento di base, funzione logaritmica. Equazioni e disequazioni esponenziali e logaritmiche.\n- **Trigonometria e Goniometria:** Circonferenza goniometrica, misura degli angoli (gradi e radianti). Funzioni goniometriche (seno, coseno, tangente, cotangente, secante, cosecante) e loro grafici.\n- **Formule Goniometriche:** Archi associati, formule di addizione, sottrazione, duplicazione, bisezione, prostaferesi e Werner.\n- **Equazioni e disequazioni goniometriche:** Elementari, lineari in seno e coseno, omogenee e fratte.\n- **Risoluzione dei triangoli:** Teoremi sui triangoli rettangoli. Teoremi sui triangoli qualunque (dei seni o di Eulero, dei coseni o di Carnot, della corda). Applicazioni fisiche, geometriche o topografiche.\n- **Numeri Complessi:** Unit\u00e0 immaginaria, forma algebrica, trigonometrica ed esponenziale (formula di Eulero). Operazioni, potenze e radici n-esime (teorema di De Moivre). Teorema fondamentale dell'algebra.\n- **Geometria dello spazio (Stereometria):** Rette e piani nello spazio (parallelismo e perpendicolarit\u00e0), angolo diedro. Poliedri e solidi di rotazione. Calcolo di aree superficiali e volumi.\n- **Calcolo Combinatorio:** Disposizioni, permutazioni, combinazioni (semplici e con ripetizione). Fattoriale e coefficiente binomiale, sviluppo del binomio di Newton.\n- **Probabilit\u00e0 (avanzata):** Probabilit\u00e0 dell'unione e intersezione di eventi, probabilit\u00e0 condizionata, eventi indipendenti, formula di Bayes. Variabili aleatorie discrete (es. distribuzione binomiale).\n\n### 5\u00b0 Anno\n- **Analisi Matematica - Topologia e Funzioni:** Topologia della retta. Dominio, codominio, intersezioni con gli assi, parit\u00e0/disparit\u00e0, periodicit\u00e0.\n- **Limiti e Continuit\u00e0:** Definizione di limiti per successioni e funzioni, continuit\u00e0 di una funzione, discussione della continuit\u00e0 per funzioni definite a tratti, classificazione dei punti di discontinuit\u00e0. Verifica di limiti con la definizione matematica.\n- **Calcolo dei Limiti:** Teoremi sui limiti (unicit\u00e0, permanenza del segno, del confronto). Calcolo dei limiti, forme indeterminate e limiti notevoli. Calcolo degli asintoti (verticali, orizzontali, obliqui). Teoremi sulle funzioni continue (Weierstrass, valori intermedi, di esistenza degli zeri).\n- **Derivate:** Derivata prima (definizione, rapporto incrementale, significato geometrico e fisico come tasso di variazione). Calcolo delle derivate delle funzioni fondamentali, calcolo di derivate complesse usando le regole di derivazione (composta, rapporto, prodotto, somma). Derivate di ordine superiore. Equazione della retta tangente al grafico in un punto.\n- **Teoremi del calcolo differenziale:** Teorema di Rolle, di Lagrange (o del valor medio), di Cauchy, e di De L'H\u00f4pital.\n- **Studio di funzione e Ottimizzazione:** Determinazione degli intervalli di crescenza/decrescenza (monotonia), massimi e minimi relativi/assoluti, punti stazionari. Concavit\u00e0, convessit\u00e0 e punti di flesso. Tracciamento completo del grafico. Risoluzione di problemi di ottimizzazione (massimo/minimo) applicati.\n- **Integrali indefiniti:** Definizione (primitiva), integrali immediati. Metodi di integrazione (per scomposizione, per sostituzione, per parti, integrazione di funzioni razionali fratte).\n- **Integrali definiti:** Definizione analitica (somme di Riemann) e geometrica. Teorema fondamentale del calcolo integrale (di Torricelli-Barrow), teorema della media.\n- **Applicazioni dell'integrale e cenni avanzati:** Calcolo di aree di superfici piane, calcolo di volumi di solidi di rotazione (metodo dei dischi/gusci), lunghezza di un arco di curva. Integrali impropri.\n- **Equazioni differenziali (cenni):** Equazioni differenziali del primo ordine a variabili separabili e lineari.\n- **Geometria Analitica nello spazio (opzionale/cenni):** Vettori nello spazio, equazioni di piano, retta e superficie sferica.\n- **Statistica e Probabilit\u00e0 (cenni continui):** Variabili aleatorie continue, distribuzione Normale (o di Gauss).", "links": [], "cited_by": ["architecture/exercise_template", "architecture/setup"]}, {"id": "database/indexing", "path": "database/indexing.md", "type": "Concept", "title": "Strategia di Indicizzazione (FTS)", "description": "Documentazione sulla strategia di Full-Text Search adottata per garantire la scalabilit\u00e0 della ricerca degli esercizi.", "tags": ["database", "indexing", "postgres", "fts", "scalability"], "resource": "", "status": "active", "body": "# Strategia di Indicizzazione e Ricerca Esercizi\n\nCon l'obiettivo di rendere la piattaforma scalabile a migliaia di esercizi generati proceduralmente (LLM) senza introdurre colli di bottiglia o frizioni per studenti e insegnanti, \u00e8 stata implementata una strategia di **Full-Text Search (FTS)** nativa in PostgreSQL.\n\n## Implementazione\n\n1. **Colonna `search_vector`**: La tabella `exercises` contiene una colonna dedicata `search_vector` di tipo `tsvector`.\n2. **Indice GIN**: Sulla colonna `search_vector` \u00e8 applicato un indice GIN (Generalized Inverted Index) che offre performance `O(log N)` eccellenti per query di ricerca testuale anche su dataset molto voluminosi.\n3. **Trigger di Aggiornamento**: Un trigger automatico si assicura che ad ogni operazione di inserimento o aggiornamento di un esercizio, il vettore venga ricreato combinando:\n   - `problem_text` (Testo del problema, peso 'A')\n   - `topic_name` (Nome del Topic, peso 'B')\n   - `macro_area_name` (Nome della Macro Area, peso 'C')\n\n## Vantaggi\n\n- **Frizione Ridotta**: Evita il sovraccarico nel frontend causato da parsing manuale o scrolling infinito.\n- **Precisione**: L'uso combinato di pesi (A, B, C) e della funzione backend API `websearch_to_tsquery` permette query precise (ad esempio, ricerca per parola chiave, argomento o operatore semantico).\n- **Scalabilit\u00e0**: Grazie a PostgreSQL e all'indice GIN, il tempo di risposta rimane pressoch\u00e9 costante anche oltre i 10.000+ record.", "links": [], "cited_by": ["database/schema"]}, {"id": "database/schema", "path": "database/schema.md", "type": "Concept", "title": "Schema del Database", "description": "La definizione dello schema del database PostgreSQL includendo le tabelle topics ed exercises.", "tags": ["database", "schema", "sql", "postgres"], "resource": "../../../init.sql", "status": "active", "body": "# Schema del Database\n\nQuesto concetto delinea la logica dello schema per la piattaforma educativa.\nL'SQL di inizializzazione completo si trova in [`init.sql`](../../../init.sql).\n\n## Tabelle\n\n### `curriculum_years`\nDefinisce l'anno di studio (1-5).\n- `id`\n- `year_number`\n- `description`\n\n### `macro_areas`\nAree tematiche generali per anno (es. Algebra, Geometria Analitica).\n- `id`\n- `year_id` (FK a `curriculum_years`)\n- `name`\n\n### `topics`\nArgomenti specifici all'interno di una macro area (es. Parabola, Limiti).\n- `id`\n- `macro_area_id` (FK a `macro_areas`)\n- `name`\n\n### `exercises`\nMemorizza gli esercizi generati in modo procedurale.\n- `id`\n- `topic_id` (FK a `topics`)\n- `difficulty_level` (1-5)\n- `problem_text`\n- `latex_problem`\n- `latex_solution`\n- `generated_hash` (UNIQUE - per garantire l'unicit\u00e0)\n- `tags` (Array di stringhe per la classificazione e la ricerca)\n- `search_vector` (tsvector - indice GIN per la Full-Text Search; vedi la [Strategia di Indicizzazione](/database/indexing.md))\n\n## Vincoli\nGli agenti DEVONO assicurarsi che gli esercizi generati producano un `generated_hash` univoco calcolato sulla base del topic e del contenuto, prima dell'inserimento, per evitare duplicati nel database.", "links": ["database/indexing"], "cited_by": ["agents/database-population-workflow", "architecture/setup"]}], "types": ["Concept"], "edges": [{"source": "agents/database-population-workflow", "target": "agents/llm-pricing"}, {"source": "agents/database-population-workflow", "target": "architecture/exercise_template"}, {"source": "agents/database-population-workflow", "target": "database/schema"}, {"source": "architecture/exercise_template", "target": "curriculum/curriculum-italiano"}, {"source": "architecture/population_workflow", "target": "architecture/exercise_template"}, {"source": "architecture/setup", "target": "architecture/frontend_performance"}, {"source": "architecture/setup", "target": "database/schema"}, {"source": "architecture/setup", "target": "curriculum/curriculum-italiano"}, {"source": "database/schema", "target": "database/indexing"}]};
+    </script>
+
+    <!-- Main Logic -->
+    <script>
+        // Palette di colori vibranti per i vari tipi di concetti
+        const typeColors = {
+            "Concept": "#6366f1", // Indigo
+            "Index": "#14b8a6",   // Teal
+            "Reference": "#f59e0b", // Amber
+            "Note": "#ec4899",     // Pink
+            "default": "#8b5cf6"  // Violet
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const nodes = graphData.nodes;
+            const edges = graphData.edges;
+            const types = graphData.types;
+
+            // Inizializza i filtri per tipo nella sidebar
+            const filtersContainer = document.getElementById("type-filters");
+            
+            // Crea filtro "Mostra Tutti"
+            const allBtn = document.createElement("button");
+            allBtn.className = "w-full text-left px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 text-white hover:bg-slate-700 transition-colors flex items-center justify-between";
+            allBtn.innerHTML = `<span>Tutti i Tipi</span> <span class="bg-slate-950 px-2 py-0.5 rounded text-[10px]">${nodes.length}</span>`;
+            allBtn.onclick = () => {
+                cy.elements().show();
+                document.querySelectorAll(".type-filter-btn").forEach(b => b.classList.remove("border-indigo-500", "bg-indigo-950/20"));
+                allBtn.classList.add("bg-slate-800");
+            };
+            filtersContainer.appendChild(allBtn);
+
+            // Popola l'elenco dei tipi
+            const typeCounts = {};
+            nodes.forEach(n => {
+                typeCounts[n.type] = (typeCounts[n.type] || 0) + 1;
+            });
+
+            Object.keys(typeCounts).forEach(type => {
+                const btn = document.createElement("button");
+                btn.className = "type-filter-btn w-full text-left px-3 py-2 rounded-lg text-xs text-slate-300 hover:bg-slate-800 hover:text-white border border-transparent transition-all flex items-center justify-between";
+                const color = typeColors[type] || typeColors.default;
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${color}"></span>
+                        <span>${type}</span>
+                    </div>
+                    <span class="bg-slate-950 px-2 py-0.5 rounded text-[10px]">${typeCounts[type]}</span>
+                `;
+                btn.onclick = () => {
+                    allBtn.classList.remove("bg-slate-800");
+                    document.querySelectorAll(".type-filter-btn").forEach(b => b.classList.remove("border-indigo-500", "bg-indigo-950/20"));
+                    btn.classList.add("border-indigo-500", "bg-indigo-950/20");
+                    
+                    // Filtra gli elementi in Cytoscape
+                    cy.elements().hide();
+                    cy.elements(`node[type = "${type}"]`).show();
+                    cy.elements(`node[type = "${type}"]`).connectedEdges().show();
+                };
+                filtersContainer.appendChild(btn);
+            });
+
+            // Prepara gli elementi per Cytoscape
+            const cyElements = [];
+            
+            nodes.forEach(n => {
+                cyElements.push({
+                    group: "nodes",
+                    data: {
+                        id: n.id,
+                        title: n.title,
+                        type: n.type,
+                        description: n.description,
+                        status: n.status,
+                        color: typeColors[n.type] || typeColors.default
+                    }
+                });
+            });
+
+            edges.forEach(e => {
+                cyElements.push({
+                    group: "edges",
+                    data: {
+                        source: e.source,
+                        target: e.target
+                    }
+                });
+            });
+
+            // Inizializza Cytoscape
+            const cy = window.cy = cytoscape({
+                container: document.getElementById("cy"),
+                elements: cyElements,
+                style: [
+                    {
+                        selector: "node",
+                        style: {
+                            "label": "data(title)",
+                            "color": "#cbd5e1",
+                            "font-family": "Outfit, sans-serif",
+                            "font-size": "11px",
+                            "background-color": "data(color)",
+                            "width": "22px",
+                            "height": "22px",
+                            "text-valign": "bottom",
+                            "text-margin-y": "6px",
+                            "overlay-padding": "6px",
+                            "transition-property": "background-color, width, height",
+                            "transition-duration": "0.2s"
+                        }
+                    },
+                    {
+                        selector: "node:selected",
+                        style: {
+                            "border-width": "2px",
+                            "border-color": "#ffffff",
+                            "width": "28px",
+                            "height": "28px",
+                            "font-size": "12px",
+                            "font-weight": "bold",
+                            "color": "#ffffff"
+                        }
+                    },
+                    {
+                        selector: "edge",
+                        style: {
+                            "width": 1.5,
+                            "line-color": "#334155",
+                            "target-arrow-color": "#475569",
+                            "target-arrow-shape": "triangle",
+                            "curve-style": "bezier",
+                            "arrow-scale": 0.8,
+                            "overlay-padding": "3px"
+                        }
+                    },
+                    {
+                        selector: "edge:selected",
+                        style: {
+                            "width": 3,
+                            "line-color": "#6366f1",
+                            "target-arrow-color": "#6366f1"
+                        }
+                    }
+                ],
+                layout: {
+                    name: "cose",
+                    idealEdgeLength: 100,
+                    nodeOverlap: 20,
+                    refresh: 20,
+                    fit: true,
+                    padding: 30,
+                    randomize: false,
+                    componentSpacing: 100,
+                    nodeRepulsion: 400000,
+                    edgeElasticity: 100,
+                    nestingFactor: 5,
+                    gravity: 80,
+                    numIter: 1000,
+                    initialTemp: 200,
+                    coolingFactor: 0.95,
+                    minTemp: 1.0
+                }
+            });
+
+            // Nascondi indicatore caricamento
+            document.getElementById("loading").classList.add("opacity-0");
+            setTimeout(() => document.getElementById("loading").classList.add("hidden"), 300);
+
+            // Gestione selezione nodo
+            cy.on("select", "node", (evt) => {
+                const nodeId = evt.target.id();
+                selectConcept(nodeId);
+            });
+
+            cy.on("unselect", "node", () => {
+                // Se nessun nodo è selezionato, ripristina empty state
+                if (cy.nodes(":selected").length === 0) {
+                    document.getElementById("detail-empty").classList.remove("hidden");
+                    document.getElementById("detail-content").classList.add("hidden");
+                }
+            });
+
+            // Ricerca testuale
+            const searchInput = document.getElementById("search-input");
+            searchInput.addEventListener("input", () => {
+                const val = searchInput.value.toLowerCase().trim();
+                if (val === "") {
+                    cy.elements().removeClass("highlighted dimmed");
+                    return;
+                }
+
+                cy.batch(() => {
+                    const matched = cy.nodes().filter(node => {
+                        const title = node.data("title").toLowerCase();
+                        const id = node.id().toLowerCase();
+                        const desc = (node.data("description") || "").toLowerCase();
+                        return title.includes(val) || id.includes(val) || desc.includes(val);
+                    });
+
+                    if (matched.length > 0) {
+                        cy.elements().addClass("dimmed").removeClass("highlighted");
+                        matched.addClass("highlighted").removeClass("dimmed");
+                        // Mostra anche gli archi collegati ai nodi evidenziati
+                        matched.connectedEdges().addClass("highlighted").removeClass("dimmed");
+                    } else {
+                        cy.elements().addClass("dimmed").removeClass("highlighted");
+                    }
+                });
+            });
+
+            // Stile css aggiuntivo per nodi evidenziati/scuri
+            cy.style()
+                .selector(".dimmed")
+                .style({
+                    "opacity": 0.25,
+                    "text-opacity": 0.25
+                })
+                .selector(".highlighted")
+                .style({
+                    "opacity": 1,
+                    "text-opacity": 1,
+                    "font-size": "12px",
+                    "font-weight": "bold"
+                })
+                .update();
+
+            // Funzione per selezionare e mostrare i dettagli di un concetto
+            function selectConcept(id) {
+                const concept = nodes.find(n => n.id === id);
+                if (!concept) return;
+
+                // Mostra pannello
+                document.getElementById("detail-empty").classList.add("hidden");
+                document.getElementById("detail-content").classList.remove("hidden");
+
+                // Aggiorna intestazione
+                const badge = document.getElementById("detail-type-badge");
+                badge.innerText = concept.type;
+                badge.style.backgroundColor = (typeColors[concept.type] || typeColors.default) + "15";
+                badge.style.borderColor = (typeColors[concept.type] || typeColors.default) + "40";
+                badge.style.color = typeColors[concept.type] || typeColors.default;
+
+                document.getElementById("detail-title").innerText = concept.title;
+                document.getElementById("detail-desc").innerText = concept.description || "Nessuna descrizione.";
+
+                // Tag
+                const tagsContainer = document.getElementById("detail-tags");
+                tagsContainer.innerHTML = "";
+                if (concept.tags && concept.tags.length > 0 && concept.tags[0] !== undefined) {
+                    document.getElementById("detail-tags-section").classList.remove("hidden");
+                    concept.tags.forEach(t => {
+                        const tBadge = document.createElement("span");
+                        tBadge.className = "text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 font-medium";
+                        tBadge.innerText = t;
+                        tagsContainer.appendChild(tBadge);
+                    });
+                } else {
+                    document.getElementById("detail-tags-section").classList.add("hidden");
+                }
+
+                // Risorsa collegata
+                const resSection = document.getElementById("detail-resource-section");
+                if (concept.resource) {
+                    resSection.classList.remove("hidden");
+                    const resLink = document.getElementById("detail-resource");
+                    resLink.href = concept.resource;
+                    resLink.innerText = concept.resource.split("/").pop() || "Apri risorsa";
+                } else {
+                    resSection.classList.add("hidden");
+                }
+
+                // Renderizza Markdown
+                const bodyHtml = document.getElementById("detail-body-html");
+                bodyHtml.innerHTML = marked.parse(concept.body || "");
+
+                // Riscrivi i link interni nel corpo per navigare all'interno della mappa
+                bodyHtml.querySelectorAll("a").forEach(a => {
+                    const href = a.getAttribute("href");
+                    if (href && !href.includes("://") && href.endsWith(".md")) {
+                        // Determina l'ID relativo del target risolvendolo
+                        // Per semplicità facciamo una risoluzione basata sui concetti esistenti
+                        const targetFilename = href.split("/").pop().replace(".md", "");
+                        const match = nodes.find(n => n.id.endsWith(targetFilename));
+                        if (match) {
+                            a.href = "#";
+                            a.onclick = (e) => {
+                                e.preventDefault();
+                                cy.nodes().unselect();
+                                const node = cy.getElementById(match.id);
+                                if (node.length > 0) {
+                                    node.select();
+                                    cy.fit(node, 100);
+                                }
+                            };
+                        }
+                    }
+                });
+
+                // Backlinks
+                const backlinksContainer = document.getElementById("detail-backlinks");
+                backlinksContainer.innerHTML = "";
+                if (concept.cited_by && concept.cited_by.length > 0) {
+                    concept.cited_by.forEach(bid => {
+                        const bConcept = nodes.find(n => n.id === bid);
+                        if (bConcept) {
+                            const bLink = document.createElement("button");
+                            bLink.className = "w-full text-left text-xs px-2.5 py-1.5 rounded hover:bg-slate-800 text-slate-300 hover:text-white transition-colors flex items-center gap-2";
+                            bLink.innerHTML = `
+                                <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${typeColors[bConcept.type] || typeColors.default}"></span>
+                                <span class="font-medium">${bConcept.title}</span>
+                            `;
+                            bLink.onclick = () => {
+                                cy.nodes().unselect();
+                                const node = cy.getElementById(bid);
+                                if (node.length > 0) {
+                                    node.select();
+                                    cy.fit(node, 100);
+                                }
+                            };
+                            backlinksContainer.appendChild(bLink);
+                        }
+                    });
+                } else {
+                    const emptyBack = document.createElement("p");
+                    emptyBack.className = "text-xs text-slate-500 italic";
+                    emptyBack.innerText = "Nessun riferimento in ingresso.";
+                    backlinksContainer.appendChild(emptyBack);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

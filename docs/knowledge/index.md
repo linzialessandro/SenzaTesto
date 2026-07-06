@@ -1,9 +1,5 @@
 ---
-type: Index
-title: Knowledge Base del Progetto
-description: La directory principale per il grafo di conoscenza del dominio OKF.
-tags: [knowledge-base, root]
-timestamp: 2026-07-01T12:35:00Z
+okf_version: "0.1"
 ---
 
 # Knowledge Base del Progetto

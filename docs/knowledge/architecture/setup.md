@@ -17,7 +17,7 @@ Il progetto DEVE essere ingegnerizzato per avere zero costi di manutenzione. Dev
 **Mandato per lo Stack Tecnologico:**
 - **Backend:** Python (FastAPI) wrappato con `Mangum` per deployment serverless (es. Vercel Serverless Functions o AWS Lambda). Questo eseguirà il motore di generazione procedurale `SymPy`.
 - **Database:** Supabase (PostgreSQL) o Cloudflare D1. Abbiamo bisogno di uno storage relazionale robusto con supporto JSON nativo per i dati complessi degli esercizi in LaTeX.
-- **Frontend:** Next.js distribuito su Vercel o Cloudflare Pages (Edge caching per gli asset statici).
+- **Frontend:** Next.js distribuito su Vercel o Cloudflare Pages (vedi le [ottimizzazioni di performance](/architecture/frontend_performance.md)).
 - **Monetizzazione:** Integrare un componente leggero per le donazioni open-source (es. Ko-fi o link di pagamento Stripe) nell'interfaccia utente.
 
 **Passaggi di Esecuzione per l'Agente:**
@@ -26,7 +26,7 @@ Il progetto DEVE essere ingegnerizzato per avere zero costi di manutenzione. Dev
    Inizializzare una struttura monorepo moderna contenente due directory principali: `/apps/api` (Python) e `/apps/frontend` (Next.js).
 
 2. **Design dello Schema del Database:** 
-   Generare gli script SQL di inizializzazione. Creare tabelle normalizzate:
+   Generare gli script SQL di inizializzazione (dettagliati nello [Schema del Database](/database/schema.md)). Creare tabelle normalizzate:
    - `topics` (id, curriculum_year, macro_area)
    - `exercises` (id, topic_id, difficulty_level, latex_problem, latex_solution, generated_hash)
    *Includere un vincolo univoco su `generated_hash` per garantire che nessun problema duplicato venga mai salvato.*
@@ -42,4 +42,4 @@ Il progetto DEVE essere ingegnerizzato per avere zero costi di manutenzione. Dev
 
 Eseguire lo scaffolding e mostrare l'albero iniziale dei file.
 
-L'intero progetto è pensato per insegnanti e studenti ITALIANI della scuola secondaria di secondo grado (anni dal 1° al 5° inclusi).
+L'intero progetto è pensato per insegnanti e studenti ITALIANI della scuola secondaria di secondo grado (vedi il [Curriculum Italiano](/curriculum/curriculum-italiano.md)).

@@ -42,7 +42,7 @@ Memorizza gli esercizi generati in modo procedurale.
 - `latex_solution`
 - `generated_hash` (UNIQUE - per garantire l'unicità)
 - `tags` (Array di stringhe per la classificazione e la ricerca)
-- `search_vector` (tsvector - indice GIN per la Full-Text Search)
+- `search_vector` (tsvector - indice GIN per la Full-Text Search; vedi la [Strategia di Indicizzazione](/database/indexing.md))
 
 ## Vincoli
 Gli agenti DEVONO assicurarsi che gli esercizi generati producano un `generated_hash` univoco calcolato sulla base del topic e del contenuto, prima dell'inserimento, per evitare duplicati nel database.

@@ -4,6 +4,8 @@ title: Population Workflow
 description: Documentazione del nuovo flusso di acquisizione degli esercizi basato su file Markdown.
 tags: [architecture, workflow, markdown, database]
 timestamp: 2026-07-01T12:00:00Z
+status: superseded
+superseded_by: agents/database-population-workflow
 ---
 
 # Flusso di Popolamento del Database (Population Workflow)
