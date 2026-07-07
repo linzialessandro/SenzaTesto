@@ -1,7 +1,5 @@
 import os
-import sys
-import hashlib
-import random
+import logging
 from contextlib import asynccontextmanager
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request, Query
@@ -15,7 +13,7 @@ import asyncpg
 from dotenv import load_dotenv
 
 
-load_dotenv('/Users/alessandro/secrets/SenzaTesto/apps/api/.env')
+load_dotenv(os.path.expanduser('~/secrets/SenzaTesto/.env'))
 
 db_pool = None
 
@@ -47,8 +45,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins, 
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
 
 class ExerciseResponse(BaseModel):
@@ -71,70 +69,70 @@ def read_root(request: Request):
 
 @app.get("/api/exercises")
 @limiter.limit("30/minute")
-async def get_exercises(request: Request, q: Optional[str] = Query(None, max_length=100), year: Optional[int] = None):
+async def get_exercises(
+    request: Request,
+    q: Optional[str] = Query(None, max_length=100),
+    year: Optional[int] = None,
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
     if not db_pool:
-        raise HTTPException(status_code=500, detail="Database pool not initialized")
-    
+        raise HTTPException(status_code=500, detail="Pool di connessioni al database non inizializzato")
+
+    # Validazione anno scolastico
+    if year is not None and (year < 1 or year > 5):
+        raise HTTPException(status_code=400, detail="L'anno deve essere compreso tra 1 e 5")
+
     try:
         async with db_pool.acquire() as connection:
-            if q and year:
-                query = """
-                    SELECT e.id, e.topic_id, e.difficulty_level, e.problem_text, e.solution_text, 
-                           e.generated_hash, e.short_code, e.tags,
-                           m.name as topic_macro_area, t.name as topic_name, c.year_number
-                    FROM exercises e
-                    JOIN topics t ON e.topic_id = t.id
-                    JOIN macro_areas m ON t.macro_area_id = m.id
-                    JOIN curriculum_years c ON m.year_id = c.id
-                    WHERE (e.search_vector @@ websearch_to_tsquery('italian', $1) OR e.short_code ILIKE $1) AND c.year_number = $2
-                    ORDER BY ts_rank(e.search_vector, websearch_to_tsquery('italian', $1)) DESC, e.created_at DESC
-                    LIMIT 50
-                """
-                records = await connection.fetch(query, q, year)
-            elif q:
-                query = """
-                    SELECT e.id, e.topic_id, e.difficulty_level, e.problem_text, e.solution_text, 
-                           e.generated_hash, e.short_code, e.tags,
-                           m.name as topic_macro_area, t.name as topic_name, c.year_number
-                    FROM exercises e
-                    JOIN topics t ON e.topic_id = t.id
-                    JOIN macro_areas m ON t.macro_area_id = m.id
-                    JOIN curriculum_years c ON m.year_id = c.id
-                    WHERE e.search_vector @@ websearch_to_tsquery('italian', $1) OR e.short_code ILIKE $1
-                    ORDER BY ts_rank(e.search_vector, websearch_to_tsquery('italian', $1)) DESC, e.created_at DESC
-                    LIMIT 50
-                """
-                records = await connection.fetch(query, q)
-            elif year:
-                query = """
-                    SELECT e.id, e.topic_id, e.difficulty_level, e.problem_text, e.solution_text, 
-                           e.generated_hash, e.short_code, e.tags,
-                           m.name as topic_macro_area, t.name as topic_name, c.year_number
-                    FROM exercises e
-                    JOIN topics t ON e.topic_id = t.id
-                    JOIN macro_areas m ON t.macro_area_id = m.id
-                    JOIN curriculum_years c ON m.year_id = c.id
-                    WHERE c.year_number = $1
-                    ORDER BY e.created_at DESC
-                    LIMIT 50
-                """
-                records = await connection.fetch(query, year)
+            # Costruzione dinamica della query con filtri parametrizzati
+            base_query = """
+                SELECT e.id, e.topic_id, e.difficulty_level, e.problem_text, e.solution_text, 
+                       e.generated_hash, e.short_code, e.tags,
+                       m.name as topic_macro_area, t.name as topic_name, c.year_number
+                FROM exercises e
+                JOIN topics t ON e.topic_id = t.id
+                JOIN macro_areas m ON t.macro_area_id = m.id
+                JOIN curriculum_years c ON m.year_id = c.id
+            """
+
+            conditions = []
+            params = []
+            param_idx = 1
+
+            if q:
+                conditions.append(
+                    f"(e.search_vector @@ websearch_to_tsquery('italian', ${param_idx}) OR e.short_code ILIKE ${param_idx})"
+                )
+                params.append(q)
+                param_idx += 1
+
+            if year is not None:
+                conditions.append(f"c.year_number = ${param_idx}")
+                params.append(year)
+                param_idx += 1
+
+            if conditions:
+                base_query += " WHERE " + " AND ".join(conditions)
+
+            # Ordinamento: per rilevanza se c'è ricerca testuale, altrimenti per data
+            if q:
+                base_query += f" ORDER BY ts_rank(e.search_vector, websearch_to_tsquery('italian', $1)) DESC, e.created_at DESC"
             else:
-                query = """
-                    SELECT e.id, e.topic_id, e.difficulty_level, e.problem_text, e.solution_text, 
-                           e.generated_hash, e.short_code, e.tags,
-                           m.name as topic_macro_area, t.name as topic_name, c.year_number
-                    FROM exercises e
-                    JOIN topics t ON e.topic_id = t.id
-                    JOIN macro_areas m ON t.macro_area_id = m.id
-                    JOIN curriculum_years c ON m.year_id = c.id
-                    ORDER BY e.created_at DESC
-                    LIMIT 50
-                """
-                records = await connection.fetch(query)
+                base_query += " ORDER BY e.created_at DESC"
+
+            # Paginazione
+            base_query += f" LIMIT ${param_idx} OFFSET ${param_idx + 1}"
+            params.append(limit)
+            params.append(offset)
+
+            records = await connection.fetch(base_query, *params)
             return [dict(record) for record in records]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception:
+        logging.exception("Errore durante il recupero degli esercizi")
+        raise HTTPException(status_code=500, detail="Errore interno del server")
 
 
 handler = Mangum(app)

@@ -16,8 +16,19 @@ Con l'obiettivo di rendere la piattaforma scalabile a migliaia di esercizi gener
 2. **Indice GIN**: Sulla colonna `search_vector` è applicato un indice GIN (Generalized Inverted Index) che offre performance `O(log N)` eccellenti per query di ricerca testuale anche su dataset molto voluminosi.
 3. **Trigger di Aggiornamento**: Un trigger automatico si assicura che ad ogni operazione di inserimento o aggiornamento di un esercizio, il vettore venga ricreato combinando:
    - `problem_text` (Testo del problema, peso 'A')
+   - `tags` (Tag dell'esercizio, peso 'A')
    - `topic_name` (Nome del Topic, peso 'B')
    - `macro_area_name` (Nome della Macro Area, peso 'C')
+
+## Indici Aggiuntivi
+
+Oltre all'indice GIN per la Full-Text Search, lo schema include i seguenti indici per ottimizzare le query più frequenti:
+
+- `idx_macro_areas_year` — su `macro_areas(year_id)`
+- `idx_topics_macro_area` — su `topics(macro_area_id)`
+- `idx_exercises_topic` — su `exercises(topic_id)`
+- `idx_exercises_difficulty` — su `exercises(difficulty_level)`
+- `idx_exercises_short_code` — su `exercises(short_code)`
 
 ## Vantaggi
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Info, Search, ChevronDown } from 'lucide-react';
+import { Sparkles, Info, Search } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 interface HeroSectionProps {

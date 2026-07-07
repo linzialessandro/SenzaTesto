@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, Mail, AlertTriangle, ChevronLeft, Plus, Cpu } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -41,7 +41,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 sm:mb-4">Come vuoi contribuire?</h2>
         <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-lg mx-auto">
-          Scegli se aggiungere materiale manualmente, correggere refusi o usare l'Intelligenza Artificiale.
+          Scegli se aggiungere materiale manualmente, correggere refusi o usare l&apos;Intelligenza Artificiale.
         </p>
       </div>
 
@@ -259,7 +259,7 @@ tipo_errore: [Testo del problema / Soluzione / Altro]
 
           {isNew && (
             <p className="text-center text-sm font-medium mt-6 sm:mt-8">
-              Non sai come scrivere in LaTeX? Non preoccuparti, l'AI ti darà una mano a tradurre!
+              Non sai come scrivere in LaTeX? Non preoccuparti, l&apos;AI ti darà una mano a tradurre!
             </p>
           )}
         </div>
@@ -267,17 +267,13 @@ tipo_errore: [Testo del problema / Soluzione / Altro]
     );
   };
 
-  const content = useMemo(() => (
-    <div className="overflow-hidden relative min-h-[420px] sm:min-h-[480px]">
-      <AnimatePresence mode="wait" initial={false}>
-        {contributionType === null ? renderStep1() : renderStep2()}
-      </AnimatePresence>
-    </div>
-  ), [contributionType]);
-
   return (
     <Modal isOpen={isOpen} onClose={handleClose} scrollId="contribute-scroll-container">
-      {content}
+      <div className="overflow-hidden relative min-h-[420px] sm:min-h-[480px]">
+        <AnimatePresence mode="wait" initial={false}>
+          {contributionType === null ? renderStep1() : renderStep2()}
+        </AnimatePresence>
+      </div>
     </Modal>
   );
 }

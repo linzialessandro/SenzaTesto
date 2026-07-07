@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Share, Check, Copy, MessageCircle, MessageSquare } from 'lucide-react';
 import { Button } from './ui/Button';
@@ -6,9 +8,24 @@ import { Button } from './ui/Button';
 export function ShareWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Use the correct app URL for sharing
-  const shareUrl = 'https://linzialessandro.github.io/SenzaTesto/';
+  // Chiudi il widget quando si clicca fuori
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  // URL dinamico basato sull'origine corrente
+  const shareUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}${window.location.pathname}`
+    : 'https://linzialessandro.github.io/SenzaTesto/';
   const shareText = "Scopri SenzaTesto: il nuovo database di esercizi di matematica open-source generato con l'Intelligenza Artificiale. Preparati al meglio, gratis.";
 
   const handleCopy = async () => {
@@ -30,7 +47,7 @@ export function ShareWidget() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <Button 
         variant="secondary" 
         size="sm"

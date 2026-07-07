@@ -182,7 +182,7 @@ async def main():
 
     print("\n=== Inizio Automazione Git & Pull Request ===")
     
-    timestamp = datetime.now().strftime("%Y%md%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     branch_name = f"feat/auto-exercises-{timestamp}"
     
     # Crea un nuovo branch

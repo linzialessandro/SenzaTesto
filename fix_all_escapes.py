@@ -5,7 +5,7 @@ from pathlib import Path
 
 def load_env():
     env_vars = {}
-    env_path = '/Users/alessandro/secrets/SenzaTesto/.env'
+    env_path = os.path.expanduser('~/secrets/SenzaTesto/.env')
     if os.path.exists(env_path):
         with open(env_path, 'r') as f:
             for line in f:
@@ -35,7 +35,7 @@ def fix_content(text):
     return text
 
 def fix_markdown_files():
-    accepted_dir = Path('/Users/alessandro/antigravity/SenzaTesto/submissions/accepted')
+    accepted_dir = Path(__file__).resolve().parent / 'submissions' / 'accepted'
     fixed_count = 0
     for md_file in accepted_dir.glob('*.md'):
         with open(md_file, 'r', encoding='utf-8') as f:

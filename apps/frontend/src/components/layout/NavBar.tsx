@@ -14,7 +14,7 @@ export function NavBar({ onOpenContribute, onOpenDonation, onLogoClick }: NavBar
     <nav className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/70 dark:bg-black/70 border-b border-slate-200/50 dark:border-slate-800/50 supports-[backdrop-filter]:bg-white/60">
       <div className="max-w-6xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
         <button 
-          onClick={onLogoClick || (() => window.location.href = '/')} 
+          onClick={onLogoClick || (() => { /* fallback: scroll to top */ window.scrollTo({ top: 0, behavior: 'smooth' }); })} 
           className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity focus:outline-none shrink-0"
         >
           <BookOpen size={22} className="text-indigo-600 dark:text-indigo-400 sm:w-6 sm:h-6" />

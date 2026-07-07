@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { NavBar } from '@/components/layout/NavBar';
 import { HeroSection } from '@/components/home/HeroSection';
 import { SearchSection } from '@/components/home/SearchSection';
@@ -11,28 +11,19 @@ import { ContributeModal } from '@/components/home/modals/ContributeModal';
 import { DonationModal } from '@/components/home/modals/DonationModal';
 import { supabase } from '@/lib/supabase';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useMemo } from 'react';
+import type { Exercise } from '@/types/exercise';
 
-interface Exercise {
-  id: number;
-  topic_id: number;
-  difficulty_level: number;
-  problem_text: string;
-  solution_text: string;
-  generated_hash: string;
-  topic_macro_area: string;
-  topic_name: string;
-  year_number: number;
-  short_code: string;
-  tags?: string[];
-}
+const PAGE_SIZE = 30;
 
 export default function Home() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
   
-  // Info Modal state
+  // Modal state
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isContributeModalOpen, setIsContributeModalOpen] = useState(false);
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
@@ -69,7 +60,7 @@ export default function Home() {
     fetchTotalCount();
   }, []);
 
-  // Fetch exercises only when there is a search or year selected
+  // Fetch exercises when search or year changes
   useEffect(() => {
     let ignore = false;
     const fetchExercises = async () => {
@@ -77,26 +68,32 @@ export default function Home() {
       
       if (!query && selectedYear === null) {
         setExercises([]);
+        setHasMore(false);
         return;
       }
 
       setLoading(true);
+      setError(null);
       try {
-        const params: any = {};
+        const params: Record<string, unknown> = { page_limit: PAGE_SIZE, page_offset: 0 };
         if (query) params.search_query = query;
         if (selectedYear !== null) params.filter_year = selectedYear;
 
-        const { data, error } = await supabase.rpc('search_exercises', params);
+        const { data, error: rpcError } = await supabase.rpc('search_exercises', params);
         
-        if (error) throw error;
+        if (rpcError) throw rpcError;
         
-        const resultData = data || [];
+        const resultData = (data || []) as Exercise[];
 
         if (!ignore) {
-          setExercises(resultData as Exercise[]);
+          setExercises(resultData);
+          setHasMore(resultData.length >= PAGE_SIZE);
         }
-      } catch (error: any) {
-        console.error("Errore durante il recupero degli esercizi:", JSON.stringify(error, null, 2) || error.message);
+      } catch (err) {
+        console.error("Errore durante il recupero degli esercizi:", err);
+        if (!ignore) {
+          setError('Si è verificato un errore durante il caricamento degli esercizi. Riprova più tardi.');
+        }
       } finally {
         if (!ignore) setLoading(false);
       }
@@ -104,6 +101,28 @@ export default function Home() {
     fetchExercises();
     return () => { ignore = true; };
   }, [debouncedQuery, selectedYear]);
+
+  // Carica altri esercizi (paginazione)
+  const loadMore = useCallback(async () => {
+    const query = debouncedQuery.trim() || null;
+    setLoadingMore(true);
+    try {
+      const params: Record<string, unknown> = { page_limit: PAGE_SIZE, page_offset: exercises.length };
+      if (query) params.search_query = query;
+      if (selectedYear !== null) params.filter_year = selectedYear;
+
+      const { data, error: rpcError } = await supabase.rpc('search_exercises', params);
+      if (rpcError) throw rpcError;
+      
+      const newData = (data || []) as Exercise[];
+      setExercises(prev => [...prev, ...newData]);
+      setHasMore(newData.length >= PAGE_SIZE);
+    } catch (err) {
+      console.error("Errore durante il caricamento di altri esercizi:", err);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [debouncedQuery, selectedYear, exercises.length]);
 
   const toggleSolution = useCallback((hash: string) => {
     setVisibleSolutions(prev => {
@@ -122,62 +141,11 @@ export default function Home() {
   const isExploring = searchQuery.trim().length > 0 || selectedYear !== null;
 
   const handleOpenInfo = useCallback(() => setIsInfoModalOpen(true), []);
+  const handleCloseInfo = useCallback(() => setIsInfoModalOpen(false), []);
   const handleOpenContribute = useCallback(() => setIsContributeModalOpen(true), []);
+  const handleCloseContribute = useCallback(() => setIsContributeModalOpen(false), []);
   const handleOpenDonation = useCallback(() => setIsDonationModalOpen(true), []);
-
-  const mainContent = useMemo(() => (
-    <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24">
-      <HeroSection onOpenInfo={handleOpenInfo} totalCount={totalCount} />
-
-      <SearchSection 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        selectedYear={selectedYear}
-        onClear={resetFilters}
-      />
-
-      <AnimatePresence mode="wait">
-        {!isExploring ? (
-          <motion.div
-            key="collections"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-          >
-            <CollectionsGrid onSelectYear={setSelectedYear} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="exercises"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-          >
-            <ExercisesGrid 
-              loading={loading}
-              filteredExercises={exercises}
-              visibleSolutions={visibleSolutions}
-              toggleSolution={toggleSolution}
-              resetFilters={resetFilters}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </main>
-  ), [
-    totalCount, 
-    searchQuery, 
-    selectedYear, 
-    isExploring, 
-    loading, 
-    exercises, 
-    visibleSolutions, 
-    handleOpenInfo, 
-    resetFilters, 
-    toggleSolution
-  ]);
+  const handleCloseDonation = useCallback(() => setIsDonationModalOpen(false), []);
 
   return (
     <div className="min-h-screen text-slate-900 dark:text-slate-50 relative pb-32">
@@ -187,11 +155,54 @@ export default function Home() {
         onLogoClick={resetFilters}
       />
 
-      {mainContent}
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24">
+        <HeroSection onOpenInfo={handleOpenInfo} totalCount={totalCount} />
 
-      <InfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} />
-      <ContributeModal isOpen={isContributeModalOpen} onClose={() => setIsContributeModalOpen(false)} />
-      <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
+        <SearchSection 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedYear={selectedYear}
+          onClear={resetFilters}
+        />
+
+        <AnimatePresence mode="wait">
+          {!isExploring ? (
+            <motion.div
+              key="collections"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <CollectionsGrid onSelectYear={setSelectedYear} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="exercises"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <ExercisesGrid 
+                loading={loading}
+                filteredExercises={exercises}
+                visibleSolutions={visibleSolutions}
+                toggleSolution={toggleSolution}
+                resetFilters={resetFilters}
+                error={error}
+                hasMore={hasMore}
+                loadingMore={loadingMore}
+                onLoadMore={loadMore}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+
+      <InfoModal isOpen={isInfoModalOpen} onClose={handleCloseInfo} />
+      <ContributeModal isOpen={isContributeModalOpen} onClose={handleCloseContribute} />
+      <DonationModal isOpen={isDonationModalOpen} onClose={handleCloseDonation} />
     </div>
   );
 }

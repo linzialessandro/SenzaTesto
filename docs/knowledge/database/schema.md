@@ -37,13 +37,13 @@ Memorizza gli esercizi generati in modo procedurale.
 - `id`
 - `topic_id` (FK a `topics`)
 - `difficulty_level` (1-5)
-- `problem_text`
-- `latex_problem`
-- `latex_solution`
+- `problem_text` (Testo del problema)
+- `solution_text` (Testo della soluzione)
 - `generated_hash` (UNIQUE - per garantire l'unicità)
 - `tags` (Array di stringhe per la classificazione e la ricerca)
-- `search_vector` (tsvector - indice GIN per la Full-Text Search; vedi la [Strategia di Indicizzazione](/database/indexing.md))
+- `short_code` (Codice alfanumerico univoco di 5 caratteri, generato automaticamente da trigger)
+- `search_vector` (tsvector - indice GIN per la Full-Text Search; vedi la [Strategia di Indicizzazione](indexing.md))
+- `created_at` (Timestamp con timezone, default a `CURRENT_TIMESTAMP`)
 
 ## Vincoli
 Gli agenti DEVONO assicurarsi che gli esercizi generati producano un `generated_hash` univoco calcolato sulla base del topic e del contenuto, prima dell'inserimento, per evitare duplicati nel database.
-

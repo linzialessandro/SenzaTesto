@@ -26,6 +26,7 @@ export function SearchSection({ searchQuery, setSearchQuery, selectedYear, onCle
           </div>
           <input
             type="text"
+            aria-label="Cerca esercizi per argomento o codice"
             placeholder="Esplora un argomento o inserisci il codice dell'esercizio..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

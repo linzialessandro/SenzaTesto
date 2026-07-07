@@ -113,6 +113,6 @@ h1, h2, h3, h4, h5, h6 {
   padding: 1rem 0;
 }
 
-* {
+button, a, [role="button"] {
   -webkit-tap-highlight-color: transparent;
 }

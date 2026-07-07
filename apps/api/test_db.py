@@ -2,28 +2,24 @@ import asyncio
 import os
 import asyncpg
 import ssl
+import certifi
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(os.path.expanduser('~/secrets/SenzaTesto/.env'))
 
 async def test():
     database_url = os.environ.get("DATABASE_URL")
-    
-    # Supabase connection pooler uses port 6543 and supports IPv4
-    database_url = database_url.replace(":5432", ":6543")
-    
-    print(f"Connecting to: {database_url.split('@')[1] if '@' in database_url else 'unknown'}")
-    
+
+    print(f"Connessione a: {database_url.split('@')[1] if '@' in database_url else 'sconosciuto'}")
+
     try:
-        # Require SSL
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        
+        # Connessione SSL sicura con verifica certificati
+        ctx = ssl.create_default_context(cafile=certifi.where())
+
         conn = await asyncpg.connect(database_url, timeout=5, ssl=ctx)
-        print("Connected successfully!")
+        print("Connessione riuscita!")
         await conn.close()
     except Exception as e:
-        print(f"Failed to connect: {e}")
+        print(f"Connessione fallita: {e}")
 
 asyncio.run(test())

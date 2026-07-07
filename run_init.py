@@ -3,7 +3,7 @@ import psycopg2
 
 def load_env():
     env_vars = {}
-    env_path = '/Users/alessandro/secrets/SenzaTesto/.env'
+    env_path = os.path.expanduser('~/secrets/SenzaTesto/.env')
     if os.path.exists(env_path):
         with open(env_path, 'r') as f:
             for line in f:

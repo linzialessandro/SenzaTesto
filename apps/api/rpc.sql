@@ -1,4 +1,10 @@
-CREATE OR REPLACE FUNCTION search_exercises(search_query text DEFAULT NULL, filter_year int DEFAULT NULL)
+-- Funzione RPC per la ricerca degli esercizi con paginazione
+CREATE OR REPLACE FUNCTION search_exercises(
+  search_query text DEFAULT NULL,
+  filter_year int DEFAULT NULL,
+  page_limit int DEFAULT 50,
+  page_offset int DEFAULT 0
+)
 RETURNS TABLE (
   id int,
   topic_id int,
@@ -26,6 +32,7 @@ BEGIN
   ORDER BY 
     CASE WHEN search_query IS NOT NULL AND search_query != '' THEN ts_rank(e.search_vector, websearch_to_tsquery('italian', search_query)) ELSE 0 END DESC, 
     e.created_at DESC
-  LIMIT 50;
+  LIMIT LEAST(page_limit, 100) OFFSET page_offset;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY INVOKER
+SET search_path = public;
