@@ -40,3 +40,4 @@ logs/
 # Docker
 .docker/
 docker-compose.override.yml
+.venv
