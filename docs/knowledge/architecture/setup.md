@@ -2,8 +2,8 @@
 type: Concept
 title: Architettura di Sistema & Configurazione del Progetto
 description: Lo scaffolding iniziale del progetto, i requisiti architetturali e il prompt di inizializzazione per la piattaforma educativa.
-tags: [architecture, setup, nextjs, fastapi, sympy, supabase]
-timestamp: 2026-07-01T12:35:00Z
+tags: [architecture, setup, nextjs, fastapi, sympy, supabase, secrets, latex]
+timestamp: 2026-07-08T10:00:00Z
 ---
 
 # Architettura di Sistema & Prompt di Inizializzazione
@@ -19,6 +19,13 @@ Il progetto DEVE essere ingegnerizzato per avere zero costi di manutenzione. Dev
 - **Database:** Supabase (PostgreSQL) o Cloudflare D1. Abbiamo bisogno di uno storage relazionale robusto con supporto JSON nativo per i dati complessi degli esercizi in LaTeX.
 - **Frontend:** Next.js distribuito su Vercel o Cloudflare Pages (vedi le [ottimizzazioni di performance](/architecture/frontend_performance.md)).
 - **Monetizzazione:** Integrare un componente leggero per le donazioni open-source (es. Ko-fi o link di pagamento Stripe) nell'interfaccia utente.
+
+**Gestione dei Segreti e Sicurezza:**
+Tutti i secret di produzione e sviluppo locale (inclusi i secret del database Supabase) non sono committati nel repository. Gli script Python utilizzano `os.path.expanduser('~/secrets/SenzaTesto/.env')` per recuperare in sicurezza le credenziali dell'ambiente al di fuori dell'albero di progetto, per proteggere la supply chain e mitigare esfiltrazioni accidentali.
+Per le comunicazioni con il database viene applicato `certifi` per validare l'SSL/TLS, evitando di disabilitare il controllo certificati.
+
+**Librerie Condivise:**
+Per ovviare a problematiche di parsing e corruzione dei caratteri di escape LaTeX, la logica di fallback e sanitize è esternalizzata in un modulo python apposito (vedi `lib/latex_utils.py`), che ripara stringhe danneggiate e assicura l'integrità del LaTeX durante i passaggi I/O.
 
 **Passaggi di Esecuzione per l'Agente:**
 

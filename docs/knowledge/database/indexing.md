@@ -2,8 +2,8 @@
 type: Concept
 title: Strategia di Indicizzazione (FTS)
 description: Documentazione sulla strategia di Full-Text Search adottata per garantire la scalabilità della ricerca degli esercizi.
-tags: [database, indexing, postgres, fts, scalability]
-timestamp: 2026-07-01T14:00:00Z
+tags: [database, indexing, postgres, fts, scalability, performance]
+timestamp: 2026-07-08T10:00:00Z
 ---
 
 # Strategia di Indicizzazione e Ricerca Esercizi
@@ -28,7 +28,7 @@ Oltre all'indice GIN per la Full-Text Search, lo schema include i seguenti indic
 - `idx_topics_macro_area` — su `topics(macro_area_id)`
 - `idx_exercises_topic` — su `exercises(topic_id)`
 - `idx_exercises_difficulty` — su `exercises(difficulty_level)`
-- `idx_exercises_short_code` — su `exercises(short_code)`
+- `idx_exercises_created_at` — su `exercises(created_at DESC)` per ottimizzare l'ordinamento e l'infinite scroll.
 
 ## Vantaggi
 

@@ -2,8 +2,8 @@
 type: Concept
 title: Frontend Performance & Mobile UX
 description: Tecniche avanzate di ottimizzazione per React, GPU rendering e UI lag su dispositivi mobili.
-tags: [frontend, react, performance, mobile, framer-motion]
-timestamp: 2026-07-04T18:40:00Z
+tags: [frontend, react, performance, mobile, framer-motion, ux]
+timestamp: 2026-07-08T10:00:00Z
 ---
 
 # Frontend Performance & Mobile UX
@@ -34,7 +34,15 @@ Il modal è **sempre renderizzato** nell'albero DOM e nella GPU, ma viene reso i
 - `pointer-events: none`
 - `aria-hidden="true"` (per l'accessibilità)
 
+Inoltre, il Modal utilizza `createPortal` per iniettare l'overlay alla radice del body (evitando conflitti di z-index causati da contesti di stacking annidati) ed è dotato di un "focus trap" per impedire che l'utente navighi col tasto `Tab` gli elementi sottostanti, migliorando radicalmente l'accessibilità da tastiera.
+
 In questo modo l'elemento viene rasterizzato e caricato in memoria grafica al momento del caricamento della pagina (o durante il tempo di *idle*). Quando l'utente lo apre, il telefono non fa altro che cambiare istantaneamente la trasparenza di una texture già pronta in memoria, a 0 costo di CPU.
+
+## 2.5 Resilienza del Rendering Matematico (ErrorBoundary)
+Renderizzare stringhe LaTeX arbitrarie provenienti da un LLM è un'operazione rischiosa. Invece di far crollare l'intera pagina React quando un carattere di escape fallisce, i blocchi matematici sono wrappati in un `<MathRenderer />` customizzato che usa opzioni restrittive (`throwOnError: false`) e gestisce le eccezioni del parser, degradando fluidamente a mostrare un fallback piuttosto che invalidare il DOM.
+
+## 2.8 Infinite Scroll vs Paginazione
+Invece di scaricare l'intero database in memoria al boot, l'applicazione usa chiamate API paginate (tramite RPC Supabase sicure). È stato adottato un approccio "Load More" manuale con pulsante invece di uno *scroll* infinito automatico: questo fornisce agli studenti un senso del progresso migliore ed evita carichi di lettura costosi in DB (che supererebbero il livello Free del backend serverless) nel caso in cui un bot provasse a scraparlo facendo scrolling automatico.
 
 ## 3. Disabilitazione del Tap-Highlight Delay
 
