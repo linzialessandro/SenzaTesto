@@ -176,7 +176,6 @@ async def main():
     topics = get_topics()
     
     config = LocalAgentConfig(
-        model="gemini-3.5-flash",
         response_schema=ExerciseOutput,
         max_output_tokens=1000
     )

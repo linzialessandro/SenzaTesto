@@ -6,8 +6,8 @@ CREATE OR REPLACE FUNCTION search_exercises(
   page_offset int DEFAULT 0
 )
 RETURNS TABLE (
-  id int,
-  topic_id int,
+  id bigint,
+  topic_id bigint,
   difficulty_level int,
   problem_text text,
   solution_text text,
