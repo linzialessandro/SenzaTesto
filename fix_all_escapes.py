@@ -2,6 +2,7 @@ import os
 import hashlib
 import psycopg2
 from pathlib import Path
+from lib.latex_utils import fix_latex_escapes as fix_content
 
 def load_env():
     env_vars = {}
@@ -14,25 +15,6 @@ def load_env():
                     key, val = line.split('=', 1)
                     env_vars[key.strip()] = val.strip()
     return env_vars
-
-def fix_content(text):
-    if not text: return text
-    text = text.replace('\x07lpha', '\\alpha')
-    text = text.replace('\x08eta', '\\beta')
-    text = text.replace('\x0crac', '\\frac')
-    text = text.replace('\theta', '\\theta')
-    text = text.replace('\tan', '\\tan')
-    text = text.replace('\to ', '\\to ')
-    text = text.replace('\to\n', '\\to\n')
-    text = text.replace('\times', '\\times')
-    text = text.replace('\text', '\\text')
-    text = text.replace('\right', '\\right')
-    text = text.replace('\rho', '\\rho')
-    text = text.replace('\nabla', '\\nabla')
-    text = text.replace('\nu ', '\\nu ')
-    text = text.replace('\nu\n', '\\nu\n')
-    text = text.replace('\notin', '\\notin')
-    return text
 
 def fix_markdown_files():
     accepted_dir = Path(__file__).resolve().parent / 'submissions' / 'accepted'

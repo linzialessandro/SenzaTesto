@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 import os
 import re
-import yaml
 import sys
+import yaml
 from pathlib import Path
+
+# Importa la funzione condivisa dal modulo lib
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from lib.latex_utils import fix_latex_escapes
 
 def fix_yaml_frontmatter(content):
     """
@@ -46,28 +50,8 @@ def fix_math_blocks(content):
             
     return re.sub(r'\$\$(.*?)\$\$', replacer, content, flags=re.DOTALL)
 
-def fix_latex_escapes(content):
-    """
-    Ripristina i caratteri di escape LaTeX distrutti da parser poco attenti
-    (es. \\alpha diventato \\x07lpha, \\right diventato \\right).
-    """
-    text = content
-    text = text.replace('\x07lpha', '\\alpha')
-    text = text.replace('\x08eta', '\\beta')
-    text = text.replace('\x0crac', '\\frac')
-    text = text.replace('\theta', '\\theta')
-    text = text.replace('\tan', '\\tan')
-    text = text.replace('\to ', '\\to ')
-    text = text.replace('\to\n', '\\to\n')
-    text = text.replace('\times', '\\times')
-    text = text.replace('\text', '\\text')
-    text = text.replace('\right', '\\right')
-    text = text.replace('\rho', '\\rho')
-    text = text.replace('\nabla', '\\nabla')
-    text = text.replace('\nu ', '\\nu ')
-    text = text.replace('\nu\n', '\\nu\n')
-    text = text.replace('\notin', '\\notin')
-    return text
+
+
 
 def process_file(file_path):
     try:
