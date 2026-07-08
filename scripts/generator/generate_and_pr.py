@@ -1,13 +1,19 @@
 import os
 import random
 import asyncio
+import logging
 import re
 import json
 import subprocess
+import sys
 from datetime import datetime
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
-from google.antigravity import Agent, LocalAgentConfig
+from google.antigravity import Agent, LocalAgentConfig, types
+from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
+
+# Configure logging for SDK observability
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # 1. Caricamento Sicuro delle Variabili d'Ambiente (BYOK & Admin Fallback)
 load_dotenv() # Prova a caricare dal .env locale nella cartella corrente o genitore
@@ -94,7 +100,77 @@ def run_cmd(cmd: str, cwd: str = PROJECT_ROOT, ignore_error: bool = False) -> bo
             print(f"Errore durante l'esecuzione di: {cmd}\n{e.stderr.decode()}")
         return False
 
-import sys
+# Eccetto ValueError o eccezioni simili, riproviamo se ci sono problemi di connessione o l'output strutturato fallisce
+@retry(
+    stop=stop_after_attempt(3), 
+    wait=wait_exponential(multiplier=1, min=2, max=10),
+    retry=retry_if_exception_type((types.AntigravityConnectionError, ValueError, Exception))
+)
+async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topic: str) -> str:
+    complexity_profile = random.choices(
+        ["standard_accessible", "elaborate_challenging"],
+        weights=[0.7, 0.3],
+        k=1
+    )[0]
+    
+    if complexity_profile == "standard_accessible":
+        complexity_instructions = """
+    IMPORTANT: To guarantee accessibility, ensure this specific exercise is extremely direct.
+    The solution MUST be concise, easy to follow, and under 5-8 clear steps."""
+    else:
+        complexity_instructions = """
+    IMPORTANT: For this specific exercise, provide a slightly more involved problem combining standard concepts.
+    However, it MUST REMAIN A SINGLE FOCUSED QUESTION, not a multi-part exam."""
+
+    prompt = f"""
+    You are a math professor in Italy creating high-quality, copyright-free math exercises for high school students.
+    Select a specific sub-topic or problem related to the following curriculum area: {selected_topic}
+    {complexity_instructions}
+    
+    CRITICAL RULES TO PREVENT OVER-GENERATION:
+    1. Generate a SINGLE, highly focused question.
+    2. DO NOT generate multi-part problems (e.g., no "1. ... 2. ... 3. ...").
+    3. DO NOT generate long "Problemi di Maturità" or exhaustive real-world scenarios.
+    4. Keep the text and solution strictly under 400 words total.
+    
+    Provide both the problem text and a complete step-by-step solution in Italian language.
+    Use LaTeX formatting for mathematical expressions.
+    CRITICAL INSTRUCTION FOR MATH BLOCKS: When writing block/centered math using $$ ... $$ or environments like \\begin{{cases}}, you MUST place the $$ delimiters on their own independent, empty lines.
+    The `problem_text` must contain ONLY the mathematical problem itself. 
+    The `solution` must contain ONLY the mathematical steps to solve it.
+    You MUST set the `generation_completed` field exactly to "COMPLETED".
+    """
+    
+    async with Agent(agent_config) as agent:
+        response = await agent.chat(prompt)
+        data_dict = await response.structured_output()
+        
+        if not data_dict:
+            raise ValueError("Structured output extraction failed (returned None)")
+            
+        exercise_data = ExerciseOutput(**data_dict)
+        md_content = format_markdown(exercise_data)
+        
+        safe_topic = re.sub(r'[^a-z0-9]+', '_', exercise_data.topic.lower()).strip('_')
+        filename_base = f"{safe_topic}_{random.randint(1000, 9999)}.md"
+        filepath = os.path.join(SUBMISSIONS_DIR, filename_base)
+        
+        with open(filepath, "w") as f:
+            f.write(md_content)
+            
+        return filepath
+
+async def task_wrapper(sem: asyncio.Semaphore, index: int, num_exercises: int, agent_config: LocalAgentConfig, topics: list[str]) -> str | None:
+    async with sem:
+        selected_topic = random.choice(topics)
+        logging.info(f"[{index}/{num_exercises}] Avvio generazione esercizio su: {selected_topic}...")
+        try:
+            filepath = await generate_single_exercise(agent_config, selected_topic)
+            logging.info(f"[{index}/{num_exercises}] -> Salvato: {os.path.basename(filepath)}")
+            return filepath
+        except Exception as e:
+            logging.error(f"[{index}/{num_exercises}] -> Errore durante la generazione dopo i tentativi di retry: {e}")
+            return None
 
 async def main():
     topics = get_topics()
@@ -113,68 +189,22 @@ async def main():
         print("Errore: Il numero di esercizi deve essere un numero intero.")
         return
         
-    print(f"=== Generazione di {NUM_EXERCISES} esercizi in corso ===")
+    print(f"\n=== Generazione Parallela di {NUM_EXERCISES} esercizi in corso ===")
     
-    generated_files = []
+    # Use semaphore of 5 to balance concurrency speed and rate limits
+    sem = asyncio.Semaphore(5)
     
-    for i in range(NUM_EXERCISES):
-        async with Agent(config) as agent:
-            selected_topic = random.choice(topics)
-            complexity_profile = random.choices(
-                ["standard_accessible", "elaborate_challenging"],
-                weights=[0.7, 0.3],
-                k=1
-            )[0]
-            
-            if complexity_profile == "standard_accessible":
-                complexity_instructions = """
-            IMPORTANT: To guarantee accessibility, ensure this specific exercise is extremely direct.
-            The solution MUST be concise, easy to follow, and under 5-8 clear steps."""
-            else:
-                complexity_instructions = """
-            IMPORTANT: For this specific exercise, provide a slightly more involved problem combining standard concepts.
-            However, it MUST REMAIN A SINGLE FOCUSED QUESTION, not a multi-part exam."""
-
-            prompt = f"""
-            You are a math professor in Italy creating high-quality, copyright-free math exercises for high school students.
-            Select a specific sub-topic or problem related to the following curriculum area: {selected_topic}
-            {complexity_instructions}
-            
-            CRITICAL RULES TO PREVENT OVER-GENERATION:
-            1. Generate a SINGLE, highly focused question.
-            2. DO NOT generate multi-part problems (e.g., no "1. ... 2. ... 3. ...").
-            3. DO NOT generate long "Problemi di Maturità" or exhaustive real-world scenarios.
-            4. Keep the text and solution strictly under 400 words total.
-            
-            Provide both the problem text and a complete step-by-step solution in Italian language.
-            Use LaTeX formatting for mathematical expressions.
-            CRITICAL INSTRUCTION FOR MATH BLOCKS: When writing block/centered math using $$ ... $$ or environments like \\begin{{cases}}, you MUST place the $$ delimiters on their own independent, empty lines.
-            The `problem_text` must contain ONLY the mathematical problem itself. 
-            The `solution` must contain ONLY the mathematical steps to solve it.
-            You MUST set the `generation_completed` field exactly to "COMPLETED".
-            """
-            
-            print(f"[{i+1}/{NUM_EXERCISES}] Generazione esercizio su: {selected_topic}...")
-            try:
-                response = await agent.chat(prompt)
-                data_dict = await response.structured_output()
-                
-                if data_dict:
-                    exercise_data = ExerciseOutput(**data_dict)
-                    md_content = format_markdown(exercise_data)
-                    
-                    safe_topic = re.sub(r'[^a-z0-9]+', '_', exercise_data.topic.lower()).strip('_')
-                    filename_base = f"{safe_topic}_{random.randint(1000, 9999)}.md"
-                    filepath = os.path.join(SUBMISSIONS_DIR, filename_base)
-                    
-                    with open(filepath, "w") as f:
-                        f.write(md_content)
-                    generated_files.append(filepath)
-                    print(f" -> Salvato: submissions/pending/{filename_base}")
-                else:
-                    print(" -> Fallito (nessun output strutturato).")
-            except Exception as e:
-                print(f" -> Errore durante la generazione: {e}")
+    tasks = [
+        task_wrapper(sem, i + 1, NUM_EXERCISES, config, topics)
+        for i in range(NUM_EXERCISES)
+    ]
+    
+    results = await asyncio.gather(*tasks)
+    
+    # Filter out failed runs
+    generated_files = [f for f in results if f is not None]
+    
+    print(f"\n=== Generati con successo {len(generated_files)}/{NUM_EXERCISES} esercizi ===")
 
     if not generated_files:
         print("Nessun esercizio generato. Uscita.")

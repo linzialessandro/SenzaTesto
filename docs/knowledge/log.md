@@ -1,6 +1,7 @@
 # Registro degli Aggiornamenti della Knowledge Base
 
 ## 2026-07-08
+* **Agenti**: Aggiornato il concetto `database-population-workflow` per riflettere l'unificazione degli script di generazione (`generate_parallel.py` deprecato) in `generate_and_pr.py`, documentando l'introduzione della concorrenza ad alte prestazioni tramite `asyncio.Semaphore`, della resilienza agli errori API tramite `tenacity` e del logging Python avanzato.
 * **Database**: Aggiornato `schema.md` per riflettere il passaggio alle colonne PK `BIGINT IDENTITY` (migrazione da SERIAL), l'aggiunta di `sort_order` per l'ordinamento pedagogico e l'enforcement di sicurezza con `FORCE ROW LEVEL SECURITY`.
 * **Database**: Aggiornato `indexing.md` per includere il nuovo indice `idx_exercises_created_at_desc` (ottimizzato per l'infinite scroll).
 * **Architettura**: Aggiornato `setup.md` inserendo dettagli sulla gestione esterna dei segreti (`os.path.expanduser`) e sul modulo condiviso per i fix LaTeX (`lib/latex_utils.py`).
