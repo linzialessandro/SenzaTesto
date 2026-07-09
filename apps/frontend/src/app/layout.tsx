@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
 };
 
-import Script from 'next/script';
+
 
 export default function RootLayout({
   children,
