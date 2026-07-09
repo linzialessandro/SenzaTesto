@@ -48,7 +48,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css" />
+        <link rel="stylesheet" type="text/css" href={process.env.NODE_ENV === 'production' ? '/SenzaTesto/tikzjax/fonts.css' : '/tikzjax/fonts.css'} />
+        <script src={process.env.NODE_ENV === 'production' ? '/SenzaTesto/tikzjax/tikzjax.js' : '/tikzjax/tikzjax.js'} async></script>
       </head>
       <body className="min-h-full flex flex-col relative overflow-x-hidden selection:bg-indigo-500/30 selection:text-indigo-900 dark:selection:text-indigo-100">
         <ThemeProvider

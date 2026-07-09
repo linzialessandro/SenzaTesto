@@ -6,14 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint"
   },
   "dependencies": {
+    "@rod2ik/tikzjax": "^1.1.14",
     "@supabase/supabase-js": "^2.110.0",
     "@tailwindcss/typography": "^0.5.20",
     "dotenv": "^17.4.2",
     "framer-motion": "^12.42.2",
-    "isomorphic-tikzjax": "^0.1.1",
     "jsdom": "^29.1.1",
     "katex": "^0.17.0",
     "lucide-react": "^1.22.0",

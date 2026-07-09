@@ -1,68 +1,102 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
-  const [svg, setSvg] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
-    const renderTikz = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch('/api/tikz', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ content }),
-        });
+    const container = containerRef.current;
+    if (!container) return;
 
-        const data = await response.json();
+    // Inizia caricamento (asincrono per evitare cascading render lint error)
+    Promise.resolve().then(() => {
+      if (isMounted) {
+        setIsLoading(true);
+        setError(null);
+      }
+    });
 
-        if (!response.ok) {
-          throw new Error(data.error || 'Errore durante la generazione del grafico');
-        }
+    // Pulisci il container
+    container.innerHTML = '';
 
-        if (isMounted) {
-          setSvg(data.svg);
-          setIsLoading(false);
-        }
-      } catch (err: unknown) {
-        const error = err as Error;
-        if (isMounted) {
-          setError(error.message);
-          setIsLoading(false);
+    // Crea lo script TikZJax
+    const script = document.createElement('script');
+    script.type = 'text/tikz';
+    script.innerHTML = content;
+    container.appendChild(script);
+
+    // Inizializza un MutationObserver per aspettare la conversione dello script in SVG
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          for (const node of Array.from(mutation.addedNodes)) {
+            if (node.nodeName.toLowerCase() === 'svg') {
+              // Il rendering SVG è stato completato!
+              if (isMounted) {
+                setIsLoading(false);
+              }
+              observer.disconnect();
+              return;
+            }
+          }
         }
       }
-    };
+    });
 
-    renderTikz();
+    observer.observe(container, { childList: true });
+
+    // Informa tikzjax che il DOM è "pronto" o forzane l'esecuzione
+    setTimeout(() => {
+      if (isMounted) {
+        document.dispatchEvent(new Event('DOMContentLoaded'));
+      }
+    }, 100);
+
+    // Fallback error timeout
+    const timeout = setTimeout(() => {
+      if (isMounted) {
+        // Se c'è ancora uno script text/tikz e nessun SVG, qualcosa è andato storto
+        const hasSvg = container.querySelector('svg');
+        if (!hasSvg) {
+          console.error("TikZJax timeout");
+          setIsLoading(false);
+          setError("Timeout del rendering TikZ");
+        }
+      }
+    }, 10000);
 
     return () => {
       isMounted = false;
+      observer.disconnect();
+      clearTimeout(timeout);
     };
   }, [content]);
 
-  if (error) {
-    return (
-      <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 text-amber-700 dark:text-amber-400 text-sm">
-        <p className="font-medium">⚠️ Errore nel rendering TikZ</p>
-        <p className="mt-1 text-xs opacity-70">{error}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="tikzjax-instance min-h-[100px] w-full flex justify-center items-center text-black">
-      {isLoading ? (
-        <div className="animate-pulse w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700"></div>
-      ) : (
-        <div dangerouslySetInnerHTML={{ __html: svg || '' }} />
+    <div className="relative min-h-[100px] flex items-center justify-center w-full">
+      {isLoading && !error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-black/20 z-10 rounded-xl">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
       )}
+      
+      {error && (
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm flex items-center gap-2">
+          <span>⚠️</span>
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Il container dove TikZJax inietterà l'SVG */}
+      <div 
+        ref={containerRef} 
+        className={`w-full overflow-x-auto flex justify-center py-4 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+      />
     </div>
   );
 };
+
