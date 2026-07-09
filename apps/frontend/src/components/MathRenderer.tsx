@@ -35,6 +35,8 @@ interface MathRendererProps {
   content: string;
 }
 
+import TikzJax from 'react-tikzjax';
+
 export const MathRenderer: React.FC<MathRendererProps> = ({ content }) => {
   return (
     <MathErrorBoundary content={content}>
@@ -45,6 +47,34 @@ export const MathRenderer: React.FC<MathRendererProps> = ({ content }) => {
         <ReactMarkdown
           remarkPlugins={[remarkMath]}
           rehypePlugins={[[rehypeKatex, { throwOnError: false, errorColor: '#dc2626' }]]}
+          components={{
+            code({ node, inline, className, children, ...props }: any) {
+              const match = /language-(\w+)/.exec(className || '');
+              const contentStr = String(children).replace(/\n$/, '');
+              
+              const isTikz = !inline && match && (match[1] === 'tikz' || (match[1] === 'latex' && contentStr.includes('\\begin{tikzpicture}')));
+              
+              if (isTikz) {
+                // Remove \begin{center} and \end{center} to ensure TikzJax parses it cleanly
+                const cleanContent = contentStr
+                  .replace(/\\begin\{center\}/g, '')
+                  .replace(/\\end\{center\}/g, '')
+                  .trim();
+                  
+                return (
+                  <div className="flex justify-center my-6 overflow-x-auto bg-white p-4 rounded-xl dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <TikzJax content={cleanContent} />
+                  </div>
+                );
+              }
+              
+              return (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            }
+          }}
         >
           {content}
         </ReactMarkdown>

@@ -1,5 +1,9 @@
 # Registro degli Aggiornamenti della Knowledge Base
 
+## 2026-07-09
+* **Database**: Completata l'ingestione massiva del curriculum di Niccolò Cangiotti (456 esercizi). Il workflow `populate_from_md.py` è stato utilizzato con successo dopo la sanitizzazione via `validate_and_fix_pending.py`.
+* **Frontend**: Aggiornato `frontend_performance.md` documentando l'implementazione del supporto a LaTeX TikZ tramite la libreria WebAssembly `react-tikzjax` integrata in `MathRenderer.tsx`.
+
 ## 2026-07-08
 * **Agenti**: Aggiornato il concetto `database-population-workflow` per riflettere l'unificazione degli script di generazione (`generate_parallel.py` deprecato) in `generate_and_pr.py`, documentando l'introduzione della concorrenza ad alte prestazioni tramite `asyncio.Semaphore`, della resilienza agli errori API tramite `tenacity` e del logging Python avanzato.
 * **Database**: Aggiornato `schema.md` per riflettere il passaggio alle colonne PK `BIGINT IDENTITY` (migrazione da SERIAL), l'aggiunta di `sort_order` per l'ordinamento pedagogico e l'enforcement di sicurezza con `FORCE ROW LEVEL SECURITY`.

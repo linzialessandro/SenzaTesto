@@ -41,6 +41,12 @@ In questo modo l'elemento viene rasterizzato e caricato in memoria grafica al mo
 ## 2.5 Resilienza del Rendering Matematico (ErrorBoundary)
 Renderizzare stringhe LaTeX arbitrarie provenienti da un LLM è un'operazione rischiosa. Invece di far crollare l'intera pagina React quando un carattere di escape fallisce, i blocchi matematici sono wrappati in un `<MathRenderer />` customizzato che usa opzioni restrittive (`throwOnError: false`) e gestisce le eccezioni del parser, degradando fluidamente a mostrare un fallback piuttosto che invalidare il DOM.
 
+## 2.6 Rendering Grafico (TikzJax e WebAssembly)
+Il curriculum di matematica e geometria analitica prevede l'uso estensivo di grafici. KaTeX e MathJax non supportano le direttive grafiche `PGF/TikZ`.
+Invece di affidare al backend la generazione costosa di immagini, il frontend adotta `react-tikzjax`. 
+Quando il parser Markdown intercetta un blocco di codice contrassegnato come `tikz` (o un blocco `latex` contenente `\begin{tikzpicture}`), la stringa viene delegata al motore **TikzJax**.
+Questo motore carica una versione precompilata in WebAssembly di TeX nel browser del client, renderizzando vettorialmente il codice in formato SVG in pochi decimi di secondo e sgravando interamente il server.
+
 ## 2.8 Infinite Scroll vs Paginazione
 Invece di scaricare l'intero database in memoria al boot, l'applicazione usa chiamate API paginate (tramite RPC Supabase sicure). È stato adottato un approccio "Load More" manuale con pulsante invece di uno *scroll* infinito automatico: questo fornisce agli studenti un senso del progresso migliore ed evita carichi di lettura costosi in DB (che supererebbero il livello Free del backend serverless) nel caso in cui un bot provasse a scraparlo facendo scrolling automatico.
 
