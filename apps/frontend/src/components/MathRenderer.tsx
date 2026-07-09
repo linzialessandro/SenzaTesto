@@ -35,7 +35,7 @@ interface MathRendererProps {
   content: string;
 }
 
-import TikzJax from 'react-tikzjax';
+import { TikzRenderer } from './TikzRenderer';
 
 export const MathRenderer: React.FC<MathRendererProps> = ({ content }) => {
   return (
@@ -62,8 +62,8 @@ export const MathRenderer: React.FC<MathRendererProps> = ({ content }) => {
                   .trim();
                   
                 return (
-                  <div className="flex justify-center my-6 overflow-x-auto bg-white p-4 rounded-xl dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    <TikzJax content={cleanContent} />
+                  <div className="flex justify-center my-6 overflow-x-auto bg-white p-4 rounded-xl dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <TikzRenderer content={cleanContent} />
                   </div>
                 );
               }
