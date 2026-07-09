@@ -48,7 +48,7 @@ export const MathRenderer: React.FC<MathRendererProps> = ({ content }) => {
           remarkPlugins={[remarkMath]}
           rehypePlugins={[[rehypeKatex, { throwOnError: false, errorColor: '#dc2626' }]]}
           components={{
-            code({ node, inline, className, children, ...props }: any) {
+            code({ inline, className, children, ...props }: React.ComponentPropsWithoutRef<'code'> & { inline?: boolean }) {
               const match = /language-(\w+)/.exec(className || '');
               const contentStr = String(children).replace(/\n$/, '');
               
