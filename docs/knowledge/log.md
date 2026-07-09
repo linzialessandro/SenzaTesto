@@ -2,7 +2,7 @@
 
 ## 2026-07-09
 * **Database**: Completata l'ingestione massiva del curriculum di Niccolò Cangiotti (456 esercizi). Il workflow `populate_from_md.py` è stato utilizzato con successo dopo la sanitizzazione via `validate_and_fix_pending.py`.
-* **Frontend**: Aggiornato `frontend_performance.md` documentando l'implementazione del supporto a LaTeX TikZ tramite la libreria WebAssembly `react-tikzjax` integrata in `MathRenderer.tsx`.
+* **Frontend**: Aggiornato `frontend_performance.md` documentando la migrazione dell'architettura di rendering LaTeX TikZ da API Routes a una soluzione 100% client-side via `@rod2ik/tikzjax` per superare i limiti di Vercel e supportare l'hosting statico su GitHub Pages.
 
 ## 2026-07-08
 * **Agenti**: Aggiornato il concetto `database-population-workflow` per riflettere l'unificazione degli script di generazione (`generate_parallel.py` deprecato) in `generate_and_pr.py`, documentando l'introduzione della concorrenza ad alte prestazioni tramite `asyncio.Semaphore`, della resilienza agli errori API tramite `tenacity` e del logging Python avanzato.

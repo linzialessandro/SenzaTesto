@@ -41,11 +41,12 @@ In questo modo l'elemento viene rasterizzato e caricato in memoria grafica al mo
 ## 2.5 Resilienza del Rendering Matematico (ErrorBoundary)
 Renderizzare stringhe LaTeX arbitrarie provenienti da un LLM è un'operazione rischiosa. Invece di far crollare l'intera pagina React quando un carattere di escape fallisce, i blocchi matematici sono wrappati in un `<MathRenderer />` customizzato che usa opzioni restrittive (`throwOnError: false`) e gestisce le eccezioni del parser, degradando fluidamente a mostrare un fallback piuttosto che invalidare il DOM.
 
-## 2.6 Rendering Grafico (TikzJax e WebAssembly)
+## 2.6 Rendering Grafico (TikzJax e WebAssembly 100% Client-Side)
 Il curriculum di matematica e geometria analitica prevede l'uso estensivo di grafici. KaTeX e MathJax non supportano le direttive grafiche `PGF/TikZ`.
-Invece di affidare al backend la generazione costosa di immagini, il frontend adotta `react-tikzjax`. 
-Quando il parser Markdown intercetta un blocco di codice contrassegnato come `tikz` (o un blocco `latex` contenente `\begin{tikzpicture}`), la stringa viene delegata al motore **TikzJax**.
-Questo motore carica una versione precompilata in WebAssembly di TeX nel browser del client, renderizzando vettorialmente il codice in formato SVG in pochi decimi di secondo e sgravando interamente il server.
+Invece di affidare al backend la generazione costosa di immagini, il frontend adotta `@rod2ik/tikzjax`. 
+Quando il parser Markdown intercetta un blocco di codice contrassegnato come `tikz` (o un blocco `latex` contenente `\begin{tikzpicture}`), il componente `TikzRenderer` inietta uno `<script type="text/tikz">`.
+Il motore **TikzJax** (agganciato in ascolto tramite un `MutationObserver`) carica una versione precompilata in WebAssembly di TeX (`core.dump.gz`) direttamente dagli asset statici del browser (`/public/tikzjax/`), renderizzando vettorialmente il codice in formato SVG in maniera asincrona.
+Questo approccio 100% client-side svincola completamente il sito dalle limitazioni stringenti di Serverless Functions (come la memoria massima di 50MB o problemi col parsing di binari WASM di grosse dimensioni), consentendo perfino l'hosting statico su GitHub Pages senza l'ausilio di API routes.
 
 ## 2.8 Infinite Scroll vs Paginazione
 Invece di scaricare l'intero database in memoria al boot, l'applicazione usa chiamate API paginate (tramite RPC Supabase sicure). È stato adottato un approccio "Load More" manuale con pulsante invece di uno *scroll* infinito automatico: questo fornisce agli studenti un senso del progresso migliore ed evita carichi di lettura costosi in DB (che supererebbero il livello Free del backend serverless) nel caso in cui un bot provasse a scraparlo facendo scrolling automatico.
