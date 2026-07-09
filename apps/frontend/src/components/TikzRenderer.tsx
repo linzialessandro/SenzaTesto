@@ -19,6 +19,11 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
   useEffect(() => {
     if (isLoaded) return;
     
+    if (typeof window !== 'undefined' && window.process_tikz) {
+      setTimeout(() => setIsLoaded(true), 0);
+      return;
+    }
+
     // Carica i font di TikzJax
     if (!document.querySelector('link[href="https://tikzjax.com/v1/fonts.css"]')) {
       const link = document.createElement('link');
@@ -39,8 +44,18 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
     const handleLoad = () => setIsLoaded(true);
     script.addEventListener('load', handleLoad);
     
+    // Fallback: poll window.process_tikz in case the load event was missed
+    // because the script was already loaded before the listener was attached
+    const interval = setInterval(() => {
+      if (typeof window !== 'undefined' && window.process_tikz) {
+        setIsLoaded(true);
+        clearInterval(interval);
+      }
+    }, 100);
+    
     return () => {
       script.removeEventListener('load', handleLoad);
+      clearInterval(interval);
     };
   }, [isLoaded]);
 
