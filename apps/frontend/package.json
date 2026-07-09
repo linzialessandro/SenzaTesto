@@ -13,6 +13,7 @@
     "@tailwindcss/typography": "^0.5.20",
     "dotenv": "^17.4.2",
     "framer-motion": "^12.42.2",
+    "jsdom": "^29.1.1",
     "katex": "^0.17.0",
     "lucide-react": "^1.22.0",
     "next": "16.2.9",

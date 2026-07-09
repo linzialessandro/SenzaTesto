@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 declare global {
   interface Window {
-    process_tikz?: (element: HTMLScriptElement) => void;
+    tikzjaxLoaded?: boolean;
   }
 }
 
@@ -11,7 +11,7 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
-      return !!window.process_tikz;
+      return !!window.tikzjaxLoaded;
     }
     return false;
   });
@@ -19,11 +19,6 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
   useEffect(() => {
     if (isLoaded) return;
     
-    if (typeof window !== 'undefined' && window.process_tikz) {
-      setTimeout(() => setIsLoaded(true), 0);
-      return;
-    }
-
     // Carica i font di TikzJax
     if (!document.querySelector('link[href="https://tikzjax.com/v1/fonts.css"]')) {
       const link = document.createElement('link');
@@ -38,29 +33,35 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
     if (!script) {
       script = document.createElement('script');
       script.src = 'https://tikzjax.com/v1/tikzjax.js';
-      document.head.appendChild(script);
-    }
-    
-    const handleLoad = () => setIsLoaded(true);
-    script.addEventListener('load', handleLoad);
-    
-    // Fallback: poll window.process_tikz in case the load event was missed
-    // because the script was already loaded before the listener was attached
-    const interval = setInterval(() => {
-      if (typeof window !== 'undefined' && window.process_tikz) {
+      
+      const handleLoad = () => {
+        window.tikzjaxLoaded = true;
         setIsLoaded(true);
-        clearInterval(interval);
+      };
+      
+      script.addEventListener('load', handleLoad);
+      document.head.appendChild(script);
+      
+      return () => {
+        script.removeEventListener('load', handleLoad);
+      };
+    } else {
+      // Script is already in DOM. If window.tikzjaxLoaded is not true, wait for its load event
+      if (!window.tikzjaxLoaded) {
+        const handleLoad = () => {
+          window.tikzjaxLoaded = true;
+          setIsLoaded(true);
+        };
+        script.addEventListener('load', handleLoad);
+        return () => {
+          script.removeEventListener('load', handleLoad);
+        };
       }
-    }, 100);
-    
-    return () => {
-      script.removeEventListener('load', handleLoad);
-      clearInterval(interval);
-    };
+    }
   }, [isLoaded]);
 
   useEffect(() => {
-    if (!isLoaded || !containerRef.current || typeof window.process_tikz !== 'function') return;
+    if (!isLoaded || !containerRef.current) return;
 
     // Svuota il contenitore
     containerRef.current.innerHTML = '';
@@ -68,6 +69,7 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
     // TikzJax si aspetta uno script tag di tipo "text/tikz"
     const script = document.createElement('script');
     script.type = 'text/tikz';
+    // Remove unsupported commands or sanitize if necessary
     script.textContent = content;
     
     const wrapper = document.createElement('div');
@@ -75,7 +77,8 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
     containerRef.current.appendChild(wrapper);
 
     try {
-      window.process_tikz(script);
+      // Invia un evento DOMContentLoaded finto per forzare TikzJax a processare il nuovo script
+      document.dispatchEvent(new Event('DOMContentLoaded'));
     } catch (e) {
       console.error('Errore durante il rendering TikZ:', e);
     }
