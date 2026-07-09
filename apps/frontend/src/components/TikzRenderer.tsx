@@ -34,7 +34,10 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
       for (const mutation of mutations) {
         if (mutation.type === 'childList') {
           for (const node of Array.from(mutation.addedNodes)) {
-            if (node.nodeName.toLowerCase() === 'svg') {
+            const isSvg = node.nodeName.toLowerCase() === 'svg';
+            const hasSvg = node instanceof HTMLElement && node.querySelector('svg') !== null;
+            
+            if (isSvg || hasSvg) {
               // Il rendering SVG è stato completato!
               if (isMounted) {
                 setIsLoading(false);
@@ -65,6 +68,9 @@ export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
           console.error("TikZJax timeout");
           setIsLoading(false);
           setError("Timeout del rendering TikZ");
+        } else {
+          // Nel caso in cui il MutationObserver avesse perso l'evento
+          setIsLoading(false);
         }
       }
     }, 10000);
