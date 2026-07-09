@@ -12,8 +12,8 @@ from pydantic import BaseModel, Field
 from google.antigravity import Agent, LocalAgentConfig, types
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
-# Configure logging for SDK observability
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configure logging to WARNING to hide internal SDK/Agent verbose thoughts
+logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # 1. Caricamento Sicuro delle Variabili d'Ambiente (BYOK & Admin Fallback)
 load_dotenv() # Prova a caricare dal .env locale nella cartella corrente o genitore
@@ -163,13 +163,13 @@ async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topi
 async def task_wrapper(sem: asyncio.Semaphore, index: int, num_exercises: int, agent_config: LocalAgentConfig, topics: list[str]) -> str | None:
     async with sem:
         selected_topic = random.choice(topics)
-        logging.info(f"[{index}/{num_exercises}] Avvio generazione esercizio su: {selected_topic}...")
+        print(f"⏳ [{index}/{num_exercises}] Generazione in corso: {selected_topic}...")
         try:
             filepath = await generate_single_exercise(agent_config, selected_topic)
-            logging.info(f"[{index}/{num_exercises}] -> Salvato: {os.path.basename(filepath)}")
+            print(f"✅ [{index}/{num_exercises}] Completato e salvato: {os.path.basename(filepath)}")
             return filepath
         except Exception as e:
-            logging.error(f"[{index}/{num_exercises}] -> Errore durante la generazione dopo i tentativi di retry: {e}")
+            print(f"❌ [{index}/{num_exercises}] Errore durante la generazione: {e}")
             return None
 
 async def main():
@@ -188,7 +188,7 @@ async def main():
         print("Errore: Il numero di esercizi deve essere un numero intero.")
         return
         
-    print(f"\n=== Generazione Parallela di {NUM_EXERCISES} esercizi in corso ===")
+    print(f"\n🚀 === Inizio Generazione Parallela di {NUM_EXERCISES} esercizi ===")
     
     # Use semaphore of 5 to balance concurrency speed and rate limits
     sem = asyncio.Semaphore(5)
@@ -203,13 +203,13 @@ async def main():
     # Filter out failed runs
     generated_files = [f for f in results if f is not None]
     
-    print(f"\n=== Generati con successo {len(generated_files)}/{NUM_EXERCISES} esercizi ===")
+    print(f"\n🎉 === Generati con successo {len(generated_files)}/{NUM_EXERCISES} esercizi ===")
 
     if not generated_files:
         print("Nessun esercizio generato. Uscita.")
         return
 
-    print("\n=== Inizio Automazione Git & Pull Request ===")
+    print("\n🐙 === Inizio Automazione Git & Pull Request ===")
     
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     branch_name = f"feat/auto-exercises-{timestamp}"
