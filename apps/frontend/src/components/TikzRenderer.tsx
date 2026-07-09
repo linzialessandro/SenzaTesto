@@ -1,95 +1,68 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-
-declare global {
-  interface Window {
-    tikzjaxLoaded?: boolean;
-  }
-}
+import React, { useEffect, useState } from 'react';
 
 export const TikzRenderer: React.FC<{ content: string }> = ({ content }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoaded, setIsLoaded] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return !!window.tikzjaxLoaded;
-    }
-    return false;
-  });
+  const [svg, setSvg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (isLoaded) return;
-    
-    // Carica i font di TikzJax
-    if (!document.querySelector('link[href="https://tikzjax.com/v1/fonts.css"]')) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://tikzjax.com/v1/fonts.css';
-      document.head.appendChild(link);
-    }
+    let isMounted = true;
 
-    const scriptSelector = 'script[src="https://tikzjax.com/v1/tikzjax.js"]';
-    let script = document.querySelector(scriptSelector) as HTMLScriptElement;
-    
-    if (!script) {
-      script = document.createElement('script');
-      script.src = 'https://tikzjax.com/v1/tikzjax.js';
-      
-      const handleLoad = () => {
-        window.tikzjaxLoaded = true;
-        setIsLoaded(true);
-      };
-      
-      script.addEventListener('load', handleLoad);
-      document.head.appendChild(script);
-      
-      return () => {
-        script.removeEventListener('load', handleLoad);
-      };
-    } else {
-      // Script is already in DOM. If window.tikzjaxLoaded is not true, wait for its load event
-      if (!window.tikzjaxLoaded) {
-        const handleLoad = () => {
-          window.tikzjaxLoaded = true;
-          setIsLoaded(true);
-        };
-        script.addEventListener('load', handleLoad);
-        return () => {
-          script.removeEventListener('load', handleLoad);
-        };
+    const renderTikz = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('/api/tikz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ content }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Errore durante la generazione del grafico');
+        }
+
+        if (isMounted) {
+          setSvg(data.svg);
+          setIsLoading(false);
+        }
+      } catch (err: unknown) {
+        const error = err as Error;
+        if (isMounted) {
+          setError(error.message);
+          setIsLoading(false);
+        }
       }
-    }
-  }, [isLoaded]);
+    };
 
-  useEffect(() => {
-    if (!isLoaded || !containerRef.current) return;
+    renderTikz();
 
-    // Svuota il contenitore
-    containerRef.current.innerHTML = '';
-    
-    // TikzJax si aspetta uno script tag di tipo "text/tikz"
-    const script = document.createElement('script');
-    script.type = 'text/tikz';
-    // Remove unsupported commands or sanitize if necessary
-    script.textContent = content;
-    
-    const wrapper = document.createElement('div');
-    wrapper.appendChild(script);
-    containerRef.current.appendChild(wrapper);
+    return () => {
+      isMounted = false;
+    };
+  }, [content]);
 
-    try {
-      // Invia un evento DOMContentLoaded finto per forzare TikzJax a processare il nuovo script
-      document.dispatchEvent(new Event('DOMContentLoaded'));
-    } catch (e) {
-      console.error('Errore durante il rendering TikZ:', e);
-    }
-  }, [content, isLoaded]);
+  if (error) {
+    return (
+      <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 text-amber-700 dark:text-amber-400 text-sm">
+        <p className="font-medium">⚠️ Errore nel rendering TikZ</p>
+        <p className="mt-1 text-xs opacity-70">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div 
-      ref={containerRef} 
-      className="tikzjax-instance min-h-[100px] w-full flex justify-center items-center text-black"
-    >
-      {!isLoaded && <div className="animate-pulse w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700"></div>}
+    <div className="tikzjax-instance min-h-[100px] w-full flex justify-center items-center text-black">
+      {isLoading ? (
+        <div className="animate-pulse w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+      ) : (
+        <div dangerouslySetInnerHTML={{ __html: svg || '' }} />
+      )}
     </div>
   );
 };
