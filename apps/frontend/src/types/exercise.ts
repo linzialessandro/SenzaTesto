@@ -12,6 +12,7 @@ export const ExerciseSchema = z.object({
   year_number: z.number(),
   short_code: z.string(),
   tags: z.array(z.string()).optional(),
+  ai_generated: z.boolean(),
 });
 
 export type Exercise = z.infer<typeof ExerciseSchema>;
