@@ -59,7 +59,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {/* Background container to prevent scroll from glows */}
-          <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
             {/* Ambient Glows - Subtle Italian Flag homage */}
             <div className="ambient-glow glow-green w-[40rem] h-[40rem] top-[-10%] left-[-15%]"></div>
             <div className="ambient-glow glow-white w-[50rem] h-[50rem] top-[20%] left-[25%] opacity-10"></div>

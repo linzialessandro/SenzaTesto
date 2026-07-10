@@ -66,7 +66,7 @@ export function ShareWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl p-4 z-40"
+            className="fixed left-4 right-4 top-[64px] z-[100] sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl p-4"
           >
             <div className="mb-4">
               <h4 className="font-semibold text-slate-900 dark:text-white mb-1">Sfida i tuoi compagni</h4>

@@ -95,6 +95,8 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.15;
   border-radius: 50%;
   pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .dark .ambient-glow {
