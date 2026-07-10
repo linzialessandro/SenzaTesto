@@ -90,23 +90,19 @@ h1, h2, h3, h4, h5, h6 {
 /* Ambient glow effect (Italian Colors subtle hint) */
 .ambient-glow {
   position: absolute;
-  filter: blur(100px);
   z-index: -1;
   opacity: 0.15;
-  border-radius: 50%;
   pointer-events: none;
-  transform: translateZ(0);
-  will-change: transform;
 }
 
 .dark .ambient-glow {
   opacity: 0.2;
 }
 
-/* Specific glows */
-.glow-green { background-color: #22c55e; }
-.glow-white { background-color: #f8fafc; }
-.glow-red { background-color: #ef4444; }
+/* Specific glows using highly-performant radial gradients instead of CSS blur */
+.glow-green { background: radial-gradient(circle, #22c55e 0%, transparent 70%); }
+.glow-white { background: radial-gradient(circle, #f8fafc 0%, transparent 70%); }
+.glow-red { background: radial-gradient(circle, #ef4444 0%, transparent 70%); }
 
 /* Mathematical equations optimization */
 .katex-display {
