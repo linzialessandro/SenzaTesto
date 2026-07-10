@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -49,7 +50,6 @@ export default function RootLayout({
     >
       <head>
         <link rel="stylesheet" type="text/css" href={process.env.NODE_ENV === 'production' ? '/SenzaTesto/tikzjax/fonts.css' : '/tikzjax/fonts.css'} />
-        <script src={process.env.NODE_ENV === 'production' ? '/SenzaTesto/tikzjax/tikzjax.js' : '/tikzjax/tikzjax.js'} async></script>
       </head>
       <body className="min-h-full flex flex-col relative overflow-x-hidden selection:bg-indigo-500/30 selection:text-indigo-900 dark:selection:text-indigo-100">
         <ThemeProvider
@@ -74,6 +74,11 @@ export default function RootLayout({
           {/* Portal root for Modals */}
           <div id="modal-root"></div>
         </ThemeProvider>
+        
+        <Script 
+          src={process.env.NODE_ENV === 'production' ? '/SenzaTesto/tikzjax/tikzjax.js' : '/tikzjax/tikzjax.js'} 
+          strategy="lazyOnload" 
+        />
       </body>
     </html>
   );
