@@ -19,6 +19,7 @@ export function DonationModal({ isOpen, onClose }: DonationModalProps) {
       const timer = setTimeout(() => setView('main'), 300);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isOpen]);
 
   // Reset scroll when view changes

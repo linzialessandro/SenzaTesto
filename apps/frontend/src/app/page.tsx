@@ -11,7 +11,8 @@ import { ContributeModal } from '@/components/home/modals/ContributeModal';
 import { DonationModal } from '@/components/home/modals/DonationModal';
 import { supabase } from '@/lib/supabase';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { Exercise } from '@/types/exercise';
+import { type Exercise, ExerciseSchema } from '@/types/exercise';
+import { z } from 'zod';
 
 const PAGE_SIZE = 30;
 
@@ -83,7 +84,7 @@ export default function Home() {
         
         if (rpcError) throw rpcError;
         
-        const resultData = (data || []) as Exercise[];
+        const resultData = z.array(ExerciseSchema).parse(data || []);
 
         if (!ignore) {
           setExercises(resultData);
@@ -114,7 +115,7 @@ export default function Home() {
       const { data, error: rpcError } = await supabase.rpc('search_exercises', params);
       if (rpcError) throw rpcError;
       
-      const newData = (data || []) as Exercise[];
+      const newData = z.array(ExerciseSchema).parse(data || []);
       setExercises(prev => [...prev, ...newData]);
       setHasMore(newData.length >= PAGE_SIZE);
     } catch (err) {

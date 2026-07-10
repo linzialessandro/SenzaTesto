@@ -24,8 +24,8 @@ export function HeroSection({ onOpenInfo, totalCount }: HeroSectionProps) {
       });
 
       // Focalizza l'input dopo lo scroll per un'esperienza seamless
-      const input = section.querySelector('input[type="text"]') as HTMLInputElement;
-      if (input) {
+      const input = section.querySelector('input[type="text"]');
+      if (input instanceof HTMLInputElement) {
         setTimeout(() => {
           input.focus({ preventScroll: true });
         }, 600); // Ritardo per permettere il completamento dell'animazione di scroll

@@ -45,6 +45,7 @@ export function Modal({ isOpen, onClose, title, children, scrollId = "modal-scro
       if (focusable.length === 0) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
       if (e.shiftKey && document.activeElement === first) {
         e.preventDefault();
         last.focus();
@@ -60,6 +61,7 @@ export function Modal({ isOpen, onClose, title, children, scrollId = "modal-scro
       document.addEventListener('keydown', handleKeyDown);
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
+    return undefined;
   }, [isOpen, handleKeyDown]);
 
   const portalRoot = typeof document !== 'undefined' ? document.getElementById('modal-root') : null;
