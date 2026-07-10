@@ -30,7 +30,7 @@ BEGIN
   JOIN curriculum_years c ON m.year_id = c.id
   WHERE (search_query IS NULL OR search_query = '' OR e.search_vector @@ websearch_to_tsquery('italian', search_query) OR e.short_code ILIKE search_query)
     AND (filter_year IS NULL OR c.year_number = filter_year)
-    AND (filter_topic IS NULL OR m.name ILIKE filter_topic)
+    AND (filter_topic IS NULL OR e.search_vector @@ websearch_to_tsquery('italian', filter_topic))
   ORDER BY 
     CASE WHEN search_query IS NOT NULL AND search_query != '' THEN ts_rank(e.search_vector, websearch_to_tsquery('italian', search_query)) ELSE 0 END DESC, 
     e.created_at DESC

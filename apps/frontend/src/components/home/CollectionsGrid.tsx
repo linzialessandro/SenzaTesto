@@ -8,14 +8,14 @@ interface CollectionsGridProps {
 
 const topics = [
   { 
-    id: "Algebra & Aritmetica", 
+    id: "Algebra", 
     title: "Algebra & Aritmetica", 
     icon: Calculator, 
     color: "from-blue-500 to-cyan-400",
     delay: 0.1
   },
   { 
-    id: "Geometria (Piana e Solida)", 
+    id: "Geometria", 
     title: "Geometria", 
     icon: Triangle, 
     color: "from-emerald-500 to-teal-400",
@@ -29,21 +29,21 @@ const topics = [
     delay: 0.3
   },
   { 
-    id: "Analisi Matematica", 
+    id: "Analisi", 
     title: "Analisi Matematica", 
     icon: LineChart, 
     color: "from-pink-500 to-rose-400",
     delay: 0.4
   },
   { 
-    id: "Goniometria & Trigonometria", 
+    id: "Trigonometria", 
     title: "Goniometria & Trigonometria", 
     icon: Target, 
     color: "from-indigo-500 to-violet-400",
     delay: 0.5
   },
   { 
-    id: "Probabilità & Statistica", 
+    id: "Probabilità", 
     title: "Probabilità & Statistica", 
     icon: Dice5, 
     color: "from-purple-500 to-fuchsia-400",
