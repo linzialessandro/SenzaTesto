@@ -1,5 +1,9 @@
 # Registro degli Aggiornamenti della Knowledge Base
 
+## 2026-07-10
+* **Architettura**: Creato il concetto `frontend_type_safety.md` per documentare l'introduzione di Zod (boundary validation), `@total-typescript/ts-reset` (standard library fixes) e l'abilitazione dello strict mode estremo (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) ispirato alle best practice di Matt Pocock.
+* **Database**: Aggiornato il concetto `indexing` per documentare l'introduzione della funzione `optimize_search_query`, la quale estende le capacità di ricerca FTS convertendo dinamicamente spazi impliciti (AND) in operatore `OR`, aumentando la recall senza penalizzare la precisione del ranking `ts_rank`.
+
 ## 2026-07-09
 * **Database**: Completata l'ingestione massiva del curriculum di Niccolò Cangiotti (456 esercizi). Il workflow `populate_from_md.py` è stato utilizzato con successo dopo la sanitizzazione via `validate_and_fix_pending.py`.
 * **Frontend**: Aggiornato `frontend_performance.md` documentando la migrazione dell'architettura di rendering LaTeX TikZ da API Routes a una soluzione 100% client-side via `@rod2ik/tikzjax` per superare i limiti di Vercel e supportare l'hosting statico su GitHub Pages.
