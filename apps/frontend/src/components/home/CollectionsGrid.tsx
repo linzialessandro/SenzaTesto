@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
 import { motion } from 'framer-motion';
 import { Calculator, Triangle, BarChart3, LineChart, Target, Dice5, TrendingUp, Scale, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -61,8 +60,7 @@ const topics = [
 
 export function CollectionsGrid({ onSelectTopic }: CollectionsGridProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: 'center', skipSnaps: false },
-    [Autoplay({ delay: 4000, stopOnInteraction: true })]
+    { loop: true, align: 'center', skipSnaps: false }
   );
 
   const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
