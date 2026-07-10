@@ -8,6 +8,7 @@ tags:
   - "tangente"
   - "geometria analitica"
   - "coniche"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione dell'ellisse riferita ai propri assi, con i fuochi sull'asse $x$, passante per il punto $P(3, -1)$ e tangente alla retta di equazione $x + 3y - 6 = 0$.

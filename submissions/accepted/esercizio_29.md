@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - derivata di un polinomio
   - calcolo
+ai_generated: true
 ---
 # Problem Text
 Calcola l'espressione analitica della derivata prima della seguente funzione polinomiale:

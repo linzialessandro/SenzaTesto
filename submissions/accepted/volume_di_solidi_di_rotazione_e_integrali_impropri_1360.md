@@ -8,6 +8,7 @@ tags:
   - "volume"
   - "solido di rotazione"
   - "integrazione per parti"
+ai_generated: true
 ---
 # Problem Text
 Determinare il volume del solido di rotazione ottenuto ruotando di un giro completo attorno all'asse $x$ la regione illimitata di piano compresa tra la curva di equazione $y = x e^{-x}$ e l'asse delle ascisse, nell'intervallo $[0, +\infty)$.

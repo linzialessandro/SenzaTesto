@@ -7,6 +7,7 @@ tags:
   - derivate
   - retta tangente
   - funzioni razionali
+ai_generated: true
 ---
 # Problem Text
 

@@ -8,6 +8,7 @@ tags:
   - "massimi e minimi"
   - "derivata prima"
   - "punti stazionari"
+ai_generated: true
 ---
 # Problem Text
 Determinare gli intervalli di monotonia e gli eventuali punti di massimo e minimo relativo della funzione:

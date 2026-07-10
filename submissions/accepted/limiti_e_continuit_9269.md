@@ -9,6 +9,7 @@ tags:
   - "Funzioni definite a tratti"
   - "Limiti notevoli"
   - "Parametri"
+ai_generated: true
 ---
 # Problem Text
 Determinare il valore del parametro reale $k$ affinché la seguente funzione definita a tratti sia continua in tutto il suo dominio $\mathbb{R}$:

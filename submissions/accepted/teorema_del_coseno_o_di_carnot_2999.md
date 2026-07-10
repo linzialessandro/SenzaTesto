@@ -8,6 +8,7 @@ tags:
   - "Trigonometria"
   - "Risoluzione dei triangoli"
   - "Teorema del coseno"
+ai_generated: true
 ---
 # Problem Text
 In un triangolo $ABC$, i lati che racchiudono l'angolo $\widehat{BAC} = 60^\circ$ hanno lunghezze $AB = 6\text{ cm}$ e $AC = 4\text{ cm}$. Determina la lunghezza del terzo lato $BC$.

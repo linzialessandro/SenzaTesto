@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - equazione pura
   - equazione spuria
+ai_generated: true
 ---
 # Problem Text
 Risolvi le seguenti equazioni di secondo grado incomplete:

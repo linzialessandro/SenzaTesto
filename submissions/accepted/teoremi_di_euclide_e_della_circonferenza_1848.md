@@ -9,6 +9,7 @@ tags:
   - tangente alla circonferenza
   - teorema di pitagora
   - circonferenza
+ai_generated: true
 ---
 # Problem Text
 In una circonferenza di centro $O$ e diametro $AB = 20 \text{ cm}$, si consideri un punto $H$ sul diametro $AB$ tale che $AH = 4 \text{ cm}$. Si conduca per $H$ la corda $CD$ perpendicolare al diametro $AB$.

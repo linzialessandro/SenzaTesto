@@ -8,6 +8,7 @@ tags:
   - "funzioni composte"
   - "retta tangente"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione della retta tangente al grafico della funzione

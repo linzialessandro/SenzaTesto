@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - limiti notevoli
   - forma indeterminata
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente limite sfruttando i limiti notevoli:

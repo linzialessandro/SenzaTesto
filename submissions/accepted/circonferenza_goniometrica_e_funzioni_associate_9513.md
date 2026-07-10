@@ -9,6 +9,7 @@ tags:
   - trasformazioni geometriche
   - grafici goniometrici
   - area triangolo
+ai_generated: true
 ---
 # Problem Text
 Il presente problema si articola in tre parti indipendenti, volte ad esplorare le definizioni delle funzioni goniometriche sulla circonferenza goniometrica, la loro applicazione analitica e la loro interpretazione geometrica.

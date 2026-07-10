@@ -6,6 +6,7 @@ difficulty: 4
 tags:
   - per parti
   - ricorsione
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente integrale per parti ciclico:

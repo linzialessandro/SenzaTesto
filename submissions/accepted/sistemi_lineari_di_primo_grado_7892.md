@@ -8,6 +8,7 @@ tags:
   - "metodo di sostituzione"
   - "prodotti notevoli"
   - "frazioni algebriche"
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente sistema lineare di due equazioni nelle incognite $x$ e $y$, riducendolo prima in forma normale:

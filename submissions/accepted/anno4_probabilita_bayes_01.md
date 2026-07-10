@@ -7,6 +7,7 @@ tags:
   - probabilità condizionata
   - bayes
   - probabilità totale
+ai_generated: true
 ---
 # Problem Text
 

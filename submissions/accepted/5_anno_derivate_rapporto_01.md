@@ -6,6 +6,7 @@ difficulty: 3
 tags:
   - derivata del quoziente
   - funzioni razionali
+ai_generated: true
 ---
 # Problem Text
 Calcola la derivata prima della funzione:

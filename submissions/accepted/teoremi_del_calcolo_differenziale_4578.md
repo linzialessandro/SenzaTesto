@@ -8,6 +8,7 @@ tags:
   - "Calcolo differenziale"
   - "Derivate"
   - "Analisi Matematica"
+ai_generated: true
 ---
 # Problem Text
 Data la funzione $f(x) = x^3 - 3x$, verificare se sono soddisfatte le ipotesi del teorema di Lagrange nell'intervallo $[0, 2]$ e determinare i valori del punto $c \in (0, 2)$ garantiti dal teorema.

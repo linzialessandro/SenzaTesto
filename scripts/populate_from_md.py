@@ -97,6 +97,7 @@ def main():
                 topic = meta['topic']
                 difficulty = meta['difficulty']
                 tags = meta.get('tags', [])
+                ai_generated = meta.get('ai_generated', False)
                 
                 # Recupera ID Anno
                 cur.execute("SELECT id FROM curriculum_years WHERE year_number = %s", (year,))
@@ -127,20 +128,22 @@ def main():
                 gen_hash = hashlib.sha256(hash_str.encode('utf-8')).hexdigest()
                 
                 cur.execute("""
-                    INSERT INTO exercises (topic_id, difficulty_level, problem_text, solution_text, generated_hash, tags)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO exercises (topic_id, difficulty_level, problem_text, solution_text, generated_hash, tags, ai_generated)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (generated_hash) 
                     DO UPDATE SET 
                         tags = EXCLUDED.tags,
                         problem_text = EXCLUDED.problem_text,
-                        solution_text = EXCLUDED.solution_text
+                        solution_text = EXCLUDED.solution_text,
+                        ai_generated = EXCLUDED.ai_generated
                 """, (
                     topic_id, 
                     difficulty, 
                     parsed['problem_text'], 
                     parsed['solution_text'], 
                     gen_hash,
-                    tags
+                    tags,
+                    ai_generated
                 ))
                 
                 print(f"  -> Successo: Inserito/Aggiornato Anno {year} - {topic}")

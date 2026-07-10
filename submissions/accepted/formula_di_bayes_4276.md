@@ -7,6 +7,7 @@ tags:
   - "Probabilit\u00e0 avanzata"
   - "Formula di Bayes"
   - "Probabilit\u00e0 condizionata"
+ai_generated: true
 ---
 # Problem Text
 Un test diagnostico per una malattia ha una sensibilità del $95\%$ (probabilità che il test sia positivo se il soggetto è malato) e una specificità del $90\%$ (probabilità che il test sia negativo se il soggetto è sano). Sapendo che il $2\%$ della popolazione è affetto da questa malattia, calcola la probabilità che un individuo scelto a caso sia effettivamente malato sapendo che il suo test è risultato positivo.

@@ -6,6 +6,7 @@ difficulty: 4
 tags:
   - seno e coseno
   - formula fondamentale
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione goniometrica, fornendo tutte e sole le soluzioni appartenenti all'intervallo $[0, 2\pi]$:

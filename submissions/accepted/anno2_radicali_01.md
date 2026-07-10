@@ -7,6 +7,7 @@ tags:
   - radicali
   - razionalizzazione
   - espressioni
+ai_generated: true
 ---
 # Problem Text
 

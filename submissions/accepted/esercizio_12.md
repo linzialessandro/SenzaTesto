@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - somma
   - semplificazione
+ai_generated: true
 ---
 # Problem Text
 Semplifica la seguente espressione con polinomi:

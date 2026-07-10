@@ -8,6 +8,7 @@ tags:
   - "Teorema di Carnot"
   - "Teorema del coseno"
   - "Triangoli qualunque"
+ai_generated: true
 ---
 # Problem Text
 In un triangolo qualunque $ABC$, due lati misurano $b = 3\text{ cm}$ e $c = 8\text{ cm}$, e l'angolo compreso tra essi è $\alpha = 60^\circ$. Determina la misura del terzo lato $a$.

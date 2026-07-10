@@ -9,6 +9,7 @@ tags:
   - "simmetria centrale"
   - "area quadrilateri"
   - "trasformazioni geometriche"
+ai_generated: true
 ---
 # Problem Text
 Siano dati i punti $A(2, 1)$ e $B(4, 5)$ nel piano cartesiano. Si considerino i loro simmetrici $A'$ e $B'$ rispetto al centro di simmetria $M(1, 2)$. Determinare l'area del parallelogramma $ABA'B'$.

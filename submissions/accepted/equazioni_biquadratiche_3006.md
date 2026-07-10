@@ -9,6 +9,7 @@ tags:
   - "algebra"
   - "scuola-superiore"
   - "metodo-di-sostituzione"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione biquadratica nell'insieme dei numeri reali $\mathbb{R}$:

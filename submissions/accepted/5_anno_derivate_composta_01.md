@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - funzione composta
   - regola della catena
+ai_generated: true
 ---
 # Problem Text
 Calcola la derivata prima della seguente funzione composta:

@@ -7,6 +7,7 @@ tags:
   - limiti
   - notevole
   - trigonometria
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente limite:

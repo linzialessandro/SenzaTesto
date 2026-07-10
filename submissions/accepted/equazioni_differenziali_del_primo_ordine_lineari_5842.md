@@ -8,6 +8,7 @@ tags:
   - "problema di Cauchy"
   - "limiti"
   - "analisi matematica"
+ai_generated: true
 ---
 # Problem Text
 Determinare la soluzione $y(x)$ del seguente problema di Cauchy per $x > 0$:

@@ -8,6 +8,7 @@ tags:
   - "regola del rapporto"
   - "retta tangente"
   - "analisi matematica"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione della retta tangente al grafico della funzione $f(x) = \frac{2x - 1}{x + 1}$ nel punto di ascissa $x_0 = 1$.

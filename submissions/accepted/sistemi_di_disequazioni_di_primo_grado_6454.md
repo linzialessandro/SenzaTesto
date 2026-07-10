@@ -7,6 +7,7 @@ tags:
   - "disequazioni"
   - "sistemi di disequazioni"
   - "primo grado"
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente sistema di disequazioni di primo grado:

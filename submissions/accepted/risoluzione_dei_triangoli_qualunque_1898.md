@@ -8,6 +8,7 @@ tags:
   - "Teorema del coseno"
   - "Triangoli qualunque"
   - "Risoluzione triangoli"
+ai_generated: true
 ---
 # Problem Text
 In un triangolo $ABC$, i lati $AC$ e $BC$ misurano rispettivamente $8\text{ cm}$ e $5\text{ cm}$, e l'angolo compreso $\widehat{C}$ è di $60^\circ$. Calcola la lunghezza del terzo lato $AB$.

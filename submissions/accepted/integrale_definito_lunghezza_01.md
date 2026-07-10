@@ -5,6 +5,7 @@ topic: integrali definiti
 difficulty: 4
 tags:
   - lunghezza curva
+ai_generated: true
 ---
 # Problem Text
 Calcola la lunghezza dell'arco di curva descritto dalla funzione $f(x) = \frac{2}{3}x \sqrt{x}$ nell'intervallo $[0, 3]$.

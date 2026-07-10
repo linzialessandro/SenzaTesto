@@ -6,6 +6,7 @@ difficulty: 4
 tags:
   - equazione esponenziale
   - sostituzione
+ai_generated: true
 ---
 # Problem Text
 Risolvi rigorosamente la seguente equazione esponenziale:

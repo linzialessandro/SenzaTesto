@@ -5,6 +5,7 @@ topic: integrali definiti
 difficulty: 3
 tags:
   - valore assoluto
+ai_generated: true
 ---
 # Problem Text
 Calcola il valore del seguente integrale definito: 

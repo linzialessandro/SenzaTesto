@@ -8,6 +8,7 @@ tags:
   - "razionalizzazione"
   - "propriet\u00e0 dei radicali"
   - "frazioni"
+ai_generated: true
 ---
 # Problem Text
 Razionalizza il denominatore della seguente frazione e semplifica il risultato:

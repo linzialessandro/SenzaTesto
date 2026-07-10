@@ -9,6 +9,7 @@ tags:
   - "parabola"
   - "derivate"
   - "massimi e minimi"
+ai_generated: true
 ---
 # Problem Text
 Determinare le dimensioni del rettangolo di area massima, avente la base sull'asse delle ascisse e due vertici appartenenti alla parabola di equazione $y = 9 - x^2$ nel semipiano $y \ge 0$.

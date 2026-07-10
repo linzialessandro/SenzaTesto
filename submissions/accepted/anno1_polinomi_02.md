@@ -6,6 +6,7 @@ difficulty: 3
 tags:
   - polinomi
   - divisione
+ai_generated: true
 ---
 # Problem Text
 

@@ -9,6 +9,7 @@ tags:
   - "criteri di congruenza"
   - "dimostrazioni geometriche"
   - "primo anno"
+ai_generated: true
 ---
 # Problem Text
 Dato un triangolo isoscele $ABC$ di base $BC$, siano $D$ ed $E$ due punti appartenenti rispettivamente ai lati $AB$ e $AC$ tali che:

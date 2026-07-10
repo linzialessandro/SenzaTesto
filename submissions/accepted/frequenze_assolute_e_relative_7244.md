@@ -8,6 +8,7 @@ tags:
   - "frequenze assolute"
   - "frequenze relative"
   - "percentuali"
+ai_generated: true
 ---
 # Problem Text
 In una classe di $25$ studenti è stata svolta un'indagine sul numero di ore settimanali dedicate allo sport. I dati raccolti, espressi come frequenze assolute, sono i seguenti:

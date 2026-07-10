@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - prodotti notevoli
   - quadrato di binomio
+ai_generated: true
 ---
 # Problem Text
 Sviluppa il seguente quadrato di binomio:

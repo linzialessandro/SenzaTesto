@@ -7,6 +7,7 @@ tags:
   - limiti notevoli
   - forme indeterminate
   - analisi matematica
+ai_generated: true
 ---
 # Problem Text
 

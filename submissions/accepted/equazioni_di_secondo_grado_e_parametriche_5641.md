@@ -8,6 +8,7 @@ tags:
   - "equazioni di secondo grado"
   - "somma e prodotto delle radici"
   - "coefficienti"
+ai_generated: true
 ---
 # Problem Text
 Determinare per quale valore del parametro reale $k$ la somma delle soluzioni dell'equazione di secondo grado $2x^2 - (k-1)x - 3 = 0$ è uguale a $4$.

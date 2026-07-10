@@ -9,6 +9,7 @@ tags:
   - "raccoglimento parziale"
   - "differenza di quadrati"
   - "biennio"
+ai_generated: true
 ---
 # Problem Text
 Scomponi in fattori il seguente polinomio:

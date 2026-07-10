@@ -5,6 +5,7 @@ topic: Sistemi lineari
 difficulty: 2
 tags:
   - metodo di riduzione
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente sistema lineare a due incognite utilizzando il metodo di riduzione:

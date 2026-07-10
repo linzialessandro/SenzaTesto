@@ -8,6 +8,7 @@ tags:
   - "Unione"
   - "Differenza"
   - "Operazioni tra insiemi"
+ai_generated: true
 ---
 # Problem Text
 Dati i seguenti tre insiemi:

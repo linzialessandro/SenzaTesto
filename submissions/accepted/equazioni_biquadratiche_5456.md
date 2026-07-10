@@ -8,6 +8,7 @@ tags:
   - "equazioni trinomie"
   - "grado superiore al secondo"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione biquadratica:

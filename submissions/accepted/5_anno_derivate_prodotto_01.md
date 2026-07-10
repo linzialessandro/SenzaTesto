@@ -5,6 +5,7 @@ topic: Calcolo delle derivate
 difficulty: 2
 tags:
   - regola del prodotto
+ai_generated: true
 ---
 # Problem Text
 Calcola la derivata prima della seguente funzione:

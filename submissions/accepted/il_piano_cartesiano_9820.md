@@ -11,6 +11,7 @@ tags:
   - area
   - perimetro
   - triangolo rettangolo
+ai_generated: true
 ---
 # Problem Text
 Nel piano cartesiano, si considerino i punti $A(1, 1)$ e $B(5, 3)$. 

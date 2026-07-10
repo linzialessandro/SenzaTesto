@@ -7,6 +7,7 @@ tags:
   - combinatorio
   - probabilità
   - urne
+ai_generated: true
 ---
 # Problem Text
 

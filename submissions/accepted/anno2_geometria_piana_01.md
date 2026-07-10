@@ -7,6 +7,7 @@ tags:
   - triangolo rettangolo
   - euclide
   - pitagora
+ai_generated: true
 ---
 # Problem Text
 

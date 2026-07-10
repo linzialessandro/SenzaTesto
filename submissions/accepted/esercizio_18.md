@@ -5,6 +5,7 @@ topic: sistemi lineari
 difficulty: 2
 tags:
   - metodo di sostituzione
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente sistema lineare utilizzando il metodo di sostituzione:

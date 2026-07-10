@@ -8,6 +8,7 @@ tags:
   - "Primo teorema di Euclide"
   - "Teorema di Euclide"
   - "Proiezioni sull'ipotenusa"
+ai_generated: true
 ---
 # Problem Text
 In un triangolo rettangolo $ABC$, con l'angolo retto in $A$, l'altezza $AH$ relativa all'ipotenusa divide quest'ultima nei segmenti $BH$ e $HC$. Sapendo che l'ipotenusa $BC$ misura $25\text{ cm}$ e che la proiezione $BH$ del cateto $AB$ misura $9\text{ cm}$, determina la lunghezza del cateto $AB$.

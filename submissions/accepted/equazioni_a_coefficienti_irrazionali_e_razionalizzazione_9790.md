@@ -8,6 +8,7 @@ tags:
   - "equazioni irrazionali"
   - "razionalizzazione"
   - "numeri reali"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione a coefficienti irrazionali:

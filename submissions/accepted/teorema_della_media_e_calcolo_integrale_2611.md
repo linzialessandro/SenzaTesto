@@ -8,6 +8,7 @@ tags:
   - "Calcolo integrale"
   - "Integrali definiti"
   - "Analisi Matematica"
+ai_generated: true
 ---
 # Problem Text
 Determinare il valor medio della funzione $f(x) = 3x^2 - 4x$ nell'intervallo $[0, 2]$ e calcolare il punto $c \in (0, 2)$ previsto dal teorema della media integrale.

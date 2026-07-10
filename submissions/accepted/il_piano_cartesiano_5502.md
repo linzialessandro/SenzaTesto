@@ -9,6 +9,7 @@ tags:
   - "punto medio"
   - "area triangolo"
   - "condizione di perpendicolarit\u00e0"
+ai_generated: true
 ---
 # Problem Text
 Determinare le coordinate del vertice $C$, situato nel primo quadrante, di un triangolo isoscele $ABC$ avente come base il segmento di estremi $A(1, 2)$ e $B(5, 4)$, sapendo che l'area del triangolo è $10$.

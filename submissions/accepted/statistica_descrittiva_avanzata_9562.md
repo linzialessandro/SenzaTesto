@@ -9,6 +9,7 @@ tags:
   - "varianza"
   - "scarto quadratico medio"
   - "deviazione standard"
+ai_generated: true
 ---
 # Problem Text
 Dato il seguente insieme di dati statistici:

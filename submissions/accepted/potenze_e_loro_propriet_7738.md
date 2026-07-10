@@ -8,6 +8,7 @@ tags:
   - "potenze"
   - "propriet\u00e0 delle potenze"
   - "espressioni"
+ai_generated: true
 ---
 # Problem Text
 Calcola il valore della seguente espressione applicando le proprietà delle potenze:

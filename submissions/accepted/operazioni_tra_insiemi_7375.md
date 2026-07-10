@@ -8,6 +8,7 @@ tags:
   - "Differenza tra insiemi"
   - "Insiemistica"
   - "Primo anno"
+ai_generated: true
 ---
 # Problem Text
 Dati i due insiemi:

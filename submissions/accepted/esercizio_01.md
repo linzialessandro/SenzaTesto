@@ -7,6 +7,7 @@ tags:
   - triangolo rettangolo
   - baricentro
   - ortocentro
+ai_generated: true
 ---
 # Problem Text
 Dato un triangolo rettangolo $ABC$ con l'angolo retto nel vertice $A$, i due cateti misurano $AB = 15$ e $AC = 20$. Determina la distanza tra il baricentro $G$ e l'ortocentro $H$ del triangolo.

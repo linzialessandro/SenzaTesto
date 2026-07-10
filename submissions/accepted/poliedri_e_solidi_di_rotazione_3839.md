@@ -8,6 +8,7 @@ tags:
   - "volume cono"
   - "stereometria"
   - "solidi di rotazione"
+ai_generated: true
 ---
 # Problem Text
 Un cono a base circolare ha il raggio di base pari a $5\text{ cm}$ e l'apotema lungo $13\text{ cm}$. Calcola il volume del cono.

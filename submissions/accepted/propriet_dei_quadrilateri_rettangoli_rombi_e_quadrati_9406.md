@@ -10,6 +10,7 @@ tags:
   - rombo
   - quadrato
   - dimostrazioni
+ai_generated: true
 ---
 # Problem Text
 Si consideri un generico rettangolo $ABCD$. Siano $M$, $N$, $P$ e $Q$ i punti medi rispettivamente dei lati $AB$, $BC$, $CD$ e $DA$.

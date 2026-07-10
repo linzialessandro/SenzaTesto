@@ -7,6 +7,7 @@ tags:
   - ellisse
   - semiassi
   - fuochi
+ai_generated: true
 ---
 # Problem Text
 Data l'equazione dell'ellisse $4x^2 + 9y^2 = 36$, determina la misura dei semiassi, le coordinate dei fuochi e l'eccentricità.

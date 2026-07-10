@@ -8,6 +8,7 @@ tags:
   - "perpendicolarit\u00e0"
   - "geometria analitica"
   - "coefficiente angolare"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione della retta $s$ passante per il punto $P(2, -3)$ e perpendicolare alla retta $r$ di equazione $3x - 4y + 5 = 0$.

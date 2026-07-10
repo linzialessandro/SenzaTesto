@@ -8,6 +8,7 @@ tags:
   - "disequazioni fratte"
   - "condizioni di esistenza"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 $$

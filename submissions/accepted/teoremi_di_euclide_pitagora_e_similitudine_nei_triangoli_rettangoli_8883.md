@@ -10,6 +10,7 @@ tags:
   - similitudine
   - aree
   - pitagora
+ai_generated: true
 ---
 # Problem Text
 Si consideri una semicirconferenza di diametro $AB = 2r$ e centro nell'origine $O$ (con raggio $OA = OB = r$). Sia $M$ il punto medio del raggio $OB$. Da $M$, si tracci la retta perpendicolare al diametro $AB$, che interseca la semicirconferenza nel punto $C$. Sia inoltre $D$ il punto di intersezione tra la retta tangente alla semicirconferenza nel punto $C$ e il prolungamento del diametro $AB$ oltre l'estremo $B$.

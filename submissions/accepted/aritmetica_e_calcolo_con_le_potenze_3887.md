@@ -8,6 +8,7 @@ tags:
   - scomposizione in fattori primi
   - MCD e mcm
   - numeri interi
+ai_generated: true
 ---
 # Problem Text
 1. Semplificare la seguente espressione numerica applicando le proprietà delle potenze e scrivendo il risultato sotto forma di frazione con numeratore pari a $1$:

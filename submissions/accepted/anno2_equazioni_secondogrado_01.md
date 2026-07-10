@@ -6,6 +6,7 @@ difficulty: 4
 tags:
   - equazioni parametriche
   - relazioni radici coefficienti
+ai_generated: true
 ---
 # Problem Text
 

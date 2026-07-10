@@ -8,6 +8,7 @@ tags:
   - "propriet\u00e0 dei triangoli"
   - "segmenti congruenti"
   - "dimostrazione geometrica"
+ai_generated: true
 ---
 # Problem Text
 Sia $ABC$ un triangolo isoscele sulla base $BC$. Si prolunghino i lati $AB$ e $AC$, oltre i vertici $B$ e $C$, di due segmenti congruenti $BD \cong CE$. Dimostrare che il triangolo $ADE$ è anch'esso un triangolo isoscele sulla base $DE$.

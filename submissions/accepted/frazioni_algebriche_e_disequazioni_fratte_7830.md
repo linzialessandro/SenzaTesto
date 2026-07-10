@@ -7,6 +7,7 @@ tags:
   - "Frazioni algebriche"
   - "Disequazioni fratte"
   - "Condizioni di esistenza"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione fratta, determinando preliminarmente le sue condizioni di esistenza ($C.E.$):

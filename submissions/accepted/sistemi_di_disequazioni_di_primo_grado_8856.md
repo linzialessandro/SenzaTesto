@@ -8,6 +8,7 @@ tags:
   - "sistemi di disequazioni"
   - "disequazioni intere"
   - "rappresentazione soluzioni"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'insieme delle soluzioni del seguente sistema di disequazioni di primo grado:

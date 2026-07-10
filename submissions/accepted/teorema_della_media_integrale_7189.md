@@ -7,6 +7,7 @@ tags:
   - "teorema della media integrale"
   - "integrale definito"
   - "calcolo integrale"
+ai_generated: true
 ---
 # Problem Text
 Determinare il valore $c \in [0, 3]$ garantito dal teorema della media integrale per la funzione $f(x) = x^2$ nell'intervallo $[0, 3]$.

@@ -8,6 +8,7 @@ tags:
   - "vettore normale"
   - "geometria nello spazio"
   - "equazione cartesiana"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione cartesiana del piano $\pi$ passante per il punto $P(2, -1, 3)$ e perpendicolare al vettore $\vec{n} = (3, 4, -2)$.

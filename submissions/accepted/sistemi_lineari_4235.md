@@ -9,6 +9,7 @@ tags:
   - "sistemi parametrici"
   - "discussione dei sistemi"
   - "secondo anno"
+ai_generated: true
 ---
 # Problem Text
 Si discuta e si risolva, al variare del parametro reale $k \in \mathbb{R}$, il seguente sistema lineare tramite la regola di Cramer:

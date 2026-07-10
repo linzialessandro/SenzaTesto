@@ -8,6 +8,7 @@ tags:
   - "asintoti"
   - "forme indeterminate"
   - "sviluppi in serie"
+ai_generated: true
 ---
 # Problem Text
 Determinare i valori dei parametri reali $a$ e $b$ affinché la funzione:

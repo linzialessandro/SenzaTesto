@@ -9,6 +9,7 @@ tags:
   - "equazione canonica"
   - "distanza focale"
   - "coniche"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione dell'ellisse riferita ai propri assi, con i fuochi sull'asse delle ascisse, sapendo che la distanza focale è pari a $6$ e che il semiasse maggiore è pari a $5$.

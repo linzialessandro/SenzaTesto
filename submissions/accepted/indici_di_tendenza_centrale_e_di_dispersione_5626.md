@@ -9,6 +9,7 @@ tags:
   - "Varianza"
   - "Scarto quadratico medio"
   - "Deviazione standard"
+ai_generated: true
 ---
 # Problem Text
 Dato il seguente insieme di voti ottenuti da cinque studenti in un test di matematica:

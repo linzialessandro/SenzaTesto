@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - integrali polinomi
   - regole di integrazione
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente integrale indefinito:

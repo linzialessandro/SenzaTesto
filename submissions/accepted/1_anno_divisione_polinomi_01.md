@@ -7,6 +7,7 @@ tags:
   - divisione in colonna
   - quoziente
   - resto
+ai_generated: true
 ---
 # Problem Text
 Esegui la seguente divisione tra polinomi e determina il quoziente $Q(x)$ e il resto $R(x)$:

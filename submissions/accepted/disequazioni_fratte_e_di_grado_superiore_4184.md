@@ -8,6 +8,7 @@ tags:
   - "disequazioni di grado superiore"
   - "metodo dei segni"
   - "scomposizione in fattori"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione fratta nel campo dei numeri reali:

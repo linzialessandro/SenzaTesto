@@ -8,6 +8,7 @@ tags:
   - "Funzioni goniometriche"
   - "Angoli notevoli"
   - "Espressioni goniometriche"
+ai_generated: true
 ---
 # Problem Text
 Calcola il valore esatto della seguente espressione goniometrica:

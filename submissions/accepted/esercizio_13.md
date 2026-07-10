@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - pitagora
   - area
+ai_generated: true
 ---
 # Problem Text
 In un triangolo rettangolo, l'ipotenusa misura $13\text{ cm}$ e un cateto misura $5\text{ cm}$. Calcola la lunghezza dell'altro cateto e l'area del triangolo.

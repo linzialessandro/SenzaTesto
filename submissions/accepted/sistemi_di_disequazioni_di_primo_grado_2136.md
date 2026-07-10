@@ -8,6 +8,7 @@ tags:
   - "sistemi di disequazioni"
   - "disequazioni di primo grado"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente sistema di disequazioni di primo grado:

@@ -9,6 +9,7 @@ tags:
   - "equazioni goniometriche"
   - "tangente"
   - "formule di duplicazione"
+ai_generated: true
 ---
 # Problem Text
 Determinare per quali valori dell'angolo $x \in \left(0, \frac{\pi}{2}\right)$ l'area del triangolo rettangolo delimitato dagli assi cartesiani e dalla retta tangente alla circonferenza goniometrica nel punto $P(\cos x, \sin x)$ è pari a $2$.

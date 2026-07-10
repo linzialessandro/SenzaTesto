@@ -8,6 +8,7 @@ tags:
   - "solidi di rotazione"
   - "metodo dei dischi"
   - "calcolo integrale"
+ai_generated: true
 ---
 # Problem Text
 Calcolare il volume del solido ottenuto dalla rotazione completa attorno all'asse $x$ della regione di piano delimitata dal grafico della funzione

@@ -5,6 +5,7 @@ topic: Equazioni di secondo grado
 difficulty: 1
 tags:
   - formula risolutiva
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione di secondo grado completa:

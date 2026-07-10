@@ -8,6 +8,7 @@ tags:
   - "equazioni parametriche"
   - "equazione spuria"
   - "condizione di realt\u00e0"
+ai_generated: true
 ---
 # Problem Text
 Determinare il valore del parametro reale $k$ per cui l'equazione di secondo grado $x^2 - (k-1)x + 2k - 8 = 0$ ammette come soluzione $x = 3$.

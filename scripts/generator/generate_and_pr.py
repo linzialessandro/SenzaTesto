@@ -80,6 +80,7 @@ year: {data.year}
 macro_area: {json.dumps(data.macro_area)}
 topic: {json.dumps(data.topic)}
 difficulty: {data.difficulty}
+ai_generated: true
 tags:
 {tags_str}
 ---

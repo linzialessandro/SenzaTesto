@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - calcolo algebrico
   - cambio verso
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione di primo grado:

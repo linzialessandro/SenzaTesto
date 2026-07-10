@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - ruffini
   - divisione
+ai_generated: true
 ---
 # Problem Text
 Esegui la divisione del polinomio $P(x) = x^3 - 2x^2 - 5x + 6$ per il binomio $(x-1)$ utilizzando la regola di Ruffini e indica quoziente e resto.

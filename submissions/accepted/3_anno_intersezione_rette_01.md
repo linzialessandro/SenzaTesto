@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - intersezione
   - sistema lineare
+ai_generated: true
 ---
 # Problem Text
 Trova le coordinate del punto di intersezione tra le rette $r: 2x - y + 1 = 0$ e $s: x + y - 4 = 0$.

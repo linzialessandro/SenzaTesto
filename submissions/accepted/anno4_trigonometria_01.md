@@ -7,6 +7,7 @@ tags:
   - equazioni goniometriche
   - formule di addizione
   - seno e coseno
+ai_generated: true
 ---
 # Problem Text
 

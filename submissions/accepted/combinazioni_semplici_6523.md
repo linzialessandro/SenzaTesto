@@ -7,6 +7,7 @@ tags:
   - "combinazioni semplici"
   - "coefficiente binomiale"
   - "calcolo combinatorio"
+ai_generated: true
 ---
 # Problem Text
 In un gruppo di $10$ persone, si desidera costituire un comitato formato da $4$ membri. Quanti diversi comitati è possibile formare?

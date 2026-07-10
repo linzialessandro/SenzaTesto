@@ -10,6 +10,7 @@ tags:
   - "simmetrie delle funzioni"
   - "segno della funzione"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Data la funzione reale di variabile reale $f: \mathbb{R} \to \mathbb{R}$ definita da:

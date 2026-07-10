@@ -7,6 +7,7 @@ tags:
   - "integrale definito"
   - "teorema della media"
   - "logaritmo"
+ai_generated: true
 ---
 # Problem Text
 Si consideri la funzione $f(x) = \ln(x)$ definita nell'intervallo $[1, e]$. Determinare il valore esatto del punto $c \in [1, e]$ garantito dal teorema della media integrale, verificando che appartenga effettivamente all'intervallo considerato.

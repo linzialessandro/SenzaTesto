@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - limite all'infinito
   - polinomi
+ai_generated: true
 ---
 # Problem Text
 Calcola il valore del seguente limite per $x$ che tende ad infinito:

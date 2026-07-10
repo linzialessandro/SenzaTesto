@@ -9,6 +9,7 @@ tags:
   - "metodo grafico della parabola"
   - "metodo dei segni"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione fratta:

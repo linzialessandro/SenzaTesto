@@ -9,6 +9,7 @@ tags:
   - "teorema degli zeri"
   - "analisi matematica"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Dimostrare, applicando il teorema di esistenza degli zeri, che l'equazione

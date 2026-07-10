@@ -9,6 +9,7 @@ tags:
   - "tangenza"
   - "vertice"
   - "geometria analitica"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione dell'ellisse riferita ai propri assi, della forma:

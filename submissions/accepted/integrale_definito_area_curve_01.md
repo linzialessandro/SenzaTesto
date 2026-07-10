@@ -6,6 +6,7 @@ difficulty: 3
 tags:
   - calcolo aree
   - due curve
+ai_generated: true
 ---
 # Problem Text
 Trova l'area della regione di piano delimitata dalle funzioni $y = x^2$ e $y = \sqrt{x}$.

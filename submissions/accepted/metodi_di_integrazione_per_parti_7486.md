@@ -7,6 +7,7 @@ tags:
   - "Integrali indefiniti"
   - "Integrazione per parti"
   - "Logaritmo"
+ai_generated: true
 ---
 # Problem Text
 Calcolare il seguente integrale indefinito:

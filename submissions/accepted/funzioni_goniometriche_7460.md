@@ -8,6 +8,7 @@ tags:
   - "Funzioni goniometriche"
   - "Angoli associati"
   - "Radianti"
+ai_generated: true
 ---
 # Problem Text
 Calcolare il valore della seguente espressione goniometrica:

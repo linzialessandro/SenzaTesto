@@ -9,6 +9,7 @@ tags:
   - "connettivi logici"
   - "prodotto cartesiano"
   - "differenza di insiemi"
+ai_generated: true
 ---
 # Problem Text
 Siano dati i due insiemi $A, B \subset \mathbb{Z}$ definiti mediante le seguenti condizioni logiche:

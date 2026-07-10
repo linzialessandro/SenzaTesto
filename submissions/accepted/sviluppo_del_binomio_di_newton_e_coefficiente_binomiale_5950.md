@@ -8,6 +8,7 @@ tags:
   - "coefficiente binomiale"
   - "calcolo combinatorio"
   - "quarto anno"
+ai_generated: true
 ---
 # Problem Text
 Determinare il coefficiente del termine in $x^3$ nello sviluppo del seguente binomio:

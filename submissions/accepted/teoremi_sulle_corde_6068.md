@@ -8,6 +8,7 @@ tags:
   - "teorema delle corde"
   - "geometria euclidea"
   - "corde"
+ai_generated: true
 ---
 # Problem Text
 In una circonferenza, due corde $AB$ e $CD$ si intersecano in un punto $P$. Sapendo che i segmenti in cui rimane divisa la prima corda hanno lunghezze $AP = 4\text{ cm}$ e $PB = 9\text{ cm}$, e che uno dei due segmenti della seconda corda misura $CP = 6\text{ cm}$, determina la lunghezza del segmento $PD$.

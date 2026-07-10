@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - scomposizione
   - forma indeterminata 0/0
+ai_generated: true
 ---
 # Problem Text
 Calcola il valore del seguente limite in un punto:

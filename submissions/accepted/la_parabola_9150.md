@@ -8,6 +8,7 @@ tags:
   - "geometria analitica"
   - "equazione parabola"
   - "coniche"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione della parabola con asse di simmetria parallelo all'asse $y$, avente il vertice nel punto $V(1, -2)$ e passante per il punto $A(3, 2)$.

@@ -7,6 +7,7 @@ tags:
   - "valore assoluto"
   - "disequazioni"
   - "secondo grado"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione con valore assoluto:

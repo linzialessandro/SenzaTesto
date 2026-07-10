@@ -9,6 +9,7 @@ tags:
   - "razionalizzazione"
   - "trasporto fuori dal segno di radice"
   - "operazioni con radicali"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione a coefficienti irrazionali, semplificando i radicali e razionalizzando i denominatori dove necessario:

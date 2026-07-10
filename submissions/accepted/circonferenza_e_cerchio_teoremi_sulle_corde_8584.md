@@ -7,6 +7,7 @@ tags:
   - "teorema delle corde"
   - "circonferenza"
   - "geometria euclidea"
+ai_generated: true
 ---
 # Problem Text
 In una circonferenza, due corde $AB$ e $CD$ si intersecano in un punto interno $P$. Sapendo che le lunghezze dei segmenti in cui $P$ divide la corda $AB$ sono $AP = 4\text{ cm}$ e $PB = 9\text{ cm}$, e che il segmento $CP$ misura $3\text{ cm}$, determina la lunghezza della corda $CD$.

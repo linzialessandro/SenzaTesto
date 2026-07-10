@@ -8,6 +8,7 @@ tags:
   - "Teorema di Carnot"
   - "Triangoli qualunque"
   - "Risoluzione dei triangoli"
+ai_generated: true
 ---
 # Problem Text
 In un triangolo qualunque $ABC$, due lati misurano rispettivamente $a = 5\text{ cm}$ e $b = 8\text{ cm}$. Sapendo che l'angolo compreso tra essi è $\gamma = 60^\circ$, determina la lunghezza del terzo lato $c$.

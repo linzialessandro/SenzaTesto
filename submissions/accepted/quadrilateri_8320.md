@@ -8,6 +8,7 @@ tags:
   - "angoli interni"
   - "quadrilateri"
   - "geometria piana"
+ai_generated: true
 ---
 # Problem Text
 In un trapezio isoscele, la somma dei due angoli adiacenti alla base maggiore è pari a $140^\circ$. Determina l'ampiezza di ciascuno dei quattro angoli interni del trapezio.

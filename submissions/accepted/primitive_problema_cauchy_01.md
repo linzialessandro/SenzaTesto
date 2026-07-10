@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - primitive
   - problema di Cauchy
+ai_generated: true
 ---
 # Problem Text
 Determina la primitiva $F(x)$ della funzione $f(x) = 3e^x + 2x$ il cui grafico passa per il punto $P(0, 5)$.

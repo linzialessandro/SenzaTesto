@@ -9,6 +9,7 @@ tags:
   - condizioni di esistenza
   - operazioni con radicali
   - trasporto fuori radice
+ai_generated: true
 ---
 # Problem Text
 Il presente problema propone di verificare la competenza dello studente nell'ambito dell'algebra irrazionale, affrontando nello specifico la determinazione delle condizioni di esistenza, la semplificazione di espressioni letterali irrazionali e la razionalizzazione di denominatori contenenti somme di più radicali.

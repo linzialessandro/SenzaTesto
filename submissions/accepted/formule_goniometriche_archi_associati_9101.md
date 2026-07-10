@@ -8,6 +8,7 @@ tags:
   - "goniometria"
   - "semplificazione"
   - "relazione fondamentale"
+ai_generated: true
 ---
 # Problem Text
 Semplifica la seguente espressione goniometrica utilizzando le formule delle funzioni goniometriche degli archi associati:

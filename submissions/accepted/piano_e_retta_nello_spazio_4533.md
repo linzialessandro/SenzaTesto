@@ -8,6 +8,7 @@ tags:
   - "equazione di un piano"
   - "perpendicolarit\u00e0"
   - "vettori nello spazio"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione cartesiana del piano passante per il punto $P(1, -2, 3)$ e perpendicolare alla retta passante per i punti $A(2, 0, -1)$ e $B(4, 3, 1)$.

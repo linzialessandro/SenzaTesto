@@ -7,6 +7,7 @@ tags:
   - irrazionali
   - radicali
   - condizioni
+ai_generated: true
 ---
 # Problem Text
 

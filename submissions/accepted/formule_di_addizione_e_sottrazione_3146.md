@@ -9,6 +9,7 @@ tags:
   - "formule di sottrazione"
   - "semplificazione"
   - "coseno"
+ai_generated: true
 ---
 # Problem Text
 Semplifica la seguente espressione goniometrica:

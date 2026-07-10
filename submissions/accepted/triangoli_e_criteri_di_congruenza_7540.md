@@ -8,6 +8,7 @@ tags:
   - "congruenza"
   - "criteri di congruenza"
   - "dimostrazione"
+ai_generated: true
 ---
 # Problem Text
 Sia $ABC$ un triangolo isoscele di base $AB$. Si considerino sulla base $AB$ due segmenti congruenti $AP$ e $QB$, con $P$ e $Q$ interni ad $AB$ tali che $P$ sia compreso tra $A$ e $Q$. Dimostra che il triangolo $CPQ$ è anch'esso isoscele.

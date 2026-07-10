@@ -8,6 +8,7 @@ tags:
   - "Equazioni fratte"
   - "Condizioni di esistenza"
   - "Semplificazione"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'insieme delle soluzioni della seguente equazione razionale fratta, prestando attenzione alle condizioni di esistenza e alla semplificazione delle frazioni:

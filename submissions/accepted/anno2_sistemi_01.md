@@ -7,6 +7,7 @@ tags:
   - sistemi lineari
   - cramer
   - parametrico
+ai_generated: true
 ---
 # Problem Text
 

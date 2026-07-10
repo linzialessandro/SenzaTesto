@@ -7,6 +7,7 @@ tags:
   - scomposizione
   - mcd
   - mcm
+ai_generated: true
 ---
 # Problem Text
 Determina il Massimo Comune Divisore (MCD) e il minimo comune multiplo (mcm) dei seguenti polinomi:

@@ -8,6 +8,7 @@ tags:
   - "Disequazioni"
   - "Algebra"
   - "Scuola secondaria di secondo grado"
+ai_generated: true
 ---
 # Problem Text
 Determina le soluzioni della seguente disequazione con valore assoluto:

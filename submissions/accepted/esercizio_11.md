@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - fattori primi
   - calcolo
+ai_generated: true
 ---
 # Problem Text
 Calcola il Massimo Comune Divisore (MCD) e il minimo comune multiplo (mcm) dei numeri 12, 18 e 24.

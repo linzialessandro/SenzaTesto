@@ -7,6 +7,7 @@ tags:
   - circonferenza
   - rette tangenti
   - distanza centro retta
+ai_generated: true
 ---
 # Problem Text
 

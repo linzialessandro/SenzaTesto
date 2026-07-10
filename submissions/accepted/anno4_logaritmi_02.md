@@ -7,6 +7,7 @@ tags:
   - logaritmi
   - disequazioni
   - dominio
+ai_generated: true
 ---
 # Problem Text
 

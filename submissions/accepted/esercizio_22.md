@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - centro
   - raggio
+ai_generated: true
 ---
 # Problem Text
 Determina le coordinate del centro $C$ e la misura del raggio $r$ della circonferenza di equazione:

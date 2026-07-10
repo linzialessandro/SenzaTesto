@@ -6,6 +6,7 @@ difficulty: 3
 tags:
   - esponenziali
   - sostituzione
+ai_generated: true
 ---
 # Problem Text
 

@@ -8,6 +8,7 @@ tags:
   - "combinazioni"
   - "somma pari"
   - "estrazioni senza reinserimento"
+ai_generated: true
 ---
 # Problem Text
 Un'urna contiene 9 palline numerate da 1 a 9. Si estraggono contemporaneamente 3 palline dall'urna. Calcola la probabilità che la somma dei tre numeri estratti sia un numero pari.

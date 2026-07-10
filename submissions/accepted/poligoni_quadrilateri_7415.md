@@ -8,6 +8,7 @@ tags:
   - "angoli interni"
   - "quadrilateri"
   - "geometria piana"
+ai_generated: true
 ---
 # Problem Text
 In un trapezio isoscele $ABCD$ di base maggiore $AB$, l'angolo interno $\hat{A}$ misura $68^\circ$. Determina l'ampiezza degli altri tre angoli interni del trapezio.

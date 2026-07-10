@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - disequazioni di secondo grado
   - parabola
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione di secondo grado:

@@ -9,6 +9,7 @@ tags:
   - "teorema di pitagora"
   - "distanza punto-piano"
   - "stereometria"
+ai_generated: true
 ---
 # Problem Text
 Si consideri una piramide quadrangolare regolare di vertice $V$ e base quadrata $ABCD$ avente tutti gli spigoli (sia di base che laterali) di lunghezza $a$. Si determini la distanza tra il centro $O$ della base e una qualsiasi delle facce laterali della piramide.

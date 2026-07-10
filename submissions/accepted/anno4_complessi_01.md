@@ -7,6 +7,7 @@ tags:
   - complessi
   - de moivre
   - forma trigonometrica
+ai_generated: true
 ---
 # Problem Text
 

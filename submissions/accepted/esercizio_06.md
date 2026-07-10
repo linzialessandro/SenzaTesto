@@ -7,6 +7,7 @@ tags:
   - metodo di cramer
   - parametro
   - discussione
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente sistema lineare con il metodo di Cramer. Discuti inoltre per quali valori del parametro $k \in \mathbb{R}$ il sistema risulta indeterminato o impossibile.

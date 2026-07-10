@@ -9,6 +9,7 @@ tags:
   - funzioni a tratti
   - punti di discontinuità
   - verifica limiti
+ai_generated: true
 ---
 # Problem Text
 Il presente problema propone di approfondire i concetti di limite e continuità attraverso tre quesiti indipendenti: la verifica formale di un limite tramite la definizione, lo studio di continuità per una funzione a tratti parametrica e la classificazione completa dei punti di discontinuità.

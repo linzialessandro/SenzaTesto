@@ -8,6 +8,7 @@ tags:
   - "limiti notevoli"
   - "forme indeterminate"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Determinare il valore del seguente limite utilizzando i limiti notevoli trigonometrici:

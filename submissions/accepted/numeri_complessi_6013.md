@@ -8,6 +8,7 @@ tags:
   - "equazioni"
   - "forma esponenziale"
   - "forma algebrica"
+ai_generated: true
 ---
 # Problem Text
 Determina tutte le soluzioni complesse dell'equazione:

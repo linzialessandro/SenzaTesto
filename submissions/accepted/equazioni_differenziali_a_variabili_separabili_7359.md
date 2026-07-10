@@ -7,6 +7,7 @@ tags:
   - "equazioni differenziali"
   - "variabili separabili"
   - "problema di Cauchy"
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente problema di Cauchy:

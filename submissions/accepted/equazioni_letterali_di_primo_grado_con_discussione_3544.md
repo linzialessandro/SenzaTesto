@@ -8,6 +8,7 @@ tags:
   - "equazioni di primo grado"
   - "discussione dei parametri"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi e discuti la seguente equazione letterale di primo grado nell'incognita $x$ al variare del parametro reale $a$:

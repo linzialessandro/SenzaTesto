@@ -7,6 +7,7 @@ tags:
   - funzioni
   - dominio
   - asintoti
+ai_generated: true
 ---
 # Problem Text
 

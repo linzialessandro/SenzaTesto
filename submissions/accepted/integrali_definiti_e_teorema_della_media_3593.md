@@ -9,6 +9,7 @@ tags:
   - primitiva
   - torricelli-barrow
   - significato geometrico
+ai_generated: true
 ---
 # Problem Text
 Si consideri la funzione reale di variabile reale definita nell'intervallo $[0, 3]$ da:

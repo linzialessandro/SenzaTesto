@@ -8,6 +8,7 @@ tags:
   - "eventi aleatori"
   - "urna"
   - "probabilit\u00e0 unione"
+ai_generated: true
 ---
 # Problem Text
 Un'urna contiene 12 palline rosse, 8 palline blu e 10 palline verdi. Calcola la probabilità che, estraendo a caso una singola pallina, essa sia rossa o blu.

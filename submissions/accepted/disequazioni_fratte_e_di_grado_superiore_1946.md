@@ -9,6 +9,7 @@ tags:
   - metodo dei segni
   - scomposizione in fattori
   - condizioni di esistenza
+ai_generated: true
 ---
 # Problem Text
 Risolvere la seguente disequazione razionale fratta:

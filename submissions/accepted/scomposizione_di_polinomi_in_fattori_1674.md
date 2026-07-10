@@ -8,6 +8,7 @@ tags:
   - "Scomposizione in fattori"
   - "Raccoglimento totale"
   - "Differenza di quadrati"
+ai_generated: true
 ---
 # Problem Text
 Scomponi in fattori il seguente polinomio:

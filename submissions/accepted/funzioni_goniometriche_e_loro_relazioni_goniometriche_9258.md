@@ -9,6 +9,7 @@ tags:
   - "relazioni fondamentali"
   - "equazioni parametriche"
   - "circonferenza goniometrica"
+ai_generated: true
 ---
 # Problem Text
 Determinare per quali valori del parametro reale $k$ l'equazione:

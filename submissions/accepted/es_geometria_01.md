@@ -7,6 +7,7 @@ tags:
   - triangolo
   - isoscele
   - dimostrazione
+ai_generated: true
 ---
 # Problem Text
 In un triangolo isoscele $ABC$, la base $AB$ misura $12 \text{ cm}$ e il lato obliquo $AC$ misura $10 \text{ cm}$.

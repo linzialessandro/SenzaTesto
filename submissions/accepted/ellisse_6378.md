@@ -8,6 +8,7 @@ tags:
   - "Ellisse"
   - "Tangenza"
   - "Geometria Analitica"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione dell'ellisse riferita ai propri assi del tipo $ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 $ che passa per il punto $ P(2, 3) $ ed è tangente alla retta di equazione $ y = -x + 5 $.

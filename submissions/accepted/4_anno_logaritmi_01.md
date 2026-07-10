@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - equazioni logaritmiche
   - proprietà dei logaritmi
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione logaritmica:

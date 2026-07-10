@@ -6,6 +6,7 @@ difficulty: 3
 tags:
   - per sostituzione
   - funzioni goniometriche
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente integrale definito: 

@@ -7,6 +7,7 @@ tags:
   - derivate
   - lagrange
   - funzioni
+ai_generated: true
 ---
 # Problem Text
 

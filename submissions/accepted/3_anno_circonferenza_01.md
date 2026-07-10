@@ -5,6 +5,7 @@ topic: Coniche
 difficulty: 2
 tags:
   - circonferenza
+ai_generated: true
 ---
 # Problem Text
 Scrivi l'equazione della circonferenza avente centro nel punto $C(2, -1)$ e raggio $r = 3$.

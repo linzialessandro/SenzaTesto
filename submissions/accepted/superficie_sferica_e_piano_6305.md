@@ -9,6 +9,7 @@ tags:
   - "retta nello spazio"
   - "intersezione"
   - "circonferenza nello spazio"
+ai_generated: true
 ---
 # Problem Text
 Determinare il centro $H$ e il raggio $r$ della circonferenza ottenuta dall'intersezione tra la superficie sferica $S$ di equazione $x^2 + y^2 + z^2 - 2x + 4y - 6z - 2 = 0$ e il piano $\pi$ di equazione $2x - y + 2z - 1 = 0$.

@@ -8,6 +8,7 @@ tags:
   - "Teorema dei coseni"
   - "Risoluzione dei triangoli qualunque"
   - "Trigonometria"
+ai_generated: true
 ---
 # Problem Text
 In un triangolo qualunque $ABC$, le misure dei lati $BC$ e $AC$ sono rispettivamente $a = 3\text{ cm}$ e $b = 8\text{ cm}$. Sapendo che l'angolo compreso tra essi è $\widehat{C} = 60^\circ$, determina la lunghezza del terzo lato $AB$.

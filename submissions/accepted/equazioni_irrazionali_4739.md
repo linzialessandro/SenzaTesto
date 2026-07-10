@@ -7,6 +7,7 @@ tags:
   - "equazioni irrazionali"
   - "radicali"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione irrazionale:

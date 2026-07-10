@@ -8,6 +8,7 @@ tags:
   - "triangolo rettangolo"
   - "proiezione cateti"
   - "altezza relativa ipotenusa"
+ai_generated: true
 ---
 # Problem Text
 In un triangolo rettangolo, la proiezione di un cateto sull'ipotenusa misura $9\text{ cm}$ e l'altezza relativa all'ipotenusa misura $12\text{ cm}$. Calcola la misura della proiezione dell'altro cateto sull'ipotenusa e la lunghezza dell'ipotenusa.

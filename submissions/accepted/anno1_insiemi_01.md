@@ -8,6 +8,7 @@ tags:
   - unione
   - intersezione
   - differenza
+ai_generated: true
 ---
 # Problem Text
 

@@ -8,6 +8,7 @@ tags:
   - "trapezio"
   - "angoli interni"
   - "geometria piana"
+ai_generated: true
 ---
 # Problem Text
 In un trapezio isoscele $ABCD$, avente base maggiore $AB$ e base minore $CD$, l'angolo interno $\hat{A}$ adiacente alla base maggiore misura $65^\circ$. Determina l'ampiezza degli altri tre angoli interni del trapezio.

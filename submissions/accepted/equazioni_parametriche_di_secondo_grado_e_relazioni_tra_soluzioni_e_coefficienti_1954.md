@@ -9,6 +9,7 @@ tags:
   - equazioni parametriche
   - relazioni tra radici e coefficienti
   - regola di cartesio
+ai_generated: true
 ---
 # Problem Text
 Si consideri la seguente equazione parametrica di secondo grado nell'incognita reale $x$, con parametro reale $k \in \mathbb{R}$:

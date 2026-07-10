@@ -7,6 +7,7 @@ tags:
   - disequazioni
   - fratte
   - studio del segno
+ai_generated: true
 ---
 # Problem Text
 

@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - retta per due punti
   - forma esplicita
+ai_generated: true
 ---
 # Problem Text
 Determina l'equazione della retta passante per i punti $A(-1, 3)$ e $B(2, -3)$, e scrivila in forma esplicita.

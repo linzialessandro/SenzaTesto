@@ -9,6 +9,7 @@ tags:
   - "unione"
   - "intersezione"
   - "differenza"
+ai_generated: true
 ---
 # Problem Text
 Dati i seguenti sottoinsiemi dell'insieme universo $U = \{x \in \mathbb{N} \mid 1 \le x \le 10\}$:

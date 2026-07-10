@@ -8,6 +8,7 @@ tags:
   - formule di sottrazione
   - semplificazione goniometrica
   - funzioni goniometriche
+ai_generated: true
 ---
 # Problem Text
 Si consideri la seguente espressione goniometrica:

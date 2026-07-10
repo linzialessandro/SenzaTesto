@@ -9,6 +9,7 @@ tags:
   - "regola di Cramer"
   - "regola di Sarrus"
   - "secondo anno"
+ai_generated: true
 ---
 # Problem Text
 Risolvere il seguente sistema di tre equazioni di primo grado in tre incognite, prima applicando il metodo di riduzione per eliminare le variabili e successivamente verificando il risultato ottenuto tramite la regola di Cramer:

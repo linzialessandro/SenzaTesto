@@ -5,6 +5,7 @@ topic: Il piano cartesiano
 difficulty: 1
 tags:
   - distanza tra punti
+ai_generated: true
 ---
 # Problem Text
 Calcola la distanza tra i punti $A(-2, 3)$ e $B(4, -5)$ sul piano cartesiano.

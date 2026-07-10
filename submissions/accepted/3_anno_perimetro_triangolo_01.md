@@ -7,6 +7,7 @@ tags:
   - distanza tra due punti
   - perimetro
   - triangolo
+ai_generated: true
 ---
 # Problem Text
 Calcola il perimetro del triangolo i cui vertici nel piano cartesiano sono $A(1, 2)$, $B(4, 6)$ e $C(-2, 6)$.

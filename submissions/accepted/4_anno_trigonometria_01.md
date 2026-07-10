@@ -7,6 +7,7 @@ tags:
   - equazione lineare
   - seno
   - coseno
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione goniometrica lineare nell'intervallo $[0, 2\pi]$:

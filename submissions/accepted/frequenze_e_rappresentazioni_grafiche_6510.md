@@ -10,6 +10,7 @@ tags:
   - media aritmetica
   - moda e mediana
   - aerogramma
+ai_generated: true
 ---
 # Problem Text
 Un'indagine statistica condotta su un campione di $120$ studenti di un liceo riguardo al numero di libri letti per diletto personale durante l'ultimo anno ha prodotto i dati parziali riassunti nella seguente tabella:

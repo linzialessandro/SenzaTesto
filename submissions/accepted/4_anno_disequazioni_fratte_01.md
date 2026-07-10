@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - studio del segno
   - disequazioni fratte
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione fratta:

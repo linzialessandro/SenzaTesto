@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - vertice
   - intersezioni
+ai_generated: true
 ---
 # Problem Text
 Data la parabola di equazione $y = x^2 - 4x + 3$, determina le coordinate del vertice $V$ e le intersezioni con gli assi cartesiani.

@@ -8,6 +8,7 @@ tags:
   - "Distribuzione normale"
   - "Standardizzazione"
   - "Gauss"
+ai_generated: true
 ---
 # Problem Text
 Sia $X$ una variabile aleatoria continua con distribuzione normale di media $\mu = 80$ e deviazione standard $\sigma = 10$. Calcola la probabilità $P(X \le 90)$, sapendo che per la variabile normale standardizzata $Z$ si ha $\Phi(1) \approx 0,8413$.

@@ -8,6 +8,7 @@ tags:
   - "Equazioni lineari"
   - "Metodo dell'angolo aggiunto"
   - "Quarto anno"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione goniometrica lineare:

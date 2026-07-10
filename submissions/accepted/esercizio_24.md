@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - parabola
   - scomposizione
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione di secondo grado:

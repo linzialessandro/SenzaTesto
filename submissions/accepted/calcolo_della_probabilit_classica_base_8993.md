@@ -8,6 +8,7 @@ tags:
   - "eventi aleatori"
   - "estrazioni"
   - "matematica di base"
+ai_generated: true
 ---
 # Problem Text
 Un'urna contiene $6$ palline rosse, $9$ palline verdi e $5$ palline blu. Estraendo a caso una pallina dall'urna, calcola la probabilità che essa sia rossa o blu.

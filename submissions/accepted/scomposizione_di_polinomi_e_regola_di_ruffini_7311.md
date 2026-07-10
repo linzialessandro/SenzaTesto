@@ -9,6 +9,7 @@ tags:
   - "regola di ruffini"
   - "teorema del resto"
   - "trinomio speciale"
+ai_generated: true
 ---
 # Problem Text
 Scomponi in fattori il seguente polinomio utilizzando il teorema e la regola di Ruffini:

@@ -7,6 +7,7 @@ tags:
   - "equazioni biquadratiche"
   - "algebra di base"
   - "grado superiore al secondo"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione biquadratica:

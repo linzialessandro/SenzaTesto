@@ -8,6 +8,7 @@ tags:
   - "propriet\u00e0 dei radicali"
   - "operazioni con radicali"
   - "trasporto fuori radice"
+ai_generated: true
 ---
 # Problem Text
 Semplifica la seguente espressione contenente radicali, trasportando i fattori fuori dal segno di radice dove possibile:

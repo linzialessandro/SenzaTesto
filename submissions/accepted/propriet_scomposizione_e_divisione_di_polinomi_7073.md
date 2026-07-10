@@ -9,6 +9,7 @@ tags:
   - scomposizione di polinomi
   - divisione tra polinomi
   - algebra letterale
+ai_generated: true
 ---
 # Problem Text
 1. Si consideri il seguente polinomio di terzo grado:

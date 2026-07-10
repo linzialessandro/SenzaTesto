@@ -7,6 +7,7 @@ tags:
   - disequazioni
   - sistemi
   - intervalli
+ai_generated: true
 ---
 # Problem Text
 

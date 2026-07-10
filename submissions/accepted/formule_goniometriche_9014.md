@@ -10,6 +10,7 @@ tags:
   - "formule di duplicazione"
   - "semplificazione goniometrica"
   - "quarto anno"
+ai_generated: true
 ---
 # Problem Text
 Semplificare la seguente espressione goniometrica dopo averne determinato le condizioni di esistenza (C.E.):

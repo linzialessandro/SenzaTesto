@@ -7,6 +7,7 @@ tags:
   - "probabilit\u00e0 classica"
   - "eventi aleatori"
   - "algebra base"
+ai_generated: true
 ---
 # Problem Text
 Un'urna contiene $6$ palline rosse, $8$ palline verdi e $10$ palline gialle. Si estrae una pallina a caso. Calcola la probabilità che la pallina estratta non sia verde.

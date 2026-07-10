@@ -8,6 +8,7 @@ tags:
   - "Funzioni a tratti"
   - "Continuit\u00e0"
   - "Derivabilit\u00e0"
+ai_generated: true
 ---
 # Problem Text
 Determinare i valori dei parametri reali $a$ e $b$ affinché la funzione definita a tratti:

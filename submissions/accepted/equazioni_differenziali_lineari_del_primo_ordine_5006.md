@@ -7,6 +7,7 @@ tags:
   - "equazioni differenziali"
   - "problema di Cauchy"
   - "equazioni lineari"
+ai_generated: true
 ---
 # Problem Text
 Risolvere il seguente problema di Cauchy per un'equazione differenziale lineare del primo ordine:

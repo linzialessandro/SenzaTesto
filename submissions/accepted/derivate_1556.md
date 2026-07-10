@@ -9,6 +9,7 @@ tags:
   - "derivata seconda"
   - "retta tangente"
   - "studio di funzioni"
+ai_generated: true
 ---
 # Problem Text
 Data la funzione $f: \mathbb{R} \to \mathbb{R}$ definita da:

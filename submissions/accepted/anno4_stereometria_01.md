@@ -7,6 +7,7 @@ tags:
   - cono
   - volume
   - area superficiale
+ai_generated: true
 ---
 # Problem Text
 

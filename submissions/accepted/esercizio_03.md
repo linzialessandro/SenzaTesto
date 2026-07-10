@@ -6,6 +6,7 @@ difficulty: 4
 tags:
   - rette tangenti
   - distanza
+ai_generated: true
 ---
 # Problem Text
 Determina le equazioni delle rette tangenti alla circonferenza di equazione $x^2 + y^2 - 4x - 6y + 8 = 0$ passanti per l'origine degli assi cartesiani.

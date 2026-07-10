@@ -8,6 +8,7 @@ tags:
   - "regola di Cramer"
   - "algebra"
   - "secondo anno"
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente sistema lineare utilizzando la regola di Cramer:

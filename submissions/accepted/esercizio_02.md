@@ -7,6 +7,7 @@ tags:
   - intersezioni
   - triangolo
   - area
+ai_generated: true
 ---
 # Problem Text
 Determina l'area del triangolo formato dall'intersezione delle rette $r: 2x - y + 1 = 0$, $s: x + y - 4 = 0$ e dall'asse delle ascisse ($y=0$).

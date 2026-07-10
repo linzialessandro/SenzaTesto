@@ -8,6 +8,7 @@ tags:
   - "variabili separabili"
   - "problema di Cauchy"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Determinare la soluzione del seguente problema di Cauchy con $y(x) > 0$:

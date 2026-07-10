@@ -8,6 +8,7 @@ tags:
   - "formula di de moivre"
   - "forma trigonometrica"
   - "potenza di un numero complesso"
+ai_generated: true
 ---
 # Problem Text
 Calcola la sesta potenza del numero complesso $z = 1 - i$ utilizzando la formula di De Moivre, esprimendo il risultato finale in forma algebrica.

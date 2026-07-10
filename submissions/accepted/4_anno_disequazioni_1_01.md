@@ -5,6 +5,7 @@ topic: Disequazioni di primo grado
 difficulty: 1
 tags:
   - disequazioni lineari
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione di primo grado:

@@ -7,6 +7,7 @@ tags:
   - "frazioni algebriche"
   - "semplificazione"
   - "condizioni di esistenza"
+ai_generated: true
 ---
 # Problem Text
 Semplifica la seguente frazione algebrica, determinando le condizioni di esistenza (C.E.):

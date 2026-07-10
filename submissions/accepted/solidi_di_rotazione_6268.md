@@ -9,6 +9,7 @@ tags:
   - "volume"
   - "teorema di Pitagora"
   - "stereometria"
+ai_generated: true
 ---
 # Problem Text
 Un triangolo rettangolo ha l'ipotenusa che misura $13 \text{ cm}$ e uno dei cateti di $12 \text{ cm}$. Calcola il volume del solido generato dalla rotazione completa del triangolo attorno al cateto maggiore.

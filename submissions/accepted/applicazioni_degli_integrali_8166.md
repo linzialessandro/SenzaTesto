@@ -8,6 +8,7 @@ tags:
   - "Solidi di rotazione"
   - "Volume di rotazione"
   - "Integrazione per parti"
+ai_generated: true
 ---
 # Problem Text
 Calcolare il volume del solido di rotazione ottenuto ruotando di un giro completo attorno all'asse $x$ la regione illimitata di piano compresa tra il grafico della funzione $f(x) = x e^{-x}$, l'asse $x$ e la retta $x = 0$, per $x \ge 0$.

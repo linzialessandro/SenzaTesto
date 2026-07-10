@@ -8,6 +8,7 @@ tags:
   - "operazioni con insiemi"
   - "prodotto cartesiano"
   - "primo anno"
+ai_generated: true
 ---
 # Problem Text
 Dato l'insieme universo $U$ formato dai numeri naturali minori o uguali a $15$:

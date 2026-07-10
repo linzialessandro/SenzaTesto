@@ -8,6 +8,7 @@ tags:
   - "equazioni lineari"
   - "seno e coseno"
   - "metodo dell'angolo aggiunto"
+ai_generated: true
 ---
 # Problem Text
 Determinare le soluzioni della seguente equazione goniometrica lineare nell'intervallo $[0, 2\pi[$:

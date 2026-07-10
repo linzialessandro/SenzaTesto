@@ -7,6 +7,7 @@ tags:
   - geometria analitica
   - parabola
   - tangenti
+ai_generated: true
 ---
 # Problem Text
 

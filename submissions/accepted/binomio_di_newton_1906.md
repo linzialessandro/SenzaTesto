@@ -8,6 +8,7 @@ tags:
   - "coefficiente binomiale"
   - "calcolo combinatorio"
   - "esercizi liceo"
+ai_generated: true
 ---
 # Problem Text
 Determinare il coefficiente del termine contenente $x^3$ nello sviluppo del binomio di Newton $(2x - 3)^5$.

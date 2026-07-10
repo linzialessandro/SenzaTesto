@@ -8,6 +8,7 @@ tags:
   - "integrali"
   - "integrazione per parti"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente integrale indefinito:

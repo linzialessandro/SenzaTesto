@@ -8,6 +8,7 @@ tags:
   - "disequazioni"
   - "disequazioni fratte"
   - "secondo grado"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione razionale fratta:

@@ -9,6 +9,7 @@ tags:
   - triangolo isoscele
   - criteri di congruenza
   - dimostrazioni
+ai_generated: true
 ---
 # Problem Text
 Si consideri un triangolo isoscele $ABC$ di base $BC$ e vertice $A$ (con $AB \cong AC$). Sui prolungamenti della base $BC$, da parte di $B$ e da parte di $C$, si prendano rispettivamente due segmenti congruenti $BD$ e $CE$ (in modo che l'ordine dei punti sulla retta sia $D$, $B$, $C$, $E$, con $D$ ed $E$ esterni al segmento $BC$).

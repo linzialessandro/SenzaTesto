@@ -8,6 +8,7 @@ tags:
   - "radici terze"
   - "formula di De Moivre"
   - "forma algebrica"
+ai_generated: true
 ---
 # Problem Text
 Determinare le radici terze del numero complesso $z = -8i$, esprimendo il risultato in forma algebrica.

@@ -8,6 +8,7 @@ tags:
   - "semplificazione di radicali"
   - "trasporto fuori radice"
   - "somma di radicali simili"
+ai_generated: true
 ---
 # Problem Text
 Semplifica la seguente espressione contenente radicali numerici:

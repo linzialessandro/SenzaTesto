@@ -7,6 +7,7 @@ tags:
   - equazione canonica
   - fuochi
   - passaggio per un punto
+ai_generated: true
 ---
 # Problem Text
 Scrivi l'equazione canonica dell'ellisse con centro nell'origine degli assi, sapendo che uno dei suoi fuochi ha coordinate $F(3, 0)$ e che passa per il punto $P\left(4, \frac{12}{5}\right)$.

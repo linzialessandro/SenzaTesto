@@ -8,6 +8,7 @@ tags:
   - "continuit\u00e0"
   - "funzioni a tratti"
   - "parametri"
+ai_generated: true
 ---
 # Problem Text
 Determinare per quali valori dei parametri reali $a$ e $b$ la funzione $f: \mathbb{R} \to \mathbb{R}$ così definita:

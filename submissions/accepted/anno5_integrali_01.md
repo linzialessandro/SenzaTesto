@@ -7,6 +7,7 @@ tags:
   - integrali
   - area
   - parabole
+ai_generated: true
 ---
 # Problem Text
 

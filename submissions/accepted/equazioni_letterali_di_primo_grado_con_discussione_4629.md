@@ -9,6 +9,7 @@ tags:
   - "equazioni letterali"
   - "discussione"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi e discuti la seguente equazione letterale nell'incognita $x$ al variare del parametro reale $a$:

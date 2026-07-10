@@ -33,5 +33,6 @@ Oltre all'indice GIN per la Full-Text Search, lo schema include i seguenti indic
 ## Vantaggi
 
 - **Frizione Ridotta**: Evita il sovraccarico nel frontend causato da parsing manuale o scrolling infinito.
-- **Precisione**: L'uso combinato di pesi (A, B, C) e della funzione backend API `websearch_to_tsquery` permette query precise (ad esempio, ricerca per parola chiave, argomento o operatore semantico).
+- **Miglioramento Semantico dell'Input**: Grazie alla funzione helper `optimize_search_query` integrata nella RPC `search_exercises`, le parole chiave inserite dall'utente divise da spazi (AND implicito) vengono automaticamente convertite con operatore `OR`. Questo allarga radicalmente la recall (es. restituendo tutti gli esercizi che contengono 'equazioni' o 'disequazioni'), demandando alla funzione `ts_rank` il corretto ordinamento dei risultati per rilevanza (spingendo in cima i documenti che presentano multiple corrispondenze). Operatori di ricerca avanzata (`""`, `-`, `OR`) bypassano questa ottimizzazione.
+- **Precisione e Flessibilità**: L'uso combinato di pesi (A, B, C) e della funzione backend API `websearch_to_tsquery` permette query altamente configurabili.
 - **Scalabilità**: Grazie a PostgreSQL e all'indice GIN, il tempo di risposta rimane pressoché costante anche oltre i 10.000+ record.

@@ -10,6 +10,7 @@ tags:
   - "secante"
   - "equazioni goniometriche"
   - "disequazioni goniometriche"
+ai_generated: true
 ---
 # Problem Text
 Determinare il dominio della funzione $f(x) = \frac{\sqrt{2\sin(x) - 1}}{\sec(x) + \sqrt{2}}$ nell'intervallo $[0, 2\pi]$.

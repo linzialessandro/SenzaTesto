@@ -7,6 +7,7 @@ tags:
   - "probabilit\u00e0 classica"
   - "eventi aleatori"
   - "calcolo delle probabilit\u00e0"
+ai_generated: true
 ---
 # Problem Text
 Un'urna contiene 12 palline rosse, 8 palline blu e 5 palline verdi. Si estrae casualmente una pallina dall'urna. Calcola la probabilità che la pallina estratta sia blu.

@@ -8,6 +8,7 @@ tags:
   - "angoli interni"
   - "somma angoli"
   - "quadrilateri"
+ai_generated: true
 ---
 # Problem Text
 In un trapezio rettangolo, la differenza tra l'ampiezza dell'angolo ottuso e quella dell'angolo acuto è $40^\circ$. Determina l'ampiezza di ciascuno dei quattro angoli interni del trapezio.

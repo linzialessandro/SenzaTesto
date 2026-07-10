@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - potenze
   - equazione elementare
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione esponenziale elementare:

@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - integrale definito
   - area
+ai_generated: true
 ---
 # Problem Text
 Calcola il valore del seguente integrale definito:

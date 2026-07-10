@@ -8,6 +8,7 @@ tags:
   - "equazioni logaritmiche"
   - "propriet\u00e0 dei logaritmi"
   - "condizioni di esistenza"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione logaritmica:

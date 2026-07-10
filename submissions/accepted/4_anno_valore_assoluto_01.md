@@ -5,6 +5,7 @@ topic: valore assoluto
 difficulty: 2
 tags:
   - equazioni con valore assoluto
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione con valore assoluto:

@@ -9,6 +9,7 @@ tags:
   - "fuoco"
   - "intersezione"
   - "geometria analitica"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione della circonferenza avente il centro nel fuoco della parabola di equazione $y = -x^2 + 2x + 3$ e passante per i suoi punti di intersezione con l'asse delle ascisse.

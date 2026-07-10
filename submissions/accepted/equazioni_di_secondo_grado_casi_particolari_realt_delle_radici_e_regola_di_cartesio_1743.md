@@ -9,6 +9,7 @@ tags:
   - regola di cartesio
   - discussione parametrica
   - casi particolari
+ai_generated: true
 ---
 # Problem Text
 Si consideri la seguente equazione parametrica di secondo grado nell'incognita reale $x$, dipendente dal parametro reale $k \in \mathbb{R}$:

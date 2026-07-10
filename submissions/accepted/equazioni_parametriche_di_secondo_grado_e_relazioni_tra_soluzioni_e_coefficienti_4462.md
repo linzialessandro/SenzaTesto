@@ -8,6 +8,7 @@ tags:
   - "equazioni parametriche"
   - "relazioni tra radici e coefficienti"
   - "somma delle soluzioni"
+ai_generated: true
 ---
 # Problem Text
 Determinare il valore del parametro reale $k$ per cui la somma delle soluzioni dell'equazione $x^2 - (2k-3)x + 5 = 0$ è uguale a $7$, e verificare che per tale valore le soluzioni dell'equazione siano reali.

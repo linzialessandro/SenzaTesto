@@ -7,6 +7,7 @@ tags:
   - triangoli
   - congruenza
   - dimostrazione
+ai_generated: true
 ---
 # Problem Text
 

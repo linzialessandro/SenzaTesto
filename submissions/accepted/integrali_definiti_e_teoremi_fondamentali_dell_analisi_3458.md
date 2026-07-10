@@ -9,6 +9,7 @@ tags:
   - teorema della media
   - teorema dei valori intermedi
   - torricelli-barrow
+ai_generated: true
 ---
 # Problem Text
 Si consideri la funzione reale di variabile reale definita nell'intervallo $[0, \pi]$ da:

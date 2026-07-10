@@ -9,6 +9,7 @@ tags:
   - "sistemi di disequazioni"
   - "disequazioni di secondo grado"
   - "terzo anno"
+ai_generated: true
 ---
 # Problem Text
 Risolvere la seguente disequazione con valore assoluto:

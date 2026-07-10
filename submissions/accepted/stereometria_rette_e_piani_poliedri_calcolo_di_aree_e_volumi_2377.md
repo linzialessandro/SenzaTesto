@@ -10,6 +10,7 @@ tags:
   - "volume e area superficiale"
   - "perpendicolarit\u00e0 nello spazio"
   - "geometria solida"
+ai_generated: true
 ---
 # Problem Text
 Si consideri un tetraedro regolare $ABCD$ i cui spigoli hanno tutti lunghezza pari a $s$.

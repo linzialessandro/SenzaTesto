@@ -8,6 +8,7 @@ tags:
   - "variabili separabili"
   - "problema di cauchy"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Determina la soluzione del seguente problema di Cauchy:

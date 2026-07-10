@@ -7,6 +7,7 @@ tags:
   - divisione
   - polinomi
   - teorema del resto
+ai_generated: true
 ---
 # Problem Text
 Esegui la seguente divisione tra polinomi utilizzando il metodo di Ruffini e verifica il risultato ottenuto (il resto) applicando il Teorema del Resto:

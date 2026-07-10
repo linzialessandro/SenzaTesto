@@ -7,6 +7,7 @@ tags:
   - "equazioni biquadratiche"
   - "algebra"
   - "secondo anno"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione biquadratica nell'insieme dei numeri reali:

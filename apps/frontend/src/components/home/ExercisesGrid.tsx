@@ -115,6 +115,11 @@ export function ExercisesGrid({
                           <span className="px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider rounded bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:border-amber-700/50 uppercase select-all" title="Codice univoco dell'esercizio. Copialo per condividerlo!">
                             #{ex.short_code}
                           </span>
+                          {ex.ai_generated && (
+                            <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-purple-100 text-purple-800 border border-purple-200 dark:bg-purple-900/40 dark:text-purple-400 dark:border-purple-700/50 uppercase flex items-center gap-1" title="Questo esercizio è stato generato tramite Intelligenza Artificiale">
+                              <Sparkles size={10} /> IA
+                            </span>
+                          )}
                         </div>
                         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{ex.topic_name}</p>
                       </div>

@@ -9,6 +9,7 @@ tags:
   - cambiamento di base
   - disequazioni logaritmiche
   - condizioni di esistenza
+ai_generated: true
 ---
 # Problem Text
 Il presente problema propone di verificare la comprensione dei concetti di logaritmo, delle loro proprietà algebriche fondamentali, delle formule di cambiamento di base, e della capacità di determinare rigorosamente il dominio delle soluzioni (C.E.) per equazioni e disequazioni logaritmiche.

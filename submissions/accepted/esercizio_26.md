@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - circonferenza goniometrica
   - angoli notevoli
+ai_generated: true
 ---
 # Problem Text
 Risolvi l'equazione goniometrica elementare $\cos x = \frac{\sqrt{2}}{2}$ indicando tutte e sole le soluzioni appartenenti all'intervallo $[0, 2\pi]$.

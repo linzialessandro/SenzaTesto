@@ -8,6 +8,7 @@ tags:
   - "radici"
   - "condizioni di esistenza"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione irrazionale nell'insieme dei numeri reali:

@@ -8,6 +8,7 @@ tags:
   - "superficie totale"
   - "apotema"
   - "geometria solida"
+ai_generated: true
 ---
 # Problem Text
 Una piramide quadrangolare regolare ha l'altezza di $12\text{ cm}$ e lo spigolo di base di $10\text{ cm}$. Calcola l'area della superficie totale della piramide.

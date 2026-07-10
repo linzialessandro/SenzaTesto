@@ -7,6 +7,7 @@ tags:
   - problemi
   - equazioni
   - sostituzione
+ai_generated: true
 ---
 # Problem Text
 In una fattoria ci sono polli e conigli. Contando le teste degli animali si ottiene il numero $35$, mentre contando le zampe si ottiene il numero $94$. Quanti polli e quanti conigli ci sono nella fattoria? Risolvi il problema impostando un sistema lineare.

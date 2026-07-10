@@ -8,6 +8,7 @@ tags:
   - "mcm"
   - "numeri naturali"
   - "rapporti"
+ai_generated: true
 ---
 # Problem Text
 Determinare due numeri naturali $x$ e $y$, con $x > y$, sapendo che il loro massimo comune divisore è $\text{MCD}(x,y) = 2^2 \cdot 3$, il loro minimo comune multiplo è $\text{mcm}(x,y) = 2^4 \cdot 3^2 \cdot 5$, e il loro rapporto è $\frac{x}{y} = \frac{20}{3}$.

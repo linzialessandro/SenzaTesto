@@ -6,6 +6,7 @@ difficulty: 3
 tags:
   - funzioni razionali
   - fratti semplici
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente integrale indefinito di una funzione razionale:

@@ -7,6 +7,7 @@ tags:
   - teorema del resto
   - scomposizione
   - regola di ruffini
+ai_generated: true
 ---
 # Problem Text
 Un polinomio $P(x) = x^3 + ax^2 + bx + 6$ risulta esattamente divisibile per il binomio $(x-2)$, mentre se viene diviso per $(x+1)$ dà come resto $12$. Determina i valori dei parametri $a$ e $b$ e procedi a scomporre completamente il polinomio in fattori lineari.

@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - scomposizione
   - aritmetica
+ai_generated: true
 ---
 # Problem Text
 Calcola il Massimo Comun Divisore (MCD) e il minimo comune multiplo (mcm) dei numeri $24, 36, 60$.

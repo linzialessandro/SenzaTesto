@@ -8,6 +8,7 @@ tags:
   - "forma trigonometrica"
   - "formula di De Moivre"
   - "potenza di un numero complesso"
+ai_generated: true
 ---
 # Problem Text
 Calcolare la potenza $z^6$ del numero complesso $z = 1 + i$.

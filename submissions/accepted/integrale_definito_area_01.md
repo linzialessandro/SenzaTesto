@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - calcolo aree
   - parabola
+ai_generated: true
 ---
 # Problem Text
 Calcola l'area della regione di piano compresa tra la parabola di equazione $y = -x^2 + 4x$ e l'asse $x$.

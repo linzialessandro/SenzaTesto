@@ -8,6 +8,7 @@ tags:
   - "goniometria"
   - "semplificazione espressioni"
   - "identit\u00e0 goniometriche"
+ai_generated: true
 ---
 # Problem Text
 Semplifica la seguente espressione goniometrica, supponendo che siano soddisfatte le condizioni di esistenza:

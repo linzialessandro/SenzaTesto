@@ -8,6 +8,7 @@ tags:
   - "sistemi di disequazioni"
   - "disequazioni intere"
   - "primo grado"
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente sistema di disequazioni di primo grado intere e rappresenta l'insieme delle soluzioni:

@@ -8,6 +8,7 @@ tags:
   - "regola di Ruffini"
   - "scomposizione in fattori"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Scomponi in fattori il seguente polinomio di terzo grado utilizzando la regola di Ruffini:

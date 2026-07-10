@@ -8,6 +8,7 @@ tags:
   - "distanza tra due punti"
   - "area del triangolo"
   - "geometria analitica"
+ai_generated: true
 ---
 # Problem Text
 Dati i punti $A(-2, 1)$, $B(4, 1)$ e $C(1, 5)$ nel piano cartesiano, determina l'area del triangolo $ABC$.

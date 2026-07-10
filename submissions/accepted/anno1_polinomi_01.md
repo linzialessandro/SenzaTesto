@@ -7,6 +7,7 @@ tags:
   - polinomi
   - scomposizione
   - ruffini
+ai_generated: true
 ---
 # Problem Text
 

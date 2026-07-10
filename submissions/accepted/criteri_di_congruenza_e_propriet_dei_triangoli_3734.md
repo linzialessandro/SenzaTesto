@@ -8,6 +8,7 @@ tags:
   - "Triangoli isosceli"
   - "Criteri di congruenza"
   - "Triangoli rettangoli"
+ai_generated: true
 ---
 # Problem Text
 Sia $ABC$ un triangolo isoscele di base $AB$. Si considerino sul prolungamento della base $AB$ due punti $D$ ed $E$, con $A$ compreso tra $D$ e $B$, e $B$ compreso tra $A$ e $E$, tali che $AD \cong BE$. Si conducano da $D$ e da $E$ le perpendicolari rispettivamente alle rette dei lati $AC$ e $BC$, indicando con $H$ e $K$ i rispettivi piedi su tali rette. Dimostrare che $DH \cong EK$.

@@ -8,6 +8,7 @@ tags:
   - "Coefficiente Binomiale"
   - "Equazioni Binomiali"
   - "Liceo Scientifico"
+ai_generated: true
 ---
 # Problem Text
 Determinare il valore del numero naturale $n$ (con $n \ge 2$) che soddisfa la seguente equazione:

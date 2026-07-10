@@ -7,6 +7,7 @@ tags:
   - valore assoluto
   - sistemi
   - irrazionali
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente disequazione irrazionale fratta con valore assoluto:

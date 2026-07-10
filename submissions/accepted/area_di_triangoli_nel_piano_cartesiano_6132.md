@@ -8,6 +8,7 @@ tags:
   - "area triangolo"
   - "distanza tra punti"
   - "geometria analitica"
+ai_generated: true
 ---
 # Problem Text
 Calcola l'area del triangolo di vertici $A(-2, 1)$, $B(4, 1)$ e $C(1, 5)$ nel piano cartesiano.

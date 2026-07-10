@@ -8,6 +8,7 @@ tags:
   - "perpendicolarit\u00e0"
   - "coefficiente angolare"
   - "equazione della retta"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione della retta $s$ passante per il punto $P(3, -2)$ e perpendicolare alla retta $r$ di equazione $2x - 3y + 6 = 0$.

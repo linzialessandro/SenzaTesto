@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - spuria
   - fattorizzazione
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione di secondo grado spuria:

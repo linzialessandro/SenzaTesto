@@ -8,6 +8,7 @@ tags:
   - "Teorema del valor medio"
   - "Derivate"
   - "Analisi Matematica"
+ai_generated: true
 ---
 # Problem Text
 Verificare l'applicabilità del teorema di Lagrange alla funzione $f(x) = x^2 - 4x + 3$ nell'intervallo $[1, 4]$ e determinare il valore di $c$ la cui esistenza è garantita dal teorema.

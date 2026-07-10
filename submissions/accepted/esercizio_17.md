@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - formula risolutiva
   - delta
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione di secondo grado completa utilizzando la formula risolutiva:

@@ -8,6 +8,7 @@ tags:
   - "Teorema fondamentale del calcolo integrale"
   - "Integrale definito"
   - "Quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Data la funzione $f(x) = \frac{1}{x^2}$ definita nell'intervallo $[1, 2]$, determinare il valore medio $\mu$ della funzione nell'intervallo e il valore del punto $c \in [1, 2]$ garantito dal teorema della media integrale.

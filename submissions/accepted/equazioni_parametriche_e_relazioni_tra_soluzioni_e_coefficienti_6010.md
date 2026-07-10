@@ -8,6 +8,7 @@ tags:
   - "equazioni parametriche"
   - "relazioni tra soluzioni e coefficienti"
   - "somma delle soluzioni"
+ai_generated: true
 ---
 # Problem Text
 Determina per quale valore del parametro reale $k$ la somma delle soluzioni dell'equazione di secondo grado $x^2 - (k-3)x + 2 = 0$ è uguale a $5$.

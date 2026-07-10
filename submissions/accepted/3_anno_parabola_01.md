@@ -8,6 +8,7 @@ tags:
   - vertice
   - fuoco
   - intersezione retta
+ai_generated: true
 ---
 # Problem Text
 Determina l'equazione della parabola con asse di simmetria parallelo all'asse $y$, avente il vertice in $V(1, -2)$ e passante per il punto $P(2, 0)$. Successivamente, trova i punti di intersezione della parabola trovata con la retta di equazione $y = 2x - 3$.

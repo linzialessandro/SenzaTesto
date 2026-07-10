@@ -5,6 +5,7 @@ topic: Equazioni di primo grado
 difficulty: 1
 tags:
   - equazioni lineari
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione di primo grado ad un'incognita:

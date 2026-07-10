@@ -5,6 +5,7 @@ topic: integrali indefiniti
 difficulty: 2
 tags:
   - per parti
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente integrale indefinito: 

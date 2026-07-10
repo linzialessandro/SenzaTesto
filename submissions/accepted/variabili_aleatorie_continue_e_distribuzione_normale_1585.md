@@ -9,6 +9,7 @@ tags:
   - "Gauss"
   - "standardizzazione"
   - "probabilit\u00e0"
+ai_generated: true
 ---
 # Problem Text
 Una variabile aleatoria continua $X$ ha una distribuzione normale con media $\mu$ e deviazione standard $\sigma$. Sapendo che $P(X < 10) = 0,1587$ e $P(X > 16) = 0,0228$, determina la probabilità $P(11 < X < 13)$.

@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - impossibile
   - calcolo algebrico
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione di primo grado:

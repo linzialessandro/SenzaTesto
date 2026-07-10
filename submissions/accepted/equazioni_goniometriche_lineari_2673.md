@@ -8,6 +8,7 @@ tags:
   - "equazioni lineari"
   - "angolo aggiunto"
   - "seno e coseno"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione goniometrica lineare nell'insieme dei numeri reali $\mathbb{R}$:

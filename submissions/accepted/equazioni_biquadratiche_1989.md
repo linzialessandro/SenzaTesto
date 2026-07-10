@@ -8,6 +8,7 @@ tags:
   - "grado superiore al secondo"
   - "algebra"
   - "metodo di sostituzione"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione biquadratica:

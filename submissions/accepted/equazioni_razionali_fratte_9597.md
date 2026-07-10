@@ -8,6 +8,7 @@ tags:
   - "frazioni algebriche"
   - "condizioni di esistenza"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione razionale fratta:

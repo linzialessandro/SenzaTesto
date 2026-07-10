@@ -8,6 +8,7 @@ tags:
   - "variabili separabili"
   - "problema di Cauchy"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente problema di Cauchy del primo ordine a variabili separabili:

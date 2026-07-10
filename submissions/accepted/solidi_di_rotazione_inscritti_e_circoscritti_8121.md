@@ -9,6 +9,7 @@ tags:
   - "solidi di rotazione"
   - "sezione aurea"
   - "geometria solida"
+ai_generated: true
 ---
 # Problem Text
 Un cono circolare retto è inscritto in una sfera di raggio $R$. Sapendo che l'area della superficie laterale del cono è pari a $\sqrt{2}$ volte l'area di un cerchio massimo della sfera, determinare i possibili valori del rapporto $\frac{h}{R}$, dove $h$ è l'altezza del cono.

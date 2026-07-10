@@ -10,6 +10,7 @@ tags:
   - "funzioni a tratti"
   - "limiti notevoli"
   - "parametri"
+ai_generated: true
 ---
 # Problem Text
 Determinare i valori dei parametri reali $a$ e $b$ affinché la funzione $f: \mathbb{R} \to \mathbb{R}$ definita da:

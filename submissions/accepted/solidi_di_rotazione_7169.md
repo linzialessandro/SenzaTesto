@@ -9,6 +9,7 @@ tags:
   - "Cilindro"
   - "Solidi di rotazione"
   - "Volume"
+ai_generated: true
 ---
 # Problem Text
 Un cilindro circolare retto è inscritto in una sfera di raggio $R$. Sapendo che l'altezza del cilindro è uguale all'altezza di ciascuna delle calotte sferiche determinate dai piani delle basi del cilindro, determinare il volume del cilindro in funzione di $R$.

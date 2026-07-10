@@ -7,6 +7,7 @@ tags:
   - iperbole
   - asintoti
   - vertici
+ai_generated: true
 ---
 # Problem Text
 Determina i vertici reali e le equazioni degli asintoti dell'iperbole di equazione $\frac{x^2}{16} - \frac{y^2}{9} = 1$.

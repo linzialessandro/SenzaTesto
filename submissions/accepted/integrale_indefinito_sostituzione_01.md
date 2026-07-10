@@ -5,6 +5,7 @@ topic: integrali indefiniti
 difficulty: 2
 tags:
   - per sostituzione
+ai_generated: true
 ---
 # Problem Text
 Risolvi il seguente integrale indefinito:

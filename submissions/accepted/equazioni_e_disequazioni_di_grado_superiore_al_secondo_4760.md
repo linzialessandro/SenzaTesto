@@ -8,6 +8,7 @@ tags:
   - "equazioni di quarto grado"
   - "sostituzione"
   - "algebra"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione biquadratica nell'insieme dei numeri reali:

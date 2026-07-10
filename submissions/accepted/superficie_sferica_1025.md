@@ -8,6 +8,7 @@ tags:
   - "superficie sferica"
   - "equazione del piano"
   - "quinto anno"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione della superficie sferica $S$ passante per l'origine degli assi $O(0,0,0)$ e per i punti $A(1,2,-1)$ e $B(2,0,1)$, avente il centro appartenente al piano $\pi$ di equazione:

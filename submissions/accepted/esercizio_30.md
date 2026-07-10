@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - primitive elementari
   - calcolo integrale
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente integrale indefinito di funzioni elementari:

@@ -7,6 +7,7 @@ tags:
   - "equazioni logaritmiche"
   - "logaritmi"
   - "scuola superiore"
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione logaritmica:

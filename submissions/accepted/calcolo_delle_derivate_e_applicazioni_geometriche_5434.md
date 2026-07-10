@@ -10,6 +10,7 @@ tags:
   - retta tangente
   - punti stazionari
   - punti di flesso
+ai_generated: true
 ---
 # Problem Text
 Si consideri la funzione reale di variabile reale definita da:

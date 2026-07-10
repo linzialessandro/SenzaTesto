@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - distanza
   - punto medio
+ai_generated: true
 ---
 # Problem Text
 Dati i punti $A(1, 2)$ e $B(4, 6)$ nel piano cartesiano, calcola la distanza tra $A$ e $B$ e le coordinate del loro punto medio $M$.

@@ -7,6 +7,7 @@ tags:
   - continuità
   - derivabilità
   - valore assoluto
+ai_generated: true
 ---
 # Problem Text
 Considera la funzione reale di variabile reale così definita:

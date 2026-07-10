@@ -8,6 +8,7 @@ tags:
   - "Parit\u00e0"
   - "Funzioni dispari"
   - "Funzione razionale fratta"
+ai_generated: true
 ---
 # Problem Text
 Determinare il dominio di definizione e studiare la parità della seguente funzione reale di variabile reale:

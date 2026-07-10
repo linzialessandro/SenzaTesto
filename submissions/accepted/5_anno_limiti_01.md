@@ -6,6 +6,7 @@ difficulty: 2
 tags:
   - forma indeterminata
   - scomposizione
+ai_generated: true
 ---
 # Problem Text
 Calcola il seguente limite:

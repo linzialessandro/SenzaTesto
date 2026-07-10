@@ -7,6 +7,7 @@ tags:
   - "superficie sferica"
   - "geometria nello spazio"
   - "distanza tra due punti"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione cartesiana della superficie sferica di centro $C(2, -1, 3)$ e passante per il punto $P(4, 1, 2)$.

@@ -9,6 +9,7 @@ tags:
   - "teorema di carnot"
   - "risoluzione dei triangoli"
   - "bisettrice"
+ai_generated: true
 ---
 # Problem Text
 Dato un triangolo $ABC$ in cui i lati $AB$ e $AC$ misurano rispettivamente $6$ e $4$, e l'angolo compreso $\widehat{A}$ è pari a $60^\circ$, si tracci la bisettrice $AD$ dell'angolo $\widehat{A}$ con $D$ situato sul lato $BC$. Determinare la lunghezza del segmento $AD$ applicando i teoremi di trigonometria sui triangoli.

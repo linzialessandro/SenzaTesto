@@ -8,6 +8,7 @@ tags:
   - "coefficiente binomiale"
   - "binomio di Newton"
   - "quarto anno"
+ai_generated: true
 ---
 # Problem Text
 Determinare nello sviluppo del seguente binomio di Newton:

@@ -7,6 +7,7 @@ tags:
   - "probabilit\u00e0 classica"
   - "eventi aleatori"
   - "scuola superiore"
+ai_generated: true
 ---
 # Problem Text
 Un sacchetto contiene $12$ palline rosse, $8$ palline blu e $5$ palline verdi. Calcola la probabilità di estrarre a caso una pallina che non sia blu.

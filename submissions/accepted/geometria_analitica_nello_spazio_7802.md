@@ -8,6 +8,7 @@ tags:
   - "superficie sferica"
   - "piano nello spazio"
   - "retta nello spazio"
+ai_generated: true
 ---
 # Problem Text
 Determinare l'equazione della superficie sferica tangente al piano $ \pi: 2x - y + 2z - 3 = 0 $ nel punto $ P(1, 1, 1) $ e avente il centro sulla retta $ r $ di equazioni parametriche:

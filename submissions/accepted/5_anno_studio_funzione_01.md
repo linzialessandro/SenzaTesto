@@ -7,6 +7,7 @@ tags:
   - derivata prima
   - asintoti
   - studio di funzione
+ai_generated: true
 ---
 # Problem Text
 Data la funzione:

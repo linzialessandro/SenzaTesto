@@ -6,6 +6,7 @@ difficulty: 1
 tags:
   - equazione della retta
   - retta per due punti
+ai_generated: true
 ---
 # Problem Text
 Trova l'equazione della retta passante per i punti $A(1, 2)$ e $B(3, -4)$.

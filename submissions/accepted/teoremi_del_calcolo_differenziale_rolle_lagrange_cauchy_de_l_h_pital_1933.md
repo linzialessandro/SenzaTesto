@@ -8,6 +8,7 @@ tags:
   - "Funzioni definite a tratti"
   - "Parametri reali"
   - "Continuit\u00e0 e derivabilit\u00e0"
+ai_generated: true
 ---
 # Problem Text
 Determinare i valori dei parametri reali $a$ e $b$ affinché la funzione

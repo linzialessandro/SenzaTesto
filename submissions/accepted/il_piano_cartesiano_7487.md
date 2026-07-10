@@ -8,6 +8,7 @@ tags:
   - "simmetria centrale"
   - "punto medio"
   - "coordinate cartesiane"
+ai_generated: true
 ---
 # Problem Text
 Dato il punto $A(2, -3)$, determina le coordinate del suo punto simmetrico $A'$ rispetto al punto $M(1, 4)$.

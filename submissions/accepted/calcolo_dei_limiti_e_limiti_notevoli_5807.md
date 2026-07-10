@@ -9,6 +9,7 @@ tags:
   - "forma indeterminata"
   - "funzione logaritmica"
   - "funzione goniometrica"
+ai_generated: true
 ---
 # Problem Text
 Calcolare il seguente limite di funzione utilizzando i limiti notevoli:

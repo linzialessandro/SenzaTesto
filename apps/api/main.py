@@ -61,6 +61,7 @@ class ExerciseResponse(BaseModel):
     topic_name: str
     year_number: int
     tags: Optional[list[str]] = []
+    ai_generated: bool = False
 
 @app.get("/")
 @limiter.limit("30/minute")
@@ -88,7 +89,7 @@ async def get_exercises(
             # Costruzione dinamica della query con filtri parametrizzati
             base_query = """
                 SELECT e.id, e.topic_id, e.difficulty_level, e.problem_text, e.solution_text, 
-                       e.generated_hash, e.short_code, e.tags,
+                       e.generated_hash, e.short_code, e.tags, e.ai_generated,
                        m.name as topic_macro_area, t.name as topic_name, c.year_number
                 FROM exercises e
                 JOIN topics t ON e.topic_id = t.id
@@ -102,7 +103,7 @@ async def get_exercises(
 
             if q:
                 conditions.append(
-                    f"(e.search_vector @@ websearch_to_tsquery('italian', ${param_idx}) OR e.short_code ILIKE ${param_idx})"
+                    f"(e.search_vector @@ websearch_to_tsquery('italian', optimize_search_query(${param_idx})) OR e.short_code ILIKE ${param_idx})"
                 )
                 params.append(q)
                 param_idx += 1
@@ -117,7 +118,7 @@ async def get_exercises(
 
             # Ordinamento: per rilevanza se c'è ricerca testuale, altrimenti per data
             if q:
-                base_query += f" ORDER BY ts_rank(e.search_vector, websearch_to_tsquery('italian', $1)) DESC, e.created_at DESC"
+                base_query += f" ORDER BY ts_rank(e.search_vector, websearch_to_tsquery('italian', optimize_search_query($1))) DESC, e.created_at DESC"
             else:
                 base_query += " ORDER BY e.created_at DESC"
 
