@@ -44,7 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="it"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${geistMono.variable} h-full antialiased overflow-x-hidden`}
       suppressHydrationWarning
     >
       <head>
@@ -58,10 +58,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* Ambient Glows - Subtle Italian Flag homage */}
-          <div className="ambient-glow glow-green w-[40rem] h-[40rem] top-[-10%] left-[-15%]"></div>
-          <div className="ambient-glow glow-white w-[50rem] h-[50rem] top-[20%] left-[25%] opacity-10"></div>
-          <div className="ambient-glow glow-red w-[35rem] h-[35rem] bottom-[-10%] right-[-10%]"></div>
+          {/* Background container to prevent scroll from glows */}
+          <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+            {/* Ambient Glows - Subtle Italian Flag homage */}
+            <div className="ambient-glow glow-green w-[40rem] h-[40rem] top-[-10%] left-[-15%]"></div>
+            <div className="ambient-glow glow-white w-[50rem] h-[50rem] top-[20%] left-[25%] opacity-10"></div>
+            <div className="ambient-glow glow-red w-[35rem] h-[35rem] bottom-[-10%] right-[-10%]"></div>
+          </div>
           
           {/* Main Content */}
           <div className="z-10 flex-1 flex flex-col relative">
