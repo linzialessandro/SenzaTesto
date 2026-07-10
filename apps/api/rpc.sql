@@ -2,6 +2,7 @@
 CREATE OR REPLACE FUNCTION search_exercises(
   search_query text DEFAULT NULL,
   filter_year int DEFAULT NULL,
+  filter_topic text DEFAULT NULL,
   page_limit int DEFAULT 50,
   page_offset int DEFAULT 0
 )
@@ -29,6 +30,7 @@ BEGIN
   JOIN curriculum_years c ON m.year_id = c.id
   WHERE (search_query IS NULL OR search_query = '' OR e.search_vector @@ websearch_to_tsquery('italian', search_query) OR e.short_code ILIKE search_query)
     AND (filter_year IS NULL OR c.year_number = filter_year)
+    AND (filter_topic IS NULL OR m.name ILIKE filter_topic)
   ORDER BY 
     CASE WHEN search_query IS NOT NULL AND search_query != '' THEN ts_rank(e.search_vector, websearch_to_tsquery('italian', search_query)) ELSE 0 END DESC, 
     e.created_at DESC

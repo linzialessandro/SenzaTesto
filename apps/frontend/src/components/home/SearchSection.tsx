@@ -5,11 +5,11 @@ import { Search, X } from 'lucide-react';
 interface SearchSectionProps {
   searchQuery: string;
   setSearchQuery: (val: string) => void;
-  selectedYear: number | null;
+  selectedTopic: string | null;
   onClear: () => void;
 }
 
-export function SearchSection({ searchQuery, setSearchQuery, selectedYear, onClear }: SearchSectionProps) {
+export function SearchSection({ searchQuery, setSearchQuery, selectedTopic, onClear }: SearchSectionProps) {
   return (
     <motion.section
       id="exercises-section"
@@ -34,7 +34,7 @@ export function SearchSection({ searchQuery, setSearchQuery, selectedYear, onCle
           />
           
           <AnimatePresence>
-            {(searchQuery || selectedYear !== null) && (
+            {(searchQuery || selectedTopic !== null) && (
               <motion.button
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -56,7 +56,7 @@ export function SearchSection({ searchQuery, setSearchQuery, selectedYear, onCle
       </div>
       
       <AnimatePresence>
-        {selectedYear !== null && !searchQuery && (
+        {selectedTopic !== null && !searchQuery && (
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -65,7 +65,7 @@ export function SearchSection({ searchQuery, setSearchQuery, selectedYear, onCle
             className="mt-6 text-center overflow-hidden"
           >
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-semibold border border-indigo-100 dark:border-indigo-800/50">
-              Collezione attiva: {selectedYear}° Anno
+              Collezione attiva: {selectedTopic}
             </span>
           </motion.div>
         )}

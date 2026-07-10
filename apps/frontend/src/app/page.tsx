@@ -32,7 +32,7 @@ export default function Home() {
   const [visibleSolutions, setVisibleSolutions] = useState<Set<string>>(new Set());
 
   // Search & Filter states
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
 
@@ -66,7 +66,7 @@ export default function Home() {
     const fetchExercises = async () => {
       const query = debouncedQuery.trim() || null;
       
-      if (!query && selectedYear === null) {
+      if (!query && selectedTopic === null) {
         setExercises([]);
         setHasMore(false);
         return;
@@ -77,7 +77,7 @@ export default function Home() {
       try {
         const params: Record<string, unknown> = { page_limit: PAGE_SIZE, page_offset: 0 };
         if (query) params.search_query = query;
-        if (selectedYear !== null) params.filter_year = selectedYear;
+        if (selectedTopic !== null) params.filter_topic = selectedTopic;
 
         const { data, error: rpcError } = await supabase.rpc('search_exercises', params);
         
@@ -100,7 +100,7 @@ export default function Home() {
     };
     fetchExercises();
     return () => { ignore = true; };
-  }, [debouncedQuery, selectedYear]);
+  }, [debouncedQuery, selectedTopic]);
 
   // Carica altri esercizi (paginazione)
   const loadMore = useCallback(async () => {
@@ -109,7 +109,7 @@ export default function Home() {
     try {
       const params: Record<string, unknown> = { page_limit: PAGE_SIZE, page_offset: exercises.length };
       if (query) params.search_query = query;
-      if (selectedYear !== null) params.filter_year = selectedYear;
+      if (selectedTopic !== null) params.filter_topic = selectedTopic;
 
       const { data, error: rpcError } = await supabase.rpc('search_exercises', params);
       if (rpcError) throw rpcError;
@@ -122,7 +122,7 @@ export default function Home() {
     } finally {
       setLoadingMore(false);
     }
-  }, [debouncedQuery, selectedYear, exercises.length]);
+  }, [debouncedQuery, selectedTopic, exercises.length]);
 
   const toggleSolution = useCallback((hash: string) => {
     setVisibleSolutions(prev => {
@@ -135,10 +135,10 @@ export default function Home() {
 
   const resetFilters = useCallback(() => {
     setSearchQuery('');
-    setSelectedYear(null);
+    setSelectedTopic(null);
   }, []);
 
-  const isExploring = searchQuery.trim().length > 0 || selectedYear !== null;
+  const isExploring = searchQuery.trim().length > 0 || selectedTopic !== null;
 
   const handleOpenInfo = useCallback(() => setIsInfoModalOpen(true), []);
   const handleCloseInfo = useCallback(() => setIsInfoModalOpen(false), []);
@@ -161,7 +161,7 @@ export default function Home() {
         <SearchSection 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          selectedYear={selectedYear}
+          selectedTopic={selectedTopic}
           onClear={resetFilters}
         />
 
@@ -174,7 +174,7 @@ export default function Home() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
             >
-              <CollectionsGrid onSelectYear={setSelectedYear} />
+              <CollectionsGrid onSelectTopic={setSelectedTopic} />
             </motion.div>
           ) : (
             <motion.div
