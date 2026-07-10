@@ -3,6 +3,7 @@
 ## 2026-07-10
 * **Architettura**: Creato il concetto `frontend_type_safety.md` per documentare l'introduzione di Zod (boundary validation), `@total-typescript/ts-reset` (standard library fixes) e l'abilitazione dello strict mode estremo (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) ispirato alle best practice di Matt Pocock.
 * **Database**: Aggiornato il concetto `indexing` per documentare l'introduzione della funzione `optimize_search_query`, la quale estende le capacità di ricerca FTS convertendo dinamicamente spazi impliciti (AND) in operatore `OR`, aumentando la recall senza penalizzare la precisione del ranking `ts_rank`.
+* **Frontend**: Aggiornato `frontend_performance.md` con l'introduzione dei concetti "GPU Memory Limits (iOS Safari)" e "Prevenzione Blocco Main Thread", vietando l'uso di `filter: blur` per l'ambient-glow a favore dei `radial-gradient` nativi, e documentando l'uso di `next/script` con `strategy="lazyOnload"` per deferire il parser WebAssembly TikzJax.
 
 ## 2026-07-09
 * **Database**: Completata l'ingestione massiva del curriculum di Niccolò Cangiotti (456 esercizi). Il workflow `populate_from_md.py` è stato utilizzato con successo dopo la sanitizzazione via `validate_and_fix_pending.py`.

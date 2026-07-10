@@ -70,3 +70,17 @@ Il filtro CSS `backdrop-filter: blur(px)` è incredibilmente oneroso su schede g
 
 ### Soluzione
 Tramite le utility classes di Tailwind (`sm:backdrop-blur-md`, `sm:shadow-xl`), questi pesanti effetti grafici di glassmorfismo sono stati limitati **esclusivamente** ai dispositivi con schermi `sm` o superiori (Tablet, Desktop). Sugli smartphone, il sistema degrada elegantemente a un background scuro semitrasparente (`bg-slate-900/40`), mantenendo però costanti i 60 FPS senza surriscaldare il dispositivo.
+
+## 5. GPU Memory Limits & Crashes su Mobile (iOS Safari)
+
+L'uso di grosse sfocature CSS (`filter: blur(100px)`) combinate ad elementi in `position: fixed` o accelerati via `will-change: transform` su dimensioni estese (es. 800x800px) può causare il **crash della GPU su iOS Safari** ("GPU Memory Limit Exceeded"). Il sintomo classico è una schermata completamente bianca al primo caricamento seguita da un rendering fallback CPU estremamente lento.
+
+### Soluzione
+Invece di usare un costoso shader di post-processing come `filter: blur()`, per creare effetti "glow" ambientali (bagliori), SenzaTesto utilizza la direttiva nativa di rendering vettoriale CSS `radial-gradient` (e.g. `background: radial-gradient(circle, #color 0%, transparent 70%)`). L'effetto visivo è identico, ma il costo computazionale e l'allocazione VRAM scendono a zero, eliminando i crash.
+
+## 6. Prevenzione Blocco del Main Thread (Next.js Script)
+
+Il caricamento di grossi pacchetti asincroni (come i compilatori WebAssembly di `tikzjax.js`) all'interno dell' `<head>` della pagina crea una competizione per la CPU (Single Thread) sui dispositivi mobile durante le fasi critiche di "First Contentful Paint" (FCP) e "React Hydration". Questo può "congelare" un telefono per oltre 10 secondi, bloccando l'interattività.
+
+### Soluzione
+Per il caricamento asincrono di motori pesanti indipendenti da React, si **deve** utilizzare il componente `<Script>` di Next.js (da `next/script`) posizionato a fine `<body>` impostando `strategy="lazyOnload"`. Questo assicura che il framework scarichi ed esegua il parser WASM esclusivamente in *background (idle time)*, ripristinando il Time To Interactive (TTI) istantaneo senza alcun blocco.
