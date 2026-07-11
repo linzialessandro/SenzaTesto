@@ -1,7 +1,9 @@
 # Registro degli Aggiornamenti della Knowledge Base
 
 ## 2026-07-11
+* **Manutenzione**: Eseguita pulizia massiva della codebase Python: rimossi 6 script "throwaway" obsoleti dalla root (es. `analyze_escapes.py`, `inspect_notes.py`), spostati gli script infrastrutturali in `scripts/` (`run_init.py`, `run_migration.py`) e applicato formatting rigoroso tramite `ruff` su tutti i restanti script per uniformità (risolti 23 errori di linting).
 * **Architettura**: Creato il concetto `custom_analytics.md` per documentare l'implementazione in-house e GDPR-compliant delle statistiche (tramite le tabelle Supabase `search_logs` e `solution_views`, le relative RPC e l'automazione dei report tramite GitHub Actions).
+* **Setup/Agenti**: Aggiornato `setup.md` per riflettere la transizione verso un ambiente PostgreSQL standard (rimozione del vendor lock-in e delle skill Supabase) e documentata l'integrazione del server MCP ufficiale per l'interazione nativa dell'agente con il DB locale, oltre all'uso diretto di `docker run` al posto di `docker-compose`.
 
 ## 2026-07-10
 * **Architettura**: Creato il concetto `frontend_type_safety.md` per documentare l'introduzione di Zod (boundary validation), `@total-typescript/ts-reset` (standard library fixes) e l'abilitazione dello strict mode estremo (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) ispirato alle best practice di Matt Pocock.

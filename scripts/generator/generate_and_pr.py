@@ -221,7 +221,7 @@ async def main():
         return
 
     # Aggiungi e committa
-    run_cmd(f"git add submissions/pending/*.md")
+    run_cmd("git add submissions/pending/*.md")
     if not run_cmd(f"git commit -m \"Aggiunti {len(generated_files)} nuovi esercizi generati da IA\""):
         print("Nessun file da committare.")
         return

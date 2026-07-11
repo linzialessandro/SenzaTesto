@@ -16,7 +16,7 @@ Il progetto DEVE essere ingegnerizzato per avere zero costi di manutenzione. Dev
 
 **Mandato per lo Stack Tecnologico:**
 - **Backend:** Python (FastAPI) wrappato con `Mangum` per deployment serverless (es. Vercel Serverless Functions o AWS Lambda). Questo eseguirà il motore di generazione procedurale `SymPy`.
-- **Database:** Supabase (PostgreSQL) o Cloudflare D1. Abbiamo bisogno di uno storage relazionale robusto con supporto JSON nativo per i dati complessi degli esercizi in LaTeX.
+- **Database:** PostgreSQL standard (es. self-hosted o managed). Abbiamo bisogno di uno storage relazionale robusto con supporto JSON nativo per i dati complessi degli esercizi in LaTeX. Sono state rimosse le dipendenze da Supabase per evitare vendor lock-in e alleggerire l'ambiente locale.
 - **Frontend:** Next.js distribuito su Vercel o Cloudflare Pages (vedi le [ottimizzazioni di performance](/architecture/frontend_performance.md)).
 - **Monetizzazione:** Integrare un componente leggero per le donazioni open-source (es. Ko-fi o link di pagamento Stripe) nell'interfaccia utente.
 
@@ -44,8 +44,8 @@ Per ovviare a problematiche di parsing e corruzione dei caratteri di escape LaTe
 4. **Inizializzazione del Frontend:** 
    Configurare un progetto Next.js pulito con Tailwind CSS. Configurare una libreria di formattazione matematica (KaTeX o MathJax) per renderizzare l'output LaTeX dell'API nativamente nel browser. 
 
-5. **Ambiente Locale & CI/CD:** 
-   Creare un `docker-compose.yml` per avviare un'istanza PostgreSQL locale per lo sviluppo. Generare file `.env.example` per frontend e backend.
+5. **Ambiente Locale, CI/CD & MCP:** 
+   Avviare un'istanza PostgreSQL locale per lo sviluppo (usando nativamente `docker run` per ovviare a limitazioni del plugin `compose`). L'agente interagisce direttamente con il DB locale tramite un server MCP (`@modelcontextprotocol/server-postgres`) configurato nell'IDE, rendendo obsolete le query manuali via CLI. Generare file `.env.example` per frontend e backend.
 
 Eseguire lo scaffolding e mostrare l'albero iniziale dei file.
 

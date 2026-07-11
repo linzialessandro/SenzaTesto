@@ -30,7 +30,7 @@ def main():
         return
 
     migration_file = os.path.join(
-        os.path.dirname(__file__), 'migrations', '001_schema_upgrade.sql'
+        os.path.dirname(os.path.dirname(__file__)), 'migrations', '001_schema_upgrade.sql'
     )
     if not os.path.exists(migration_file):
         print(f"ERRORE: File di migrazione non trovato: {migration_file}")
@@ -39,7 +39,7 @@ def main():
     with open(migration_file, 'r') as f:
         sql = f.read()
 
-    print(f"Connessione al database...")
+    print("Connessione al database...")
     conn = psycopg2.connect(database_url)
     conn.autocommit = False  # La transazione è gestita dal BEGIN/COMMIT nel file SQL
     cur = conn.cursor()

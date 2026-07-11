@@ -118,7 +118,7 @@ async def get_exercises(
 
             # Ordinamento: per rilevanza se c'è ricerca testuale, altrimenti per data
             if q:
-                base_query += f" ORDER BY ts_rank(e.search_vector, websearch_to_tsquery('italian', optimize_search_query($1))) DESC, e.created_at DESC"
+                base_query += " ORDER BY ts_rank(e.search_vector, websearch_to_tsquery('italian', optimize_search_query($1))) DESC, e.created_at DESC"
             else:
                 base_query += " ORDER BY e.created_at DESC"
 

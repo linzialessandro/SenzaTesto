@@ -16,7 +16,8 @@ def load_env():
 env = load_env()
 conn = psycopg2.connect(env['DATABASE_URL'])
 cur = conn.cursor()
-with open('init.sql', 'r') as f:
+init_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'init.sql')
+with open(init_file, 'r') as f:
     cur.execute(f.read())
 conn.commit()
 print("DB initialized")

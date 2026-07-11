@@ -1,7 +1,7 @@
 import psycopg2
 import os
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime
 
 def load_env():
     env_vars = {}
@@ -131,7 +131,7 @@ def print_terminal(data):
     console.print(t3)
 
 def generate_markdown(data):
-    md = f"# 📊 Report Analytics SenzaTesto\n\n"
+    md = "# 📊 Report Analytics SenzaTesto\n\n"
     md += f"**Generato il:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
     md += f"- **Ricerche Totali:** {data['total_searches']}\n"
     md += f"- **Soluzioni Visualizzate Totali:** {data['total_views']}\n\n"
