@@ -128,8 +128,15 @@ export default function Home() {
   const toggleSolution = useCallback((hash: string) => {
     setVisibleSolutions(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(hash)) newSet.delete(hash);
-      else newSet.add(hash);
+      if (newSet.has(hash)) {
+        newSet.delete(hash);
+      } else {
+        newSet.add(hash);
+        // Log the view anonymously
+        supabase.rpc('log_solution_view', { hash }).then(({ error }) => {
+          if (error) console.error("Error logging solution view:", error);
+        });
+      }
       return newSet;
     });
   }, []);
