@@ -4,6 +4,9 @@
     "jsqr": "^1.4.0",
     "pngjs": "^7.0.0"
   },
+  "scripts": {
+    "analytics": "venv/bin/python scripts/analytics.py"
+  },
   "engines": {
     "node": ">=24.0.0"
   }

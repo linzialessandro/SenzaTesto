@@ -1,0 +1,38 @@
+name: Analytics Weekly Report
+
+on:
+  schedule:
+    - cron: '0 8 * * 1' # Every Monday at 08:00 UTC
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  generate_report:
+    runs-on: ubuntu-latest
+    # Aggiungi permessi per creare issue
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install psycopg2-binary rich
+
+      - name: Generate Analytics Report
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python scripts/analytics.py --markdown --out report.md
+
+      - name: Create GitHub Issue
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "📊 Report Analytics Settimanale"
+          content-filepath: ./report.md
+          labels: "analytics"
