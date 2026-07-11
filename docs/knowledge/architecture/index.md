@@ -8,3 +8,4 @@ Questa categoria contiene informazioni sull'infrastruttura del progetto, sul dep
 - [Template Markdown Esercizi](./exercise_template.md) - Standard per la formattazione dei nuovi esercizi.
 - [Performance Frontend e Mobile UX](./frontend_performance.md) - Ottimizzazioni estreme per React, framer-motion e GPU su mobile.
 - [Frontend Type Safety & Boundary Validation](./frontend_type_safety.md) - Architettura di validazione dei dati e configurazione rigorosa di TypeScript.
+- [Custom Analytics & GDPR Compliance](./custom_analytics.md) - Architettura del sistema di tracciamento anonimo basato su database e reportistica GitHub Actions.

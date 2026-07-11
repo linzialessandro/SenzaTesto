@@ -1,5 +1,8 @@
 # Registro degli Aggiornamenti della Knowledge Base
 
+## 2026-07-11
+* **Architettura**: Creato il concetto `custom_analytics.md` per documentare l'implementazione in-house e GDPR-compliant delle statistiche (tramite le tabelle Supabase `search_logs` e `solution_views`, le relative RPC e l'automazione dei report tramite GitHub Actions).
+
 ## 2026-07-10
 * **Architettura**: Creato il concetto `frontend_type_safety.md` per documentare l'introduzione di Zod (boundary validation), `@total-typescript/ts-reset` (standard library fixes) e l'abilitazione dello strict mode estremo (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) ispirato alle best practice di Matt Pocock.
 * **Database**: Aggiornato il concetto `indexing` per documentare l'introduzione della funzione `optimize_search_query`, la quale estende le capacità di ricerca FTS convertendo dinamicamente spazi impliciti (AND) in operatore `OR`, aumentando la recall senza penalizzare la precisione del ranking `ts_rank`.
