@@ -20,7 +20,7 @@ load_dotenv() # Prova a caricare dal .env locale nella cartella corrente o genit
 
 if not os.environ.get("GEMINI_API_KEY"):
     # Fallback per Alessandro (non viene committato alcun segreto, è solo un path locale)
-    fallback_path = os.path.expanduser("~/secrets/Submissions-per-SenzaTesto/antigravity-sdk/.env")
+    fallback_path = os.path.expanduser("~/secrets/SenzaTesto/.env")
     if os.path.exists(fallback_path):
         load_dotenv(fallback_path)
     else:
@@ -30,7 +30,7 @@ if not os.environ.get("GEMINI_API_KEY"):
 
 # Costanti dei path basati sulla root del progetto
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-CURRICULUM_PATH = os.path.join(PROJECT_ROOT, "docs", "curriculum-italiano.md")
+CURRICULUM_PATH = os.path.join(PROJECT_ROOT, "docs", "knowledge", "curriculum", "curriculum-italiano.md")
 SUBMISSIONS_DIR = os.path.join(PROJECT_ROOT, "submissions", "pending")
 
 # 2. Struttura dei dati per l'AI
@@ -44,19 +44,189 @@ class ExerciseOutput(BaseModel):
     solution: str = Field(description="The complete step-by-step solution using LaTeX where appropriate")
     generation_completed: str = Field(description="MUST be exactly the string 'COMPLETED'")
 
-def get_topics():
+# 3. System Instruction specializzati per anno scolastico
+# Ogni prompt è compatto (~400-500 token) per efficienza BYOK.
+# Contiene: identità, argomenti dell'anno, livello pedagogico, stile esercizi.
+YEAR_SYSTEM_INSTRUCTIONS: dict[int, str] = {
+    1: (
+        "Sei un professore di matematica italiano per il 1° anno delle scuole superiori. "
+        "I tuoi studenti hanno 14-15 anni e stanno costruendo le basi del pensiero algebrico.\n\n"
+        "ARGOMENTI del 1° Anno: "
+        "Logica e Insiemistica (proposizioni, connettivi logici, insiemi, operazioni tra insiemi, prodotto cartesiano, relazioni) | "
+        "Aritmetica e Algebra (N, Z, Q, proprietà delle operazioni, MCD, mcm, potenze, proporzioni, percentuali) | "
+        "Calcolo letterale (monomi, polinomi, prodotti notevoli, MCD e mcm tra polinomi, divisioni, Ruffini, scomposizione in fattori) | "
+        "Geometria piana Euclidea (enti fondamentali, segmenti, angoli, triangoli, criteri di congruenza) | "
+        "Poligoni (quadrilateri, parallelogrammi, rettangoli, rombi, quadrati, trapezi, somma angoli) | "
+        "Statistica Descrittiva (frequenze assolute e relative, istogrammi, aerogrammi, diagrammi a barre).\n\n"
+        "LIVELLO PEDAGOGICO:\n"
+        "- Linguaggio chiaro e accessibile, evita formalismi eccessivi.\n"
+        "- Gli studenti NON conoscono: equazioni, disequazioni, radicali, funzioni, coordinate cartesiane.\n"
+        "- Ogni passaggio della soluzione deve essere esplicito, senza salti logici.\n"
+        "- Prediligi esercizi di calcolo diretto, scomposizione, applicazione di definizioni e proprietà.\n"
+        "- Nella geometria usa dimostrazioni guidate con i criteri di congruenza."
+    ),
+    2: (
+        "Sei un professore di matematica italiano per il 2° anno delle scuole superiori. "
+        "I tuoi studenti hanno 15-16 anni e stanno imparando a risolvere equazioni e a dimostrare proprietà geometriche.\n\n"
+        "ARGOMENTI del 2° Anno: "
+        "Equazioni di primo grado (intere, letterali con discussione) | "
+        "Disequazioni di primo grado (intere, sistemi di disequazioni) | "
+        "Frazioni algebriche (semplificazione, operazioni, equazioni e disequazioni fratte, condizioni di esistenza) | "
+        "Sistemi lineari (sostituzione, confronto, riduzione, Cramer) | "
+        "Numeri reali e Radicali (proprietà, operazioni, razionalizzazione, equazioni irrazionali) | "
+        "Equazioni di secondo grado (formula risolutiva, pura, spuria, relazione soluzioni-coefficienti, Cartesio, parametriche) | "
+        "Geometria piana avanzata (circonferenza e cerchio, corde, tangenti, angoli al centro/alla circonferenza, "
+        "poligoni inscritti e circoscritti, Pitagora, Euclide, similitudine, Talete) | "
+        "Probabilità base (eventi, probabilità classica).\n\n"
+        "LIVELLO PEDAGOGICO:\n"
+        "- Linguaggio preciso ma ancora guidato, introduci gradualmente il formalismo.\n"
+        "- Gli studenti conoscono il calcolo letterale e la geometria base, ma NON la geometria analitica, le funzioni, o i logaritmi.\n"
+        "- Le soluzioni devono mostrare ogni passaggio algebrico.\n"
+        "- Nelle equazioni parametriche, esplicita sempre la discussione sui casi."
+    ),
+    3: (
+        "Sei un professore di matematica italiano per il 3° anno delle scuole superiori. "
+        "I tuoi studenti hanno 16-17 anni e stanno imparando a collegare algebra e geometria nel piano cartesiano.\n\n"
+        "ARGOMENTI del 3° Anno: "
+        "Geometria Analitica — Piano cartesiano (distanza, punto medio, baricentro, perimetro e area sul piano, "
+        "trasformazioni geometriche: simmetrie, traslazioni, dilatazioni) | "
+        "La retta (equazione implicita/esplicita, coefficiente angolare, intersezione, parallelismo, perpendicolarità, "
+        "distanza punto-retta, fasci di rette) | "
+        "Coniche: parabola (vertice, fuoco, direttrice, asse, tangenti), "
+        "circonferenza (centro, raggio, posizione reciproca con rette), "
+        "ellisse (equazione canonica, vertici, fuochi, eccentricità), "
+        "iperbole (vertici, fuochi, asintoti, equilatera, funzione omografica) | "
+        "Equazioni/disequazioni di grado superiore (biquadratiche, trinomie, Ruffini) | "
+        "Equazioni/disequazioni irrazionali | "
+        "Statistica avanzata (media, moda, mediana, varianza, scarto quadratico medio).\n\n"
+        "LIVELLO PEDAGOGICO:\n"
+        "- Linguaggio formale, usa la notazione analitica con sicurezza.\n"
+        "- Gli studenti conoscono equazioni e disequazioni di 1° e 2° grado, radicali, sistemi.\n"
+        "- NON conoscono: esponenziali, logaritmi, trigonometria, limiti, derivate.\n"
+        "- Nelle coniche, chiedi sia il calcolo degli elementi che la discussione delle posizioni reciproche.\n"
+        "- Valorizza esercizi che collegano equazioni algebriche a interpretazioni geometriche."
+    ),
+    4: (
+        "Sei un professore di matematica italiano per il 4° anno delle scuole superiori. "
+        "I tuoi studenti hanno 17-18 anni e stanno acquisendo strumenti matematici avanzati.\n\n"
+        "ARGOMENTI del 4° Anno: "
+        "Disequazioni di grado superiore e fratte (metodo grafico, metodo dei segni) | "
+        "Valore assoluto (equazioni e disequazioni) | "
+        "Esponenziali e Logaritmi (proprietà, funzioni, equazioni e disequazioni esponenziali e logaritmiche, cambio di base) | "
+        "Goniometria (circonferenza goniometrica, gradi e radianti, seno, coseno, tangente, cotangente, grafici) | "
+        "Formule goniometriche (archi associati, addizione, sottrazione, duplicazione, bisezione, prostaferesi, Werner) | "
+        "Equazioni/disequazioni goniometriche (elementari, lineari, omogenee, fratte) | "
+        "Risoluzione dei triangoli (rettangoli e qualunque: seni, coseni, corda, applicazioni) | "
+        "Numeri Complessi (forma algebrica, trigonometrica, esponenziale, De Moivre, radici n-esime, TFA) | "
+        "Stereometria (rette e piani nello spazio, poliedri, solidi di rotazione, aree e volumi) | "
+        "Calcolo Combinatorio (disposizioni, permutazioni, combinazioni, fattoriale, binomiale, Newton) | "
+        "Probabilità avanzata (unione, intersezione, condizionata, indipendenza, Bayes, distribuzione binomiale).\n\n"
+        "LIVELLO PEDAGOGICO:\n"
+        "- Linguaggio rigoroso, gli studenti devono padroneggiare la notazione formale.\n"
+        "- Conoscono tutta l'algebra e la geometria analitica dei primi 3 anni.\n"
+        "- NON conoscono: limiti, derivate, integrali, analisi matematica.\n"
+        "- In trigonometria, verifica che le soluzioni coprano tutti i casi periodici.\n"
+        "- Nei complessi, alterna tra forma algebrica e trigonometrica.\n"
+        "- In combinatoria e probabilità, esigi che il modello sia dichiarato prima del calcolo."
+    ),
+    5: (
+        "Sei un professore di matematica italiano per il 5° anno delle scuole superiori. "
+        "I tuoi studenti hanno 18-19 anni e si stanno preparando all'Esame di Stato (Maturità).\n\n"
+        "ARGOMENTI del 5° Anno: "
+        "Topologia e Funzioni (dominio, codominio, intersezioni con assi, parità, periodicità) | "
+        "Limiti e Continuità (definizione, verifica con la definizione, continuità per funzioni a tratti, "
+        "classificazione dei punti di discontinuità) | "
+        "Calcolo dei Limiti (teoremi: unicità, permanenza del segno, confronto; forme indeterminate, limiti notevoli, "
+        "asintoti verticali/orizzontali/obliqui, Weierstrass, valori intermedi, esistenza degli zeri) | "
+        "Derivate (definizione, rapporto incrementale, significato geometrico e fisico, regole di derivazione: "
+        "composta, rapporto, prodotto, somma; derivate di ordine superiore, retta tangente) | "
+        "Teoremi del calcolo differenziale (Rolle, Lagrange, Cauchy, De L'Hôpital) | "
+        "Studio di funzione e Ottimizzazione (crescenza, monotonia, max/min, concavità, flessi, grafico completo, "
+        "problemi di ottimizzazione applicati) | "
+        "Integrali indefiniti (primitiva, integrali immediati, scomposizione, sostituzione, per parti, fratte) | "
+        "Integrali definiti (somme di Riemann, Torricelli-Barrow, teorema della media) | "
+        "Applicazioni dell'integrale (aree, volumi di rotazione, lunghezza d'arco, integrali impropri) | "
+        "Equazioni differenziali (1° ordine: variabili separabili, lineari) | "
+        "Geometria analitica nello spazio (vettori, equazioni di piano, retta, sfera) | "
+        "Statistica e Probabilità continua (variabili aleatorie continue, distribuzione Normale).\n\n"
+        "LIVELLO PEDAGOGICO:\n"
+        "- Linguaggio molto rigoroso e formale, usa la notazione dell'analisi matematica.\n"
+        "- Gli studenti hanno padronanza completa di algebra, geometria analitica, trigonometria.\n"
+        "- Le soluzioni devono essere dettagliate ma senza ripetizioni, con riferimenti ai teoremi usati.\n"
+        "- Nello studio di funzione, ogni passaggio deve essere giustificato dal teorema appropriato.\n"
+        "- Negli integrali, specifica il metodo scelto e perché.\n"
+        "- Alterna tra esercizi tecnici (calcolo) ed esercizi concettuali (dimostrazioni, interpretazioni)."
+    ),
+}
+
+
+def get_topics_by_year() -> dict[int, list[dict[str, str]]]:
+    """Parsa il curriculum e restituisce argomenti raggruppati per anno.
+
+    Returns:
+        Dict con chiave=anno (1-5) e valore=lista di dict {'macro_area': ..., 'topic': ...}.
+    """
     if not os.path.exists(CURRICULUM_PATH):
         print(f"Errore: File curriculum non trovato in {CURRICULUM_PATH}")
         exit(1)
-        
+
     with open(CURRICULUM_PATH, "r") as f:
         content = f.read()
-    
-    topics = []
+
+    topics_by_year: dict[int, list[dict[str, str]]] = {}
+    current_year = None
+
     for line in content.split('\n'):
-        if line.strip().startswith("- **") or (line.strip().startswith("- ") and " - " not in line):
-            topics.append(line.strip().replace("- **", "").replace("**", "").replace("- ", ""))
-    return [t for t in topics if len(t) > 5]
+        stripped = line.strip()
+
+        # Rileva intestazione anno: "### 1° Anno", "### 2° Anno", etc.
+        year_match = re.match(r'^###\s+(\d)°\s+Anno', stripped)
+        if year_match:
+            current_year = int(year_match.group(1))
+            topics_by_year[current_year] = []
+            continue
+
+        if current_year is None:
+            continue
+
+        # Rileva macro_area: righe "- **Nome Macro Area:** descrizione argomenti"
+        macro_match = re.match(r'^-\s+\*\*(.+?)(?::?\*\*)\s*(.*)', stripped)
+        if macro_match:
+            macro_area = macro_match.group(1).rstrip(':').strip()
+            description = macro_match.group(2).strip()
+            if len(macro_area) > 3:
+                topics_by_year[current_year].append({
+                    'macro_area': macro_area,
+                    'topic': description if description else macro_area,
+                })
+            continue
+
+        # Rileva sotto-argomenti indentati (es. coniche nel 3° anno): "  - La parabola (...)"
+        # Usa `line` (non `stripped`) per preservare l'indentazione come segnale di sotto-argomento
+        sub_match = re.match(r'^\s+-\s+(.+)', line)
+        if sub_match and not stripped.startswith('- **') and current_year and topics_by_year[current_year]:
+            sub_topic = sub_match.group(1).strip()
+            if len(sub_topic) > 5:
+                parent_macro = topics_by_year[current_year][-1]['macro_area']
+                topics_by_year[current_year].append({
+                    'macro_area': parent_macro,
+                    'topic': sub_topic,
+                })
+
+    return topics_by_year
+
+
+def build_agent_configs() -> dict[int, LocalAgentConfig]:
+    """Crea un LocalAgentConfig specializzato per ogni anno scolastico."""
+    configs = {}
+    for year, instruction in YEAR_SYSTEM_INSTRUCTIONS.items():
+        configs[year] = LocalAgentConfig(
+            system_instructions=instruction,
+            response_schema=ExerciseOutput,
+            max_output_tokens=1000,
+        )
+    return configs
+
 
 def fix_math_blocks(text: str) -> str:
     if not text:
@@ -107,7 +277,7 @@ def run_cmd(cmd: str, cwd: str = PROJECT_ROOT, ignore_error: bool = False) -> bo
     wait=wait_exponential(multiplier=1, min=2, max=10),
     retry=retry_if_exception_type((types.AntigravityConnectionError, ValueError, Exception))
 )
-async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topic: str) -> str:
+async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topic: dict[str, str]) -> str:
     complexity_profile = random.choices(
         ["standard_accessible", "elaborate_challenging"],
         weights=[0.7, 0.3],
@@ -115,32 +285,27 @@ async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topi
     )[0]
     
     if complexity_profile == "standard_accessible":
-        complexity_instructions = """
-    IMPORTANT: To guarantee accessibility, ensure this specific exercise is extremely direct.
-    The solution MUST be concise, easy to follow, and under 5-8 clear steps."""
+        complexity_instructions = (
+            "COMPLESSITÀ: Esercizio diretto e accessibile. "
+            "La soluzione deve essere concisa, chiara, e in massimo 5-8 passaggi."
+        )
     else:
-        complexity_instructions = """
-    IMPORTANT: For this specific exercise, provide a slightly more involved problem combining standard concepts.
-    However, it MUST REMAIN A SINGLE FOCUSED QUESTION, not a multi-part exam."""
+        complexity_instructions = (
+            "COMPLESSITÀ: Esercizio leggermente più articolato che combina concetti standard. "
+            "Deve comunque essere UNA SINGOLA domanda focalizzata, non un compito multi-parte."
+        )
 
-    prompt = f"""
-    You are a math professor in Italy creating high-quality, copyright-free math exercises for high school students.
-    Select a specific sub-topic or problem related to the following curriculum area: {selected_topic}
-    {complexity_instructions}
-    
-    CRITICAL RULES TO PREVENT OVER-GENERATION:
-    1. Generate a SINGLE, highly focused question.
-    2. DO NOT generate multi-part problems (e.g., no "1. ... 2. ... 3. ...").
-    3. DO NOT generate long "Problemi di Maturità" or exhaustive real-world scenarios.
-    4. Keep the text and solution strictly under 400 words total.
-    
-    Provide both the problem text and a complete step-by-step solution in Italian language.
-    Use LaTeX formatting for mathematical expressions.
-    CRITICAL INSTRUCTION FOR MATH BLOCKS: When writing block/centered math using $$ ... $$ or environments like \\begin{{cases}}, you MUST place the $$ delimiters on their own independent, empty lines.
-    The `problem_text` must contain ONLY the mathematical problem itself. 
-    The `solution` must contain ONLY the mathematical steps to solve it.
-    You MUST set the `generation_completed` field exactly to "COMPLETED".
-    """
+    prompt = (
+        f"Genera un esercizio per: {selected_topic['macro_area']} — {selected_topic['topic']}\n"
+        f"{complexity_instructions}\n\n"
+        "REGOLE DI FORMATO:\n"
+        "1. Domanda SINGOLA e focalizzata, NO multi-parte (no \"1. ... 2. ... 3. ...\").\n"
+        "2. NO \"Problemi di Maturità\" lunghi o scenari esaustivi del mondo reale.\n"
+        "3. Testo e soluzione in italiano, max 400 parole totali.\n"
+        "4. Usa LaTeX: i delimitatori $$ DEVONO stare su righe proprie per i blocchi.\n"
+        "5. `problem_text`: SOLO il problema. `solution`: SOLO i passaggi risolutivi.\n"
+        "6. `generation_completed` = \"COMPLETED\"."
+    )
     
     async with Agent(agent_config) as agent:
         response = await agent.chat(prompt)
@@ -161,10 +326,20 @@ async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topi
             
         return filepath
 
-async def task_wrapper(sem: asyncio.Semaphore, index: int, num_exercises: int, agent_config: LocalAgentConfig, topics: list[str]) -> str | None:
+async def task_wrapper(
+    sem: asyncio.Semaphore,
+    index: int,
+    num_exercises: int,
+    agent_configs: dict[int, LocalAgentConfig],
+    topics_by_year: dict[int, list[dict[str, str]]],
+) -> str | None:
     async with sem:
-        selected_topic = random.choice(topics)
-        print(f"⏳ [{index}/{num_exercises}] Generazione in corso: {selected_topic}...")
+        # Selezione casuale dell'anno con probabilità uniforme (1/5 ciascuno)
+        year = random.choice([1, 2, 3, 4, 5])
+        selected_topic = random.choice(topics_by_year[year])
+        agent_config = agent_configs[year]
+
+        print(f"⏳ [{index}/{num_exercises}] Anno {year} — {selected_topic['macro_area']}: {selected_topic['topic']}...")
         try:
             filepath = await generate_single_exercise(agent_config, selected_topic)
             print(f"✅ [{index}/{num_exercises}] Completato e salvato: {os.path.basename(filepath)}")
@@ -174,13 +349,13 @@ async def task_wrapper(sem: asyncio.Semaphore, index: int, num_exercises: int, a
             return None
 
 async def main():
-    topics = get_topics()
-    
-    config = LocalAgentConfig(
-        response_schema=ExerciseOutput,
-        max_output_tokens=1000
-    )
-    
+    topics_by_year = get_topics_by_year()
+    agent_configs = build_agent_configs()
+
+    # Stampa un riepilogo degli argomenti trovati per anno
+    for year in sorted(topics_by_year.keys()):
+        print(f"  📚 Anno {year}: {len(topics_by_year[year])} argomenti trovati")
+
     os.makedirs(SUBMISSIONS_DIR, exist_ok=True)
     
     try:
@@ -189,13 +364,13 @@ async def main():
         print("Errore: Il numero di esercizi deve essere un numero intero.")
         return
         
-    print(f"\n🚀 === Inizio Generazione Parallela di {NUM_EXERCISES} esercizi ===")
+    print(f"\n🚀 === Inizio Generazione Parallela di {NUM_EXERCISES} esercizi (5 agenti specializzati) ===")
     
     # Use semaphore of 5 to balance concurrency speed and rate limits
     sem = asyncio.Semaphore(5)
     
     tasks = [
-        task_wrapper(sem, i + 1, NUM_EXERCISES, config, topics)
+        task_wrapper(sem, i + 1, NUM_EXERCISES, agent_configs, topics_by_year)
         for i in range(NUM_EXERCISES)
     ]
     
