@@ -65,7 +65,8 @@ export default function Home() {
   useEffect(() => {
     let ignore = false;
     const fetchExercises = async () => {
-      const query = debouncedQuery.trim() || null;
+      // Remove any leading '#' that users might copy-paste from the UI
+      const query = debouncedQuery.trim().replace(/^#/, '') || null;
       
       if (!query && selectedTopic === null) {
         setExercises([]);
@@ -105,7 +106,8 @@ export default function Home() {
 
   // Carica altri esercizi (paginazione)
   const loadMore = useCallback(async () => {
-    const query = debouncedQuery.trim() || null;
+    // Remove any leading '#' that users might copy-paste from the UI
+    const query = debouncedQuery.trim().replace(/^#/, '') || null;
     setLoadingMore(true);
     try {
       const params: Record<string, unknown> = { page_limit: PAGE_SIZE, page_offset: exercises.length };
