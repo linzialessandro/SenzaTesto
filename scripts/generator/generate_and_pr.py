@@ -272,32 +272,49 @@ def run_cmd(cmd: str, cwd: str = PROJECT_ROOT, ignore_error: bool = False) -> bo
         return False
 
 # Eccetto ValueError o eccezioni simili, riproviamo se ci sono problemi di connessione o l'output strutturato fallisce
+# 4. Profili di difficoltà espliciti per guidare l'IA
+# Ogni livello contiene istruzioni pedagogiche precise e vincola il campo `difficulty`.
+DIFFICULTY_PROFILES: dict[int, str] = {
+    1: (
+        "DIFFICOLTÀ: 1/5 (Base). Esercizio elementare di applicazione diretta di una definizione "
+        "o di una formula. Nessun passaggio intermedio complesso. "
+        "Il campo `difficulty` DEVE essere 1."
+    ),
+    2: (
+        "DIFFICOLTÀ: 2/5 (Facile). Esercizio standard che richiede 2-3 passaggi algebrici "
+        "o l'applicazione di una singola tecnica risolutiva nota. "
+        "Il campo `difficulty` DEVE essere 2."
+    ),
+    3: (
+        "DIFFICOLTÀ: 3/5 (Medio). Esercizio che richiede la combinazione di due tecniche "
+        "o un ragionamento in più passaggi con qualche insidia (segni, casi particolari). "
+        "Il campo `difficulty` DEVE essere 3."
+    ),
+    4: (
+        "DIFFICOLTÀ: 4/5 (Impegnativo). Esercizio che richiede padronanza sicura dell'argomento, "
+        "combina più concetti, e presenta almeno un passaggio non banale o un caso limite. "
+        "Il campo `difficulty` DEVE essere 4."
+    ),
+    5: (
+        "DIFFICOLTÀ: 5/5 (Massimo). Esercizio sfidante anche per gli studenti più preparati. "
+        "Richiede intuizione, collegamenti tra argomenti diversi, o una dimostrazione rigorosa. "
+        "Può includere parametri, casi da discutere, o generalizzazioni. "
+        "Il campo `difficulty` DEVE essere 5."
+    ),
+}
+
+
 @retry(
     stop=stop_after_attempt(3), 
     wait=wait_exponential(multiplier=1, min=2, max=10),
     retry=retry_if_exception_type((types.AntigravityConnectionError, ValueError, Exception))
 )
-async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topic: dict[str, str]) -> str:
-    complexity_profile = random.choices(
-        ["standard_accessible", "elaborate_challenging"],
-        weights=[0.7, 0.3],
-        k=1
-    )[0]
-    
-    if complexity_profile == "standard_accessible":
-        complexity_instructions = (
-            "COMPLESSITÀ: Esercizio diretto e accessibile. "
-            "La soluzione deve essere concisa, chiara, e in massimo 5-8 passaggi."
-        )
-    else:
-        complexity_instructions = (
-            "COMPLESSITÀ: Esercizio leggermente più articolato che combina concetti standard. "
-            "Deve comunque essere UNA SINGOLA domanda focalizzata, non un compito multi-parte."
-        )
+async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topic: dict[str, str], difficulty_level: int) -> str:
+    difficulty_instructions = DIFFICULTY_PROFILES[difficulty_level]
 
     prompt = (
         f"Genera un esercizio per: {selected_topic['macro_area']} — {selected_topic['topic']}\n"
-        f"{complexity_instructions}\n\n"
+        f"{difficulty_instructions}\n\n"
         "REGOLE DI FORMATO:\n"
         "1. Domanda SINGOLA e focalizzata, NO multi-parte (no \"1. ... 2. ... 3. ...\").\n"
         "2. NO \"Problemi di Maturità\" lunghi o scenari esaustivi del mondo reale.\n"
@@ -339,9 +356,16 @@ async def task_wrapper(
         selected_topic = random.choice(topics_by_year[year])
         agent_config = agent_configs[year]
 
-        print(f"⏳ [{index}/{num_exercises}] Anno {year} — {selected_topic['macro_area']}: {selected_topic['topic']}...")
+        # Selezione pesata della difficoltà per garantire copertura completa dello spettro
+        difficulty_level = random.choices(
+            [1, 2, 3, 4, 5],
+            weights=[0.15, 0.30, 0.30, 0.15, 0.10],
+            k=1
+        )[0]
+
+        print(f"⏳ [{index}/{num_exercises}] Anno {year} | Diff. {difficulty_level} ⭐ — {selected_topic['macro_area']}: {selected_topic['topic']}...")
         try:
-            filepath = await generate_single_exercise(agent_config, selected_topic)
+            filepath = await generate_single_exercise(agent_config, selected_topic, difficulty_level)
             print(f"✅ [{index}/{num_exercises}] Completato e salvato: {os.path.basename(filepath)}")
             return filepath
         except Exception as e:
