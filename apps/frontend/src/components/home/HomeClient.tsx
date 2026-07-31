@@ -24,6 +24,8 @@ import { z } from 'zod';
 
 const PAGE_SIZE = 30;
 const SCROLL_LOCK_KEY = 'senzatesto.scrollLock';
+/** Cover first filter transition: URL update + collections→exercises AnimatePresence (~400ms). */
+const SCROLL_HOLD_MS = 650;
 const QUERY_KEYS = ['q', 'topic', 'year', 'difficulty', 'exercise', 'mode', 'size'] as const;
 type QueryKey = (typeof QUERY_KEYS)[number];
 type UrlUpdate = Partial<Record<QueryKey, string | number | null>>;
@@ -98,6 +100,8 @@ export function HomeClient() {
   const [practiceNonce, setPracticeNonce] = useState(0);
   // Keep scroll stable when query-string filters change (selects are especially noisy).
   const pendingScrollY = useRef<number | null>(null);
+  const scrollHoldCleanup = useRef<(() => void) | null>(null);
+  const wasExploringRef = useRef(false);
 
   const selectedTopic = urlFilters.topic;
   const selectedYear = urlFilters.year;
@@ -124,6 +128,48 @@ export function HomeClient() {
     return null;
   }, [selectedDifficulty, selectedTopic, selectedYear, urlFilters.exerciseCode]);
 
+  const holdScrollPosition = useCallback((scrollY: number, holdMs = SCROLL_HOLD_MS) => {
+    scrollHoldCleanup.current?.();
+    pendingScrollY.current = scrollY;
+    try {
+      sessionStorage.setItem(SCROLL_LOCK_KEY, String(scrollY));
+    } catch {
+      // private mode / quota
+    }
+
+    restoreScrollPosition(scrollY);
+    const startedAt = performance.now();
+    let rafId = 0;
+    const timeouts: number[] = [];
+
+    const tick = (now: number) => {
+      restoreScrollPosition(scrollY);
+      if (now - startedAt < holdMs) {
+        rafId = window.requestAnimationFrame(tick);
+      } else if (pendingScrollY.current === scrollY) {
+        pendingScrollY.current = null;
+        try {
+          sessionStorage.removeItem(SCROLL_LOCK_KEY);
+        } catch {
+          // ignore
+        }
+      }
+    };
+    rafId = window.requestAnimationFrame(tick);
+
+    // Router / focus scrolls often land after a few frames; re-assert for a while.
+    for (const delay of [0, 16, 50, 100, 200, 350, 500, holdMs]) {
+      timeouts.push(window.setTimeout(() => restoreScrollPosition(scrollY), delay));
+    }
+
+    scrollHoldCleanup.current = () => {
+      window.cancelAnimationFrame(rafId);
+      for (const id of timeouts) window.clearTimeout(id);
+    };
+  }, []);
+
+  useEffect(() => () => scrollHoldCleanup.current?.(), []);
+
   const replaceUrl = useCallback(
     (updates: UrlUpdate) => {
       const next = new URLSearchParams(searchParamsKey);
@@ -141,30 +187,15 @@ export function HomeClient() {
       const currentUrl = searchParamsKey ? `${pathname}?${searchParamsKey}` : pathname;
       if (nextUrl === currentUrl) return;
 
-      // Native <select> + App Router search-param updates often jump to top despite scroll:false.
-      const scrollY = window.scrollY;
-      pendingScrollY.current = scrollY;
-      try {
-        sessionStorage.setItem(SCROLL_LOCK_KEY, String(scrollY));
-      } catch {
-        // private mode / quota — in-memory lock is enough for same-document updates
-      }
-
+      // First year/difficulty choice also swaps Collections → Exercises (layout collapse).
+      // Hold scroll longer than a single paint so the swap cannot yank the viewport to top.
+      holdScrollPosition(window.scrollY);
       router.replace(nextUrl, { scroll: false });
-
-      // Restore immediately and after the next paints (Next can still scroll after replace).
-      restoreScrollPosition(scrollY);
-      requestAnimationFrame(() => {
-        restoreScrollPosition(scrollY);
-        requestAnimationFrame(() => restoreScrollPosition(scrollY));
-      });
-      window.setTimeout(() => restoreScrollPosition(scrollY), 0);
-      window.setTimeout(() => restoreScrollPosition(scrollY), 50);
     },
-    [pathname, router, searchParamsKey],
+    [holdScrollPosition, pathname, router, searchParamsKey],
   );
 
-  // After URL-driven re-render (or Suspense remount), put the viewport back.
+  // After URL-driven re-render (or Suspense remount), re-assert the held position.
   useLayoutEffect(() => {
     let y = pendingScrollY.current;
     if (y == null) {
@@ -176,14 +207,7 @@ export function HomeClient() {
       }
     }
     if (y == null || !Number.isFinite(y)) return;
-
     restoreScrollPosition(y);
-    pendingScrollY.current = null;
-    try {
-      sessionStorage.removeItem(SCROLL_LOCK_KEY);
-    } catch {
-      // ignore
-    }
   }, [searchParamsKey]);
 
   useEffect(() => {
@@ -370,6 +394,34 @@ export function HomeClient() {
     effectiveQuery || selectedTopic || selectedYear !== null || selectedDifficulty !== null,
   );
 
+  // First filter: collections unmount after explore becomes true — re-hold scroll for that swap.
+  useLayoutEffect(() => {
+    const becameExploring = isExploring && !wasExploringRef.current;
+    wasExploringRef.current = isExploring;
+    if (!becameExploring) return;
+
+    let y = pendingScrollY.current;
+    if (y == null) {
+      try {
+        const raw = sessionStorage.getItem(SCROLL_LOCK_KEY);
+        if (raw != null) y = Number(raw);
+      } catch {
+        y = null;
+      }
+    }
+    // Prefer locked Y; otherwise pin to the search/filters block so we never jump to the hero top.
+    if (y == null || !Number.isFinite(y)) {
+      const section = document.getElementById('exercises-section');
+      if (section) {
+        const top = section.getBoundingClientRect().top + window.scrollY - 88;
+        y = Math.max(0, top);
+      } else {
+        y = window.scrollY;
+      }
+    }
+    holdScrollPosition(y, SCROLL_HOLD_MS);
+  }, [holdScrollPosition, isExploring]);
+
   return (
     <div className="min-h-screen text-slate-900 dark:text-slate-50 relative pb-32">
       <NavBar
@@ -403,53 +455,56 @@ export function HomeClient() {
           isPracticeActive={isPracticeActive}
         />
 
-        <AnimatePresence mode="wait">
-          {isPracticeActive ? (
-            <motion.div
-              key={`practice-${practiceNonce}-${urlFilters.sessionSize}-${selectedYear}-${selectedDifficulty}-${selectedTopic ?? ''}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-            >
-              <PracticeSession
-                filters={practiceFilters}
-                onExit={exitPractice}
-                onStartRecommended={(recommended) => startPractice(recommended)}
-              />
-            </motion.div>
-          ) : !isExploring ? (
-            <motion.div
-              key="collections"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            >
-              <CollectionsGrid onSelectTopic={handleTopicChange} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="exercises"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            >
-              <ExercisesGrid
-                loading={loading}
-                filteredExercises={exercises}
-                visibleSolutions={visibleSolutions}
-                toggleSolution={toggleSolution}
-                resetFilters={resetFilters}
-                error={error}
-                hasMore={hasMore}
-                loadingMore={loadingMore}
-                onLoadMore={loadMore}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* min-height avoids a total collapse when collections exit on the first filter. */}
+        <div className="relative min-h-[20rem]">
+          <AnimatePresence mode="sync" initial={false}>
+            {isPracticeActive ? (
+              <motion.div
+                key={`practice-${practiceNonce}-${urlFilters.sessionSize}-${selectedYear}-${selectedDifficulty}-${selectedTopic ?? ''}`}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
+              >
+                <PracticeSession
+                  filters={practiceFilters}
+                  onExit={exitPractice}
+                  onStartRecommended={(recommended) => startPractice(recommended)}
+                />
+              </motion.div>
+            ) : !isExploring ? (
+              <motion.div
+                key="collections"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, position: 'absolute', inset: '0 0 auto 0' }}
+                transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+              >
+                <CollectionsGrid onSelectTopic={handleTopicChange} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="exercises"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
+              >
+                <ExercisesGrid
+                  loading={loading}
+                  filteredExercises={exercises}
+                  visibleSolutions={visibleSolutions}
+                  toggleSolution={toggleSolution}
+                  resetFilters={resetFilters}
+                  error={error}
+                  hasMore={hasMore}
+                  loadingMore={loadingMore}
+                  onLoadMore={loadMore}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </main>
 
       <InfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} />
