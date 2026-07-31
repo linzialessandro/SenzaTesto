@@ -1,9 +1,9 @@
 ---
 type: Concept
 title: Exercise Discovery, Permalinks & Sharing
-description: Filtri basati su URL, deep link per short code e condivisione per-esercizio sul frontend statico.
-tags: [frontend, discovery, permalinks, sharing, search, url-state, nextjs]
-timestamp: 2026-07-31T12:00:00Z
+description: Filtri basati su URL, deep link per short code, condivisione e avvio sessione di pratica sul frontend statico.
+tags: [frontend, discovery, permalinks, sharing, search, url-state, nextjs, practice]
+timestamp: 2026-07-31T18:00:00Z
 ---
 
 # Exercise Discovery, Permalinks & Sharing
@@ -19,11 +19,19 @@ Il frontend statico (Next.js `output: "export"`, `basePath: /SenzaTesto`) non pu
 | `year` | Anno scolastico 1–5 | intero in range |
 | `difficulty` | Difficoltà 1–5 | intero in range |
 | `exercise` | Short code (5–6 alfanumerici) | case-insensitive, `#` opzionale |
+| `mode` | `practice` avvia la sessione guidata | solo valore `practice` |
+| `size` | Numero esercizi in sessione (5–10, default 8) | clamp lato client |
 
 Esempi:
 - `/?exercise=UB7BB` — permalink dell'esercizio
-- `/?year=1&difficulty=2` — sessione di pratica informale filtrata
+- `/?year=1&difficulty=2` — esplorazione filtrata
+- `/?year=2&difficulty=2&mode=practice&size=8` — sessione di pratica guidata
 - `/?topic=Algebra&q=equazioni` — collezione + ricerca
+
+## Sessione di pratica
+
+Con almeno un filtro tra anno, argomento e difficoltà, il pulsante **Inizia sessione di pratica** imposta `mode=practice`.
+Il loop completo (autovalutazione, `localStorage`, raccomandazioni) è documentato in [Practice Session MVP](/architecture/practice-session.md).
 
 L'orchestrazione vive in `HomeClient` (`apps/frontend/src/components/home/HomeClient.tsx`). `page.tsx` è un thin shell con `Suspense` per `useSearchParams`.
 
@@ -33,6 +41,7 @@ L'orchestrazione vive in `HomeClient` (`apps/frontend/src/components/home/HomeCl
 2. Con almeno un filtro/query/codice: `ExercisesGrid` carica risultati via `supabase.rpc('search_exercises', …)`.
 3. Su `?exercise=CODE` i risultati vengono cercati per short code e la card `#exercise-CODE` riceve scroll-into-view.
 4. Selettori anno/difficoltà in `SearchSection` scrivono direttamente sull'URL (`router.replace`, no scroll).
+5. Con `mode=practice`: `PracticeSession` sostituisce griglia/collezioni finché l’utente non esce dalla pratica.
 
 ## Condivisione
 
@@ -49,5 +58,6 @@ Il link generato per un singolo esercizio azzera gli altri query param e imposta
 
 ## Relazioni
 
+- Sessione guidata: [Practice Session MVP](/architecture/practice-session.md).
 - Validazione runtime dei payload RPC: [Frontend Type Safety](/architecture/frontend_type_safety.md).
 - Bound server-side e analytics: [Custom Analytics](/architecture/custom_analytics.md).

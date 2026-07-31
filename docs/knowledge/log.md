@@ -1,6 +1,7 @@
 # Registro degli Aggiornamenti della Knowledge Base
 
 ## 2026-07-31
+* **Frontend / Practice**: Aggiunto il concetto `architecture/practice-session.md` (MVP sessione 5–10 esercizi, autovalutazione prima della soluzione, `localStorage`, raccomandazioni). Estesi discovery (`mode`/`size`), indice architettura, `setup.md` e `apps/frontend/CONTEXT.md`; rigenerato il grafo OKF.
 * **Frontend / Discovery**: Aggiunto il concetto `architecture/exercise-discovery.md` per documentare i filtri basati su URL (`q`, `topic`, `year`, `difficulty`, `exercise`), i permalink per short code e la condivisione per-esercizio (Web Share, WhatsApp, copia link) su static export GitHub Pages.
 * **Database**: Aggiornati `schema.md` e `indexing.md` con `ai_generated`, tabelle analytics (`search_logs.filter_difficulty`, `solution_views`), contratto RPC hardenizzato (`search_exercises` / `log_solution_view`), bound di input e lookup `short_code`.
 * **Agenti / Pipeline**: Aggiornato `agents/database-population-workflow.md` con il gate deterministico `validate_submissions.py`, `scripts/requirements.txt`, `environment.py` e il passaggio CI sul deploy; allineato il template Markdown (`ai_generated`) e la nota di supersessione in `architecture/population_workflow.md`.

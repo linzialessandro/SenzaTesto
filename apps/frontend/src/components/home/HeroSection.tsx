@@ -1,14 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Info, Search } from 'lucide-react';
+import { Sparkles, Info, Search, Target } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 interface HeroSectionProps {
   onOpenInfo: () => void;
   totalCount?: number | null;
+  onStartPractice?: () => void;
 }
 
-export function HeroSection({ onOpenInfo, totalCount }: HeroSectionProps) {
+export function HeroSection({ onOpenInfo, totalCount, onStartPractice }: HeroSectionProps) {
   const handleStartSession = () => {
     const section = document.getElementById('exercises-section');
     if (section) {
@@ -31,6 +32,7 @@ export function HeroSection({ onOpenInfo, totalCount }: HeroSectionProps) {
         }, 600); // Ritardo per permettere il completamento dell'animazione di scroll
       }
     }
+    onStartPractice?.();
   };
 
   return (
@@ -60,18 +62,22 @@ export function HeroSection({ onOpenInfo, totalCount }: HeroSectionProps) {
       </h1>
       
       <p className="text-lg sm:text-2xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-8 sm:mb-10 font-medium leading-relaxed px-4 sm:px-0">
-        Un database infinito di esercizi, generato e validato da agenti AI specializzati. 
+        Cerca esercizi o avvia una sessione di pratica con autovalutazione. 
         Gratuito. Open-Source. Creato per gli studenti italiani.
       </p>
       
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 w-full max-w-md mx-auto sm:max-w-none">
         <Button size="lg" onClick={handleStartSession} className="flex items-center justify-center gap-2 w-full sm:w-auto group">
-          <Search size={18} className="transition-transform duration-300 group-hover:scale-110" />
-          Cerca un Esercizio
+          <Target size={18} className="transition-transform duration-300 group-hover:scale-110" />
+          Inizia a praticare
         </Button>
-        <Button variant="secondary" size="lg" onClick={onOpenInfo} className="flex items-center justify-center gap-2 w-full sm:w-auto">
+        <Button variant="secondary" size="lg" onClick={handleStartSession} className="flex items-center justify-center gap-2 w-full sm:w-auto group">
+          <Search size={18} className="transition-transform duration-300 group-hover:scale-110" />
+          Cerca un esercizio
+        </Button>
+        <Button variant="ghost" size="lg" onClick={onOpenInfo} className="flex items-center justify-center gap-2 w-full sm:w-auto">
           <Info size={18} />
-          Scopri la Visione
+          Visione
         </Button>
       </div>
 

@@ -35,7 +35,7 @@ Per le comunicazioni con il database viene applicato `certifi` per validare l'SS
 **Librerie Condivise:**
 Per ovviare a problematiche di parsing e corruzione dei caratteri di escape LaTeX, la logica di fallback e sanitize è esternalizzata in un modulo python apposito (vedi `lib/latex_utils.py`), che ripara stringhe danneggiate e assicura l'integrità del LaTeX durante i passaggi I/O.
 
-**Frontend discovery:** deep link e filtri URL sono documentati in [Exercise Discovery](/architecture/exercise-discovery.md).
+**Frontend discovery e pratica:** deep link e filtri URL in [Exercise Discovery](/architecture/exercise-discovery.md); loop di pratica locale in [Practice Session MVP](/architecture/practice-session.md).
 
 **Passaggi di Esecuzione per l'Agente:**
 

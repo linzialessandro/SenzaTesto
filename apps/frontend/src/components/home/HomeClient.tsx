@@ -8,15 +8,22 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { SearchSection } from '@/components/home/SearchSection';
 import { CollectionsGrid } from '@/components/home/CollectionsGrid';
 import { ExercisesGrid } from '@/components/home/ExercisesGrid';
+import { PracticeSession } from '@/components/practice/PracticeSession';
 import { InfoModal } from '@/components/home/modals/InfoModal';
 import { ContributeModal } from '@/components/home/modals/ContributeModal';
 import { DonationModal } from '@/components/home/modals/DonationModal';
 import { supabase } from '@/lib/supabase';
+import {
+  clampSessionSize,
+  DEFAULT_SESSION_SIZE,
+  type PracticeFilters,
+  saveActiveSession,
+} from '@/lib/practiceProgress';
 import { type Exercise, ExerciseSchema } from '@/types/exercise';
 import { z } from 'zod';
 
 const PAGE_SIZE = 30;
-const QUERY_KEYS = ['q', 'topic', 'year', 'difficulty', 'exercise'] as const;
+const QUERY_KEYS = ['q', 'topic', 'year', 'difficulty', 'exercise', 'mode', 'size'] as const;
 type QueryKey = (typeof QUERY_KEYS)[number];
 type UrlUpdate = Partial<Record<QueryKey, string | number | null>>;
 
@@ -26,6 +33,8 @@ interface UrlFilters {
   year: number | null;
   difficulty: number | null;
   exerciseCode: string | null;
+  practiceMode: boolean;
+  sessionSize: number;
 }
 
 function parseFilterNumber(value: string | null): number | null {
@@ -44,12 +53,16 @@ function parseExerciseCode(value: string | null): string | null {
 }
 
 function readUrlFilters(params: URLSearchParams): UrlFilters {
+  const sizeRaw = params.get('size');
+  const sizeParsed = sizeRaw != null && sizeRaw !== '' ? Number(sizeRaw) : null;
   return {
     query: parseText(params.get('q'), 100) ?? '',
     topic: parseText(params.get('topic'), 200),
     year: parseFilterNumber(params.get('year')),
     difficulty: parseFilterNumber(params.get('difficulty')),
     exerciseCode: parseExerciseCode(params.get('exercise')),
+    practiceMode: params.get('mode') === 'practice',
+    sessionSize: clampSessionSize(Number.isFinite(sizeParsed as number) ? sizeParsed : DEFAULT_SESSION_SIZE),
   };
 }
 
@@ -76,9 +89,33 @@ export function HomeClient() {
   // Seed from the URL so shared ?q= / ?exercise= links do not flash the collections grid.
   const [searchQuery, setSearchQuery] = useState(urlFilters.query);
   const [debouncedQuery, setDebouncedQuery] = useState(urlFilters.query);
+  // Remount PracticeSession when a new session is requested with the same filters.
+  const [practiceNonce, setPracticeNonce] = useState(0);
+
   const selectedTopic = urlFilters.topic;
   const selectedYear = urlFilters.year;
   const selectedDifficulty = urlFilters.difficulty;
+  const isPracticeActive = urlFilters.practiceMode;
+
+  const practiceFilters: PracticeFilters = useMemo(
+    () => ({
+      year: selectedYear,
+      topic: selectedTopic,
+      difficulty: selectedDifficulty,
+      size: urlFilters.sessionSize,
+    }),
+    [selectedDifficulty, selectedTopic, selectedYear, urlFilters.sessionSize],
+  );
+
+  const practiceDisabledReason = useMemo(() => {
+    if (urlFilters.exerciseCode) {
+      return 'Rimuovi il permalink dell’esercizio per avviare una sessione filtrata.';
+    }
+    if (!selectedYear && !selectedTopic && !selectedDifficulty) {
+      return 'Scegli almeno un anno, un argomento o una difficoltà per iniziare.';
+    }
+    return null;
+  }, [selectedDifficulty, selectedTopic, selectedYear, urlFilters.exerciseCode]);
 
   const replaceUrl = useCallback(
     (updates: UrlUpdate) => {
@@ -105,10 +142,12 @@ export function HomeClient() {
     setSearchQuery(urlFilters.query);
     setDebouncedQuery(urlFilters.query);
   }, [searchQuery, urlFilters.query]);
+
   useEffect(() => {
     const timeout = window.setTimeout(() => setDebouncedQuery(searchQuery), 500);
     return () => window.clearTimeout(timeout);
   }, [searchQuery]);
+
   useEffect(() => {
     let cancelled = false;
     const fetchTotalCount = async () => {
@@ -130,6 +169,8 @@ export function HomeClient() {
   const effectiveQuery = urlFilters.exerciseCode ?? (debouncedQuery.trim().replace(/^#/, '') || null);
 
   useEffect(() => {
+    if (isPracticeActive) return;
+
     let cancelled = false;
     const fetchExercises = async () => {
       if (!effectiveQuery && selectedTopic === null && selectedYear === null && selectedDifficulty === null) {
@@ -168,10 +209,10 @@ export function HomeClient() {
     return () => {
       cancelled = true;
     };
-  }, [effectiveQuery, selectedDifficulty, selectedTopic, selectedYear]);
+  }, [effectiveQuery, isPracticeActive, selectedDifficulty, selectedTopic, selectedYear]);
 
   useEffect(() => {
-    if (!urlFilters.exerciseCode || exercises.length === 0) return;
+    if (isPracticeActive || !urlFilters.exerciseCode || exercises.length === 0) return;
     const timeout = window.setTimeout(() => {
       document.getElementById(`exercise-${urlFilters.exerciseCode}`)?.scrollIntoView({
         behavior: 'smooth',
@@ -179,7 +220,7 @@ export function HomeClient() {
       });
     }, 100);
     return () => window.clearTimeout(timeout);
-  }, [exercises.length, urlFilters.exerciseCode]);
+  }, [exercises.length, isPracticeActive, urlFilters.exerciseCode]);
 
   const loadMore = useCallback(async () => {
     setLoadingMore(true);
@@ -221,24 +262,57 @@ export function HomeClient() {
   const handleSearchChange = useCallback((value: string) => {
     const boundedValue = value.slice(0, 100);
     setSearchQuery(boundedValue);
-    replaceUrl({ q: boundedValue.trim() || null, exercise: null });
+    replaceUrl({ q: boundedValue.trim() || null, exercise: null, mode: null });
   }, [replaceUrl]);
 
   const handleTopicChange = useCallback((topic: string | null) => {
-    replaceUrl({ topic, exercise: null });
+    replaceUrl({ topic, exercise: null, mode: null });
   }, [replaceUrl]);
 
   const handleYearChange = useCallback((year: number | null) => {
-    replaceUrl({ year, exercise: null });
+    replaceUrl({ year, exercise: null, mode: null });
   }, [replaceUrl]);
 
   const handleDifficultyChange = useCallback((difficulty: number | null) => {
-    replaceUrl({ difficulty, exercise: null });
+    replaceUrl({ difficulty, exercise: null, mode: null });
   }, [replaceUrl]);
 
   const resetFilters = useCallback(() => {
     setSearchQuery('');
-    replaceUrl({ q: null, topic: null, year: null, difficulty: null, exercise: null });
+    saveActiveSession(null);
+    replaceUrl({
+      q: null,
+      topic: null,
+      year: null,
+      difficulty: null,
+      exercise: null,
+      mode: null,
+      size: null,
+    });
+  }, [replaceUrl]);
+
+  const startPractice = useCallback((filters?: PracticeFilters) => {
+    const next = filters ?? practiceFilters;
+    if (!next.year && !next.topic && !next.difficulty) return;
+    setPracticeNonce((value) => value + 1);
+    saveActiveSession(null);
+    replaceUrl({
+      q: null,
+      exercise: null,
+      topic: next.topic,
+      year: next.year,
+      difficulty: next.difficulty,
+      mode: 'practice',
+      size: next.size,
+    });
+    window.setTimeout(() => {
+      document.getElementById('exercises-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }, [practiceFilters, replaceUrl]);
+
+  const exitPractice = useCallback(() => {
+    saveActiveSession(null);
+    replaceUrl({ mode: null, size: null });
   }, [replaceUrl]);
 
   const isExploring = Boolean(
@@ -254,7 +328,15 @@ export function HomeClient() {
       />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24">
-        <HeroSection onOpenInfo={() => setIsInfoModalOpen(true)} totalCount={totalCount} />
+        {!isPracticeActive && (
+          <HeroSection
+            onOpenInfo={() => setIsInfoModalOpen(true)}
+            totalCount={totalCount}
+            onStartPractice={() => {
+              document.getElementById('exercises-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }}
+          />
+        )}
 
         <SearchSection
           searchQuery={searchQuery}
@@ -265,10 +347,27 @@ export function HomeClient() {
           onSelectYear={handleYearChange}
           onSelectDifficulty={handleDifficultyChange}
           onClear={resetFilters}
+          onStartPractice={() => startPractice()}
+          practiceDisabledReason={practiceDisabledReason}
+          isPracticeActive={isPracticeActive}
         />
 
         <AnimatePresence mode="wait">
-          {!isExploring ? (
+          {isPracticeActive ? (
+            <motion.div
+              key={`practice-${practiceNonce}-${urlFilters.sessionSize}-${selectedYear}-${selectedDifficulty}-${selectedTopic ?? ''}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <PracticeSession
+                filters={practiceFilters}
+                onExit={exitPractice}
+                onStartRecommended={(recommended) => startPractice(recommended)}
+              />
+            </motion.div>
+          ) : !isExploring ? (
             <motion.div
               key="collections"
               initial={{ opacity: 0, y: 20 }}
