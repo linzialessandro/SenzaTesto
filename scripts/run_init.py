@@ -1,23 +1,38 @@
-import os
+"""Reset a database with the current SenzaTesto schema snapshot."""
+
+from __future__ import annotations
+
+import argparse
+
 import psycopg2
 
-def load_env():
-    env_vars = {}
-    env_path = os.path.expanduser('~/secrets/SenzaTesto/.env')
-    if os.path.exists(env_path):
-        with open(env_path, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    key, val = line.split('=', 1)
-                    env_vars[key.strip()] = val.strip()
-    return env_vars
+from environment import PROJECT_ROOT, get_database_url
 
-env = load_env()
-conn = psycopg2.connect(env['DATABASE_URL'])
-cur = conn.cursor()
-init_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'init.sql')
-with open(init_file, 'r') as f:
-    cur.execute(f.read())
-conn.commit()
-print("DB initialized")
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Reset a database using init.sql")
+    parser.add_argument(
+        "--confirm-reset",
+        action="store_true",
+        help="Required because init.sql drops existing application tables.",
+    )
+    args = parser.parse_args()
+    if not args.confirm_reset:
+        parser.error("Refusing to reset a database without --confirm-reset.")
+
+    init_file = PROJECT_ROOT / "init.sql"
+    try:
+        with init_file.open(encoding="utf-8") as file:
+            sql = file.read()
+        with psycopg2.connect(get_database_url()) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+        print("Database initialized successfully.")
+    except (OSError, psycopg2.Error, RuntimeError) as error:
+        print(f"Database initialization failed: {error}")
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

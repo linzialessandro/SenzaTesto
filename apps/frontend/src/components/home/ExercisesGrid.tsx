@@ -3,6 +3,7 @@ import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Loader2, Sparkles, CheckCircle2, Eye, Star } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { MathRenderer } from '@/components/MathRenderer';
+import { ExerciseShareButton } from '@/components/ExerciseShareButton';
 import type { Exercise } from '@/types/exercise';
 
 const staggerContainer: Variants = {
@@ -86,6 +87,7 @@ export function ExercisesGrid({
               <motion.article 
                 layout
                 key={ex.generated_hash}
+                id={`exercise-${ex.short_code}`}
                 variants={fadeUp}
                 initial="hidden"
                 animate="show"
@@ -112,9 +114,14 @@ export function ExercisesGrid({
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-semibold text-lg leading-none">{ex.topic_macro_area}</h3>
-                          <span className="px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider rounded bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:border-amber-700/50 uppercase select-all" title="Codice univoco dell'esercizio. Copialo per condividerlo!">
+                          <a
+                            href={`?exercise=${encodeURIComponent(ex.short_code)}`}
+                            className="px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider rounded bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:border-amber-700/50 uppercase select-all hover:bg-amber-200 dark:hover:bg-amber-900/70 transition-colors"
+                            title="Apri il link permanente di questo esercizio"
+                            aria-label={`Apri l'esercizio #${ex.short_code}`}
+                          >
                             #{ex.short_code}
-                          </span>
+                          </a>
                           {ex.ai_generated && (
                             <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-purple-100 text-purple-800 border border-purple-200 dark:bg-purple-900/40 dark:text-purple-400 dark:border-purple-700/50 uppercase flex items-center gap-1" title="Questo esercizio è stato generato tramite Intelligenza Artificiale">
                               <Sparkles size={10} /> IA
@@ -140,6 +147,9 @@ export function ExercisesGrid({
                 </div>
 
                 <div className="pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
+                  <div className="flex justify-end pt-4">
+                    <ExerciseShareButton shortCode={ex.short_code} topic={ex.topic_name} />
+                  </div>
                   {!visibleSolutions.has(ex.generated_hash) ? (
                     <div className="flex justify-center mt-6">
                       <Button variant="secondary" onClick={() => toggleSolution(ex.generated_hash)} className="group/btn">

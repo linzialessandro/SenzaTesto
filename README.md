@@ -50,19 +50,40 @@ Puoi inviare il tuo esercizio in vari modi:
 2. **Pull Request su GitHub:** Clona la repository, aggiungi manualmente il tuo file `.md` in `submissions/pending/` e apri una PR.
 3. **Via Email:** Puoi compilare il template e inviarlo direttamente a `alessandro.linzi.phd@icloud.com`.
 
-### Script di Acquisizione (Per Sviluppatori)
+### Validazione e Acquisizione (Per Sviluppatori)
 
-Una volta che il file `.md` è nella cartella `submissions/`, il popolamento del database avviene tramite l'apposito script Python:
+Una submission passa prima dal validatore deterministico e solo dopo può essere
+inserita nel database. Crea un ambiente Python dedicato e installa l'unico set
+di dipendenze usato dagli script operativi:
 
 ```bash
-# Attiva il virtual environment
-source venv/bin/activate
-# Installa PyYAML se non lo hai già
-pip install pyyaml
-# Esegui lo script
-python3 scripts/populate_from_md.py
+python3 -m venv .venv
+.venv/bin/pip install -r scripts/requirements.txt
+
+# Verifica le submission prima di aprire una PR o importarle
+.venv/bin/python scripts/validate_submissions.py submissions/pending
+
+# Importa solo file validi; al termine vengono spostati in accepted/
+.venv/bin/python scripts/populate_from_md.py
 ```
-Lo script prenderà in carico automaticamente l'inserimento dell'esercizio, l'indicizzazione per la ricerca e l'associazione dei tag, aggiornando in tempo reale il frontend.
+Lo script blocca metadata incompleti, sezioni mancanti, delimitatori matematici
+non bilanciati e duplicati esatti prima di scrivere nel database.
+
+### Schema del Database
+
+`init.sql` è lo snapshot completo per un database nuovo e viene usato anche da
+Docker Compose. **Cancella le tabelle applicative esistenti**: eseguilo solo in
+locale o dopo un backup esplicito.
+
+```bash
+# Applica una migrazione a un database esistente: prima mostra il piano,
+# poi richiede un consenso esplicito per eseguirla.
+.venv/bin/python scripts/run_migration.py 008_add_difficulty_filter.sql
+.venv/bin/python scripts/run_migration.py 008_add_difficulty_filter.sql --apply
+```
+
+Non usare gli script di migrazione per ripetere file storici già applicati in
+produzione. Le migrazioni sono additive e devono essere applicate una sola volta.
 
 ## Stack Tecnologico
 

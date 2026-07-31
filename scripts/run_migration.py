@@ -1,61 +1,63 @@
-"""
-Script per applicare la migrazione dello schema al database di produzione.
-Carica i segreti da ~/secrets/SenzaTesto/.env e esegue il file SQL di migrazione.
+"""Apply one explicitly selected, versioned migration to a database.
 
-Uso:
-    python run_migration.py
+The repository contains historical migrations that may already be applied in
+production. Requiring an explicit filename and --apply avoids accidentally
+rerunning an incompatible legacy migration.
 """
-import os
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+from pathlib import Path
+
 import psycopg2
 
-
-def load_env():
-    env_vars = {}
-    env_path = os.path.expanduser('~/secrets/SenzaTesto/.env')
-    if os.path.exists(env_path):
-        with open(env_path, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    key, val = line.split('=', 1)
-                    env_vars[key.strip()] = val.strip()
-    return env_vars
+from environment import PROJECT_ROOT, get_database_url
 
 
-def main():
-    env = load_env()
-    database_url = env.get('DATABASE_URL')
-    if not database_url:
-        print("ERRORE: DATABASE_URL non trovato in ~/secrets/SenzaTesto/.env")
-        return
+MIGRATIONS_DIRECTORY = PROJECT_ROOT / "migrations"
 
-    migration_file = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), 'migrations', '001_schema_upgrade.sql'
-    )
-    if not os.path.exists(migration_file):
-        print(f"ERRORE: File di migrazione non trovato: {migration_file}")
-        return
 
-    with open(migration_file, 'r') as f:
-        sql = f.read()
+def resolve_migration(value: str) -> Path:
+    candidate = Path(value)
+    if not candidate.is_absolute():
+        candidate = MIGRATIONS_DIRECTORY / candidate.name
+    if candidate.parent != MIGRATIONS_DIRECTORY or candidate.suffix != ".sql":
+        raise ValueError("migration must be a .sql file directly inside migrations/")
+    if not candidate.is_file():
+        raise ValueError(f"migration not found: {candidate}")
+    return candidate
 
-    print("Connessione al database...")
-    conn = psycopg2.connect(database_url)
-    conn.autocommit = False  # La transazione è gestita dal BEGIN/COMMIT nel file SQL
-    cur = conn.cursor()
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Apply one SenzaTesto SQL migration")
+    parser.add_argument("migration", help="Migration filename, for example 008_add_difficulty_filter.sql")
+    parser.add_argument("--apply", action="store_true", help="Execute the migration. Omit for a dry run.")
+    args = parser.parse_args()
 
     try:
-        print("Esecuzione della migrazione 001_schema_upgrade.sql...")
-        cur.execute(sql)
-        conn.commit()
-        print("✅ Migrazione completata con successo!")
-    except Exception as e:
-        conn.rollback()
-        print(f"❌ Migrazione fallita (rollback eseguito): {e}")
-    finally:
-        cur.close()
-        conn.close()
+        migration = resolve_migration(args.migration)
+        sql = migration.read_text(encoding="utf-8")
+    except (OSError, ValueError) as error:
+        parser.error(str(error))
+
+    checksum = hashlib.sha256(sql.encode("utf-8")).hexdigest()[:12]
+    print(f"Migration: {migration.name} (sha256:{checksum})")
+    if not args.apply:
+        print("Dry run only. Re-run with --apply after confirming this migration is unapplied.")
+        return 0
+
+    try:
+        with psycopg2.connect(get_database_url()) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+        print("Migration applied successfully.")
+    except (psycopg2.Error, RuntimeError) as error:
+        print(f"Migration failed and was rolled back: {error}")
+        return 1
+    return 0
 
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    raise SystemExit(main())

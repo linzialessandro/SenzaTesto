@@ -1,27 +1,11 @@
 import psycopg2
-import os
 import argparse
 from datetime import datetime
 
-def load_env():
-    env_vars = {}
-    env_path = os.path.expanduser('~/secrets/SenzaTesto/.env')
-    if os.path.exists(env_path):
-        with open(env_path, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    key, val = line.split('=', 1)
-                    env_vars[key.strip()] = val.strip()
-    return env_vars
+from environment import get_database_url
 
 def get_db_connection():
-    env = load_env()
-    db_url = os.environ.get('DATABASE_URL') or env.get('DATABASE_URL')
-    if not db_url:
-        print("Errore: DATABASE_URL non trovata nelle variabili d'ambiente o nel file .env segreto.")
-        exit(1)
-    return psycopg2.connect(db_url)
+    return psycopg2.connect(get_database_url())
 
 def fetch_data():
     conn = get_db_connection()

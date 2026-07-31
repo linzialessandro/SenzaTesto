@@ -22,9 +22,9 @@ export function ShareWidget() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  // URL dinamico basato sull'origine corrente
+  // Preserve active filters and exercise permalinks when users share the page.
   const shareUrl = typeof window !== 'undefined' 
-    ? `${window.location.origin}${window.location.pathname}`
+    ? window.location.href
     : 'https://linzialessandro.github.io/SenzaTesto/';
   const shareText = "Scopri SenzaTesto: il nuovo database di esercizi di matematica open-source generato con l'Intelligenza Artificiale. Preparati al meglio, gratis.";
 

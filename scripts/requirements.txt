@@ -1,0 +1,4 @@
+# Dependencies for content ingestion, migration tooling, and analytics scripts.
+PyYAML==6.0.2
+psycopg2-binary==2.9.12
+rich==13.9.4

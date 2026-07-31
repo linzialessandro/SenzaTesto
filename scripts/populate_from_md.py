@@ -1,5 +1,3 @@
-import os
-import sys
 import hashlib
 import psycopg2
 import yaml
@@ -7,16 +5,8 @@ import re
 import shutil
 from pathlib import Path
 
-def load_env():
-    env_vars = {}
-    if os.path.exists('.env'):
-        with open('.env', 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    key, val = line.split('=', 1)
-                    env_vars[key.strip()] = val.strip()
-    return env_vars
+from environment import PROJECT_ROOT, get_database_url
+from validate_submissions import validate_file
 
 def parse_markdown_exercise(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -61,13 +51,7 @@ def parse_markdown_exercise(file_path):
     }
 
 def main():
-    submissions_dir = Path('../submissions')
-    if not submissions_dir.exists():
-        submissions_dir = Path('submissions')
-        if not submissions_dir.exists():
-            print("Cannot find 'submissions' directory.")
-            sys.exit(1)
-            
+    submissions_dir = PROJECT_ROOT / 'submissions'
     pending_dir = submissions_dir / 'pending'
     accepted_dir = submissions_dir / 'accepted'
     rejected_dir = submissions_dir / 'rejected'
@@ -76,11 +60,11 @@ def main():
     accepted_dir.mkdir(exist_ok=True)
     rejected_dir.mkdir(exist_ok=True)
 
-    env_vars = load_env()
-    database_url = env_vars.get('DATABASE_URL')
-    if not database_url:
-        print("DATABASE_URL not found in .env")
-        sys.exit(1)
+    try:
+        database_url = get_database_url()
+    except RuntimeError as error:
+        print(error)
+        return
         
     try:
         conn = psycopg2.connect(database_url)
@@ -90,6 +74,15 @@ def main():
         for md_file in pending_dir.glob('*.md'):
             print(f"Elaborazione: {md_file.name}")
             try:
+                dest_path = accepted_dir / md_file.name
+                if dest_path.exists():
+                    raise FileExistsError(f"esiste già un file accettato: {dest_path.name}")
+
+                validation_issues, _ = validate_file(md_file)
+                if validation_issues:
+                    messages = "; ".join(issue.message for issue in validation_issues)
+                    raise ValueError(f"validazione fallita: {messages}")
+
                 parsed = parse_markdown_exercise(md_file)
                 meta = parsed['metadata']
                 year = meta['year']
@@ -150,7 +143,6 @@ def main():
                 conn.commit()  # Eseguiamo la commit per ogni file
                 
                 # Sposta il file in accepted
-                dest_path = accepted_dir / md_file.name
                 shutil.move(str(md_file), str(dest_path))
                 print(f"  -> Spostato in accepted: {md_file.name}")
                 
@@ -164,7 +156,7 @@ def main():
         
     except Exception as e:
         print(f"Errore critico: {e}")
-        sys.exit(1)
+        return
 
 if __name__ == "__main__":
     main()
