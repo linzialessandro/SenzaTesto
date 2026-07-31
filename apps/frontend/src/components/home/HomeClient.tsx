@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NavBar } from '@/components/layout/NavBar';
@@ -23,9 +23,14 @@ import { type Exercise, ExerciseSchema } from '@/types/exercise';
 import { z } from 'zod';
 
 const PAGE_SIZE = 30;
+const SCROLL_LOCK_KEY = 'senzatesto.scrollLock';
 const QUERY_KEYS = ['q', 'topic', 'year', 'difficulty', 'exercise', 'mode', 'size'] as const;
 type QueryKey = (typeof QUERY_KEYS)[number];
 type UrlUpdate = Partial<Record<QueryKey, string | number | null>>;
+
+function restoreScrollPosition(y: number) {
+  window.scrollTo({ top: y, left: 0, behavior: 'auto' });
+}
 
 interface UrlFilters {
   query: string;
@@ -91,6 +96,8 @@ export function HomeClient() {
   const [debouncedQuery, setDebouncedQuery] = useState(urlFilters.query);
   // Remount PracticeSession when a new session is requested with the same filters.
   const [practiceNonce, setPracticeNonce] = useState(0);
+  // Keep scroll stable when query-string filters change (selects are especially noisy).
+  const pendingScrollY = useRef<number | null>(null);
 
   const selectedTopic = urlFilters.topic;
   const selectedYear = urlFilters.year;
@@ -130,10 +137,54 @@ export function HomeClient() {
         }
       }
       const queryString = next.toString();
-      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+      const nextUrl = queryString ? `${pathname}?${queryString}` : pathname;
+      const currentUrl = searchParamsKey ? `${pathname}?${searchParamsKey}` : pathname;
+      if (nextUrl === currentUrl) return;
+
+      // Native <select> + App Router search-param updates often jump to top despite scroll:false.
+      const scrollY = window.scrollY;
+      pendingScrollY.current = scrollY;
+      try {
+        sessionStorage.setItem(SCROLL_LOCK_KEY, String(scrollY));
+      } catch {
+        // private mode / quota — in-memory lock is enough for same-document updates
+      }
+
+      router.replace(nextUrl, { scroll: false });
+
+      // Restore immediately and after the next paints (Next can still scroll after replace).
+      restoreScrollPosition(scrollY);
+      requestAnimationFrame(() => {
+        restoreScrollPosition(scrollY);
+        requestAnimationFrame(() => restoreScrollPosition(scrollY));
+      });
+      window.setTimeout(() => restoreScrollPosition(scrollY), 0);
+      window.setTimeout(() => restoreScrollPosition(scrollY), 50);
     },
     [pathname, router, searchParamsKey],
   );
+
+  // After URL-driven re-render (or Suspense remount), put the viewport back.
+  useLayoutEffect(() => {
+    let y = pendingScrollY.current;
+    if (y == null) {
+      try {
+        const raw = sessionStorage.getItem(SCROLL_LOCK_KEY);
+        if (raw != null) y = Number(raw);
+      } catch {
+        y = null;
+      }
+    }
+    if (y == null || !Number.isFinite(y)) return;
+
+    restoreScrollPosition(y);
+    pendingScrollY.current = null;
+    try {
+      sessionStorage.removeItem(SCROLL_LOCK_KEY);
+    } catch {
+      // ignore
+    }
+  }, [searchParamsKey]);
 
   useEffect(() => {
     // Apply browser back/forward (or pasted URLs) immediately; keep debounce for typing.

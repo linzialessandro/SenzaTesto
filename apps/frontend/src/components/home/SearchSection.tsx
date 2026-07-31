@@ -56,7 +56,15 @@ function FilterSelect({
       <select
         id={id}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => {
+          const scrollY = window.scrollY;
+          onChange(event.target.value);
+          // Blur after choice so the browser does not keep scrolling the select into view.
+          event.currentTarget.blur();
+          window.requestAnimationFrame(() => {
+            window.scrollTo({ top: scrollY, left: 0, behavior: 'auto' });
+          });
+        }}
         disabled={disabled}
         className={`${filterSelectClassName} ${
           isActive
