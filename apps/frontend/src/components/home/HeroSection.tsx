@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Info } from 'lucide-react';
+import { Sparkles, Info, Target } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 interface HeroSectionProps {
@@ -67,7 +67,8 @@ export function HeroSection({ onOpenInfo, totalCount, onStartPractice }: HeroSec
       </p>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 w-full max-w-xs sm:max-w-none mx-auto">
-        <Button size="lg" onClick={handleStart} className="w-full sm:w-auto min-w-[10rem]">
+        <Button size="lg" onClick={handleStart} className="flex items-center justify-center gap-2 w-full sm:w-auto min-w-[10rem] group">
+          <Target size={18} className="transition-transform duration-300 group-hover:scale-110" />
           Inizia
         </Button>
         <Button
