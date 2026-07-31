@@ -1,5 +1,14 @@
 # Registro degli Aggiornamenti della Knowledge Base
 
+## 2026-07-31
+* **Frontend / Discovery**: Aggiunto il concetto `architecture/exercise-discovery.md` per documentare i filtri basati su URL (`q`, `topic`, `year`, `difficulty`, `exercise`), i permalink per short code e la condivisione per-esercizio (Web Share, WhatsApp, copia link) su static export GitHub Pages.
+* **Database**: Aggiornati `schema.md` e `indexing.md` con `ai_generated`, tabelle analytics (`search_logs.filter_difficulty`, `solution_views`), contratto RPC hardenizzato (`search_exercises` / `log_solution_view`), bound di input e lookup `short_code`.
+* **Agenti / Pipeline**: Aggiornato `agents/database-population-workflow.md` con il gate deterministico `validate_submissions.py`, `scripts/requirements.txt`, `environment.py` e il passaggio CI sul deploy; allineato il template Markdown (`ai_generated`) e la nota di supersessione in `architecture/population_workflow.md`.
+* **Analytics**: Completato il frontmatter OKF di `custom_analytics.md` e documentati i bound RPC + colonna difficoltà.
+* **Setup**: Aggiornato `setup.md` con la risoluzione centralizzata di `DATABASE_URL` e la mappa degli script operativi.
+* **Grafo OKF**: Rigenerato `viz.html` includendo i nodi orfani (`custom_analytics`, `frontend_type_safety`) e il nuovo concetto di discovery; bodies allineati ai file Markdown correnti. Aggiunto `scripts/regenerate_okf_graph.py` per ricostruire il grafo dai Concept.
+* **Frontend CONTEXT**: Allineato `apps/frontend/CONTEXT.md` a `HomeClient` e allo stato URL.
+
 ## 2026-07-11
 * **Manutenzione**: Eseguita pulizia massiva della codebase Python: rimossi 6 script "throwaway" obsoleti dalla root (es. `analyze_escapes.py`, `inspect_notes.py`), spostati gli script infrastrutturali in `scripts/` (`run_init.py`, `run_migration.py`) e applicato formatting rigoroso tramite `ruff` su tutti i restanti script per uniformità (risolti 23 errori di linting).
 * **Architettura**: Creato il concetto `custom_analytics.md` per documentare l'implementazione in-house e GDPR-compliant delle statistiche (tramite le tabelle Supabase `search_logs` e `solution_views`, le relative RPC e l'automazione dei report tramite GitHub Actions).

@@ -15,9 +15,10 @@ Questa guida documenta le scelte architetturali implementate in **SenzaTesto** p
 Nelle applicazioni single-page moderne (SPA), i cambiamenti di stato nei nodi padre causano un "re-render" a cascata di tutti i componenti figli. Quando si maneggiano DOM molto grandi o complessi (ad esempio griglie con centinaia di formule LaTeX e componenti interattivi), il processo di *diffing* dell'albero virtuale di React può bloccare il thread principale (Main Thread) per 100-300ms.
 
 ### La Soluzione
-SenzaTesto utilizza `useMemo` e `useCallback` in maniera *aggressiva* per i blocchi principali (`<ExercisesGrid />`, `<CollectionsGrid />`). 
-In `page.tsx`, l'intero contenuto centrale della pagina viene congelato in un `useMemo` che ha come dipendenze unicamente gli stati di ricerca/filtro.
-Quando l'utente clicca su un bottone della NavBar per aprire un Modal (modificando `isContributeModalOpen` per esempio), la pagina **non** ricalcola il DOM, scendendo il costo computazionale a ~0.5ms.
+SenzaTesto utilizza `useMemo` e `useCallback` in maniera *aggressiva* per i blocchi principali (`<ExercisesGrid />`, `<CollectionsGrid />`).
+La home interattiva vive in `HomeClient` (montato da `page.tsx` dentro `Suspense`); i filtri URL e la ricerca sono isolati lì in modo che l'apertura di un Modal dalla NavBar non forzi un re-render costoso dell'intera griglia di esercizi.
+Quando l'utente clicca su un bottone della NavBar per aprire un Modal (modificando `isContributeModalOpen` per esempio), la griglia **non** ricalcola il DOM pesante, scendendo il costo computazionale a ~0.5ms.
+Vedi anche [Exercise Discovery](/architecture/exercise-discovery.md).
 
 ## 2. GPU Caching per i Modal (CSS & Framer Motion)
 

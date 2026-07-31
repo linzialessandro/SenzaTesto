@@ -2,13 +2,13 @@
 type: Concept
 title: Exercise Markdown Template
 description: Standard format for defining new exercises using Markdown and YAML frontmatter.
-tags: [architecture, markdown, template, exercises]
-timestamp: 2026-07-01T12:00:00Z
+tags: [architecture, markdown, template, exercises, validation]
+timestamp: 2026-07-31T12:00:00Z
 ---
 
 # Standard Exercise Markdown Template
 
-All new exercises must be submitted using the following Markdown format. The system will automatically parse this format to ingest the exercise into the database.
+All new exercises must be submitted using the following Markdown format. The system will automatically parse this format to ingest the exercise into the database. Prima dell'inserimento, `scripts/validate_submissions.py` applica un gate deterministico (vedi [Flusso di Popolamento](/agents/database-population-workflow.md)).
 
 ## 1. Structure
 
@@ -23,6 +23,7 @@ difficulty: 2
 tags:
   - frazioni
   - verifica
+ai_generated: true
 ---
 # Problem Text
 Risolvi la seguente equazione lineare:
@@ -43,7 +44,8 @@ Moltiplicando per 2, il risultato è $x = 4$.
 | `macro_area` | String | L'area tematica generale (es. "Geometria", "Algebra Base"). |
 | `topic` | String | L'argomento specifico (es. "triangoli", "sistemi lineari"). |
 | `difficulty` | Integer | Il livello di difficoltà dell'esercizio (1-5). |
-| `tags` | List[String] | Una lista di tag aggiuntivi per la ricerca. |
+| `tags` | List[String] | Una lista di tag aggiuntivi per la ricerca (max 12). |
+| `ai_generated` | Boolean (opzionale) | `true` se prodotto da un modello LLM; default `false` in ingestione se assente. |
 
 ## 3. Headers (Body)
 

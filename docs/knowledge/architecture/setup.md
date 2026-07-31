@@ -21,11 +21,21 @@ Il progetto DEVE essere ingegnerizzato per avere zero costi di manutenzione. Dev
 - **Monetizzazione:** Integrare un componente leggero per le donazioni open-source (es. Ko-fi o link di pagamento Stripe) nell'interfaccia utente.
 
 **Gestione dei Segreti e Sicurezza:**
-Tutti i secret di produzione e sviluppo locale (inclusi i secret del database Supabase) non sono committati nel repository. Gli script Python utilizzano `os.path.expanduser('~/secrets/SenzaTesto/.env')` per recuperare in sicurezza le credenziali dell'ambiente al di fuori dell'albero di progetto, per proteggere la supply chain e mitigare esfiltrazioni accidentali.
+Tutti i secret di produzione e sviluppo locale (inclusi i secret del database) non sono committati nel repository. Gli script operativi risolvono `DATABASE_URL` tramite `scripts/environment.py` con priorità: variabile d'ambiente di processo → `~/secrets/SenzaTesto/.env` → `.env` di progetto. In CI i secret sono iniettati da GitHub Secrets. Il frontend Next.js carica i secret locali da `~/secrets/SenzaTesto/.env` solo in sviluppo; in deploy usa `NEXT_PUBLIC_SUPABASE_*`.
 Per le comunicazioni con il database viene applicato `certifi` per validare l'SSL/TLS, evitando di disabilitare il controllo certificati.
+
+**Script operativi e dipendenze:**
+- Dipendenze Python unificate in `scripts/requirements.txt` (PyYAML, psycopg2-binary, rich).
+- Validazione contenuti: `scripts/validate_submissions.py` (+ test unitari).
+- Ingestione: `scripts/populate_from_md.py` (richiede validazione preventiva).
+- Schema fresco: `scripts/run_init.py --confirm-reset` (applica `init.sql`).
+- Migrazioni additive: `scripts/run_migration.py <file.sql> [--apply]`.
+- Analytics: `scripts/analytics.py`.
 
 **Librerie Condivise:**
 Per ovviare a problematiche di parsing e corruzione dei caratteri di escape LaTeX, la logica di fallback e sanitize è esternalizzata in un modulo python apposito (vedi `lib/latex_utils.py`), che ripara stringhe danneggiate e assicura l'integrità del LaTeX durante i passaggi I/O.
+
+**Frontend discovery:** deep link e filtri URL sono documentati in [Exercise Discovery](/architecture/exercise-discovery.md).
 
 **Passaggi di Esecuzione per l'Agente:**
 

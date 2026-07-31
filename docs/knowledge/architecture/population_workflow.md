@@ -44,15 +44,24 @@ Uno script ausiliario per sanare gli errori più comuni prima del caricamento ne
 
 ## Come Eseguire il Workflow
 
+> **Stato:** questo documento è **superseded**. Usa [Flusso di Popolamento Database](/agents/database-population-workflow.md) come fonte di verità (include il gate `validate_submissions.py`, `scripts/requirements.txt` e `environment.py`).
+
 1. Aggiungere uno o più file `.md` nella cartella `submissions/pending/` seguendo il template.
-2. Attivare il virtual environment: `source venv/bin/activate`
-3. Installare le dipendenze se necessario (es. `pip install pyyaml`)
-4. Eseguire lo script di validazione per correggere preventivamente la sintassi del Markdown:
+2. Creare un venv e installare le dipendenze operative:
    ```bash
-   python3 scripts/validate_and_fix_pending.py
+   python3 -m venv .venv
+   .venv/bin/pip install -r scripts/requirements.txt
+   ```
+3. (Opzionale) Sanare la sintassi Markdown:
+   ```bash
+   .venv/bin/python scripts/validate_and_fix_pending.py
+   ```
+4. Eseguire il gate deterministico:
+   ```bash
+   .venv/bin/python scripts/validate_submissions.py submissions/pending
    ```
 5. Eseguire lo script di elaborazione per caricare i file su PostgreSQL:
    ```bash
-   python3 scripts/populate_from_md.py
+   .venv/bin/python scripts/populate_from_md.py
    ```
-6. Gli esercizi validi verranno processati (calcolando gli hash e aggiornando PostgreSQL) e i relativi file `.md` verranno spostati automaticamente in `submissions/accepted/`. Gli esercizi con errori rimarranno in `pending/`.
+6. Gli esercizi validi verranno processati e spostati in `submissions/accepted/`. Gli esercizi con errori rimarranno in `pending/`.
