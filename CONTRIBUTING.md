@@ -31,16 +31,20 @@ Puoi contribuire ad arricchire il database di SenzaTesto in due modi:
 Aggiungi un nuovo file `.md` nella cartella `submissions/pending/` rispettando la struttura del frontmatter e usando LaTeX per la matematica. Consulta gli esercizi già presenti per prendere spunto!
 
 ### Metodo 2: Generazione Massiva con IA (BYOK)
-Se hai una chiave API di Google Gemini (Bring-Your-Own-Key), puoi generare automaticamente decine di esercizi e inviarli via Pull Request.
+Se hai una chiave API di DeepSeek (Bring-Your-Own-Key), puoi generare automaticamente decine di esercizi e inviarli via Pull Request. Lo script usa il modello **deepseek-v4-flash** tramite l'API OpenAI-compatible di DeepSeek.
 
 1. Installa le dipendenze Python:
    ```bash
    pip install -r scripts/generator/requirements.txt
    ```
-2. Crea un file `.env` dentro `scripts/generator/` e inserisci la tua chiave:
+2. Crea un file `.env` dentro `scripts/generator/` (oppure in `~/secrets/SenzaTesto/.env`) e inserisci la tua chiave:
    ```env
-   GEMINI_API_KEY=la_tua_chiave_qui
+   DEEPSEEK_API_KEY=la_tua_chiave_qui
+   # Opzionali (default già corretti):
+   # DEEPSEEK_BASE_URL=https://api.deepseek.com
+   # DEEPSEEK_MODEL=deepseek-v4-flash
    ```
+   Ottieni la chiave su [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys).
 3. Lancia lo script (che creerà un branch locale con i nuovi file). Di default genererà 10 esercizi, ma puoi specificare un numero diverso:
    ```bash
    cd scripts/generator

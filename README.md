@@ -46,7 +46,7 @@ Per aggiungere un nuovo esercizio, è sufficiente creare o copiare un file `.md`
 ### Inviare la Submission
 
 Puoi inviare il tuo esercizio in vari modi:
-1. **Generazione Massiva con IA (BYOK):** Inserisci la tua chiave Gemini nel file `.env` dentro `scripts/generator/` ed esegui `python generate_and_pr.py 20` (dove 20 è il numero di esercizi, di default 10) per generare e inviare decine di esercizi automaticamente via PR. (Vedi `CONTRIBUTING.md` per i dettagli).
+1. **Generazione Massiva con IA (BYOK):** Inserisci la tua `DEEPSEEK_API_KEY` nel file `.env` (in `scripts/generator/` oppure in `~/secrets/SenzaTesto/.env`) ed esegui `python generate_and_pr.py 20` (dove 20 è il numero di esercizi, di default 10) per generare e inviare decine di esercizi automaticamente via PR. (Vedi `CONTRIBUTING.md` per i dettagli).
 2. **Pull Request su GitHub:** Clona la repository, aggiungi manualmente il tuo file `.md` in `submissions/pending/` e apri una PR.
 3. **Via Email:** Puoi compilare il template e inviarlo direttamente a `alessandro.linzi.phd@icloud.com`.
 

@@ -6,7 +6,7 @@ from pathlib import Path
 
 # Importa la funzione condivisa dal modulo lib
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from lib.latex_utils import fix_latex_escapes
+from lib.latex_utils import fix_latex_escapes, normalize_latex_for_site
 
 def fix_yaml_frontmatter(content):
     """
@@ -58,6 +58,13 @@ def process_file(file_path):
             content = f.read()
             
         new_content = fix_yaml_frontmatter(content)
+        # Normalize TeX delimiters (\( \) / \[ \]) and $$ layout for KaTeX
+        yaml_match = re.match(r'^---\n(.*?)\n---\n(.*)', new_content, re.DOTALL)
+        if yaml_match:
+            body = normalize_latex_for_site(yaml_match.group(2))
+            new_content = f"---\n{yaml_match.group(1)}\n---\n{body}\n"
+        else:
+            new_content = normalize_latex_for_site(new_content)
         new_content = fix_math_blocks(new_content)
         new_content = fix_latex_escapes(new_content)
         
