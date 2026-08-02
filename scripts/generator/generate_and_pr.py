@@ -270,6 +270,23 @@ _LATEX_RULES = (
     "$$"
 )
 
+_MATH_PRECISION_RULES = (
+    "\n\nPRECISIONE MATEMATICA (obbligatoria — zero errori di calcolo):\n"
+    "- Ogni passaggio algebrico deve essere corretto; ricalcola discriminanti, "
+    "sostituzioni, prodotti e somme prima di scrivere il risultato.\n"
+    "- Verifica le soluzioni nell'equazione/disequazione/sistema originale.\n"
+    "- Disequazioni \"per ogni x in un intervallo\": usa il MASSIMO (o il minimo "
+    "se serve $\\ge$) della funzione sull'intervallo, NON confondere min e max.\n"
+    "- Equazioni goniometriche: mantieni TUTTE le famiglie di soluzioni "
+    "(es. $\\cos\\theta=-1/2$ dà due famiglie; non fondere $\\pm$ in una sola).\n"
+    "- Problemi geometrici: la configurazione descritta nel testo DEVE coincidere "
+    "con la formula usata (stessa parte vs parti opposte, ecc.).\n"
+    "- Condizioni di esistenza: esplicita e scarta le soluzioni estranee.\n"
+    "- Se un risultato è un intero o una frazione semplice, riportalo in forma esatta "
+    "(niente decimali approssimati se evitabili).\n"
+    "- La soluzione deve essere autocontenuta e concludere con la risposta finale chiara."
+)
+
 
 def build_system_prompts() -> dict[int, str]:
     """Crea il system prompt specializzato per ogni anno scolastico.
@@ -290,7 +307,8 @@ def build_system_prompts() -> dict[int, str]:
         "- problem_text (string)\n"
         "- solution (string)\n"
         "- generation_completed (string, DEVE essere esattamente \"COMPLETED\")\n"
-        f"{_LATEX_RULES}\n\n"
+        f"{_LATEX_RULES}\n"
+        f"{_MATH_PRECISION_RULES}\n\n"
         "ESEMPIO DI FORMA (i valori vanno sostituiti con l'esercizio reale):\n"
         f"{example_json}\n"
         "NON restituire uno JSON Schema, NON avvolgere i campi in \"properties\"."
@@ -431,7 +449,9 @@ async def generate_single_exercise(
         "4. LaTeX ready-to-use per KaTeX: SOLO $...$ inline e $$ su righe proprie per i blocchi. "
         "MAI \\(...\\) o \\[...\\].\n"
         "5. `problem_text`: SOLO il problema. `solution`: SOLO i passaggi risolutivi.\n"
-        "6. `generation_completed` = \"COMPLETED\"."
+        "6. `generation_completed` = \"COMPLETED\".\n"
+        "7. PRIMA di rispondere: esegui mentalmente un controllo numerico/algebrico "
+        "di ogni passaggio e della risposta finale; se qualcosa non torna, riscrivi la soluzione."
     )
 
     response = await openai_client.chat.completions.create(
@@ -442,8 +462,9 @@ async def generate_single_exercise(
         ],
         response_format={"type": "json_object"},
         max_tokens=MAX_OUTPUT_TOKENS,
-        # Non-thinking: più economico e sufficiente per esercizi strutturati
-        extra_body={"thinking": {"type": "disabled"}},
+        # Thinking low: migliora la precisione algebrica a costo contenuto
+        reasoning_effort="low",
+        extra_body={"thinking": {"type": "enabled"}},
     )
 
     content = response.choices[0].message.content

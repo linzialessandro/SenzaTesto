@@ -5,27 +5,50 @@ topic: "Risoluzione dei triangoli: teoremi dei seni e dei coseni"
 difficulty: 5
 ai_generated: true
 tags:
-  - "teorema dei seni"
-  - "teorema dei coseni"
-  - "triangolo rettangolo"
-  - "topografia"
+  - "angolo di depressione"
+  - "tangente"
+  - "identità goniometriche"
   - "applicazioni"
 ---
 # Problem Text
-Un osservatore in cima a una torre alta $h$ metri vede un punto $A$ a terra con un angolo di depressione $\alpha$ e un punto $B$ sulla stessa retta orizzontale dietro la torre con un angolo di depressione $\beta$ (con $\alpha > \beta$). Sapendo che la distanza tra $A$ e $B$ è $d$ metri, dimostrare che l'altezza della torre è data da $$ h = \frac{d \sin\alpha \sin\beta}{\sin(\alpha - \beta)}. $$
+Un osservatore in cima a una torre alta $h$ metri vede due punti $A$ e $B$ a terra, **dalla stessa parte** rispetto al piede della torre, con angoli di depressione rispettivamente $\alpha$ e $\beta$, con $\alpha > \beta$ (quindi $A$ è più vicino alla torre di $B$). Sapendo che la distanza $AB$ vale $d$ metri, dimostrare che
+
+$$
+h = \frac{d \sin\alpha \sin\beta}{\sin(\alpha - \beta)}.
+$$
 
 # Solution
-Si consideri la torre verticale di altezza $h$, con il piede $O$ e la cima $T$. I punti $A$ e $B$ sono a terra, con $A$ e $B$ allineati con $O$. Poiché gli angoli di depressione sono $\alpha$ e $\beta$, gli angoli di elevazione dalla base sono anch'essi $\alpha$ e $\beta$ (angoli alterni interni). Quindi $\angle OTA = 90^\circ - \alpha$ e $\angle OTB = 90^\circ - \beta$.
+Sia $T$ la cima della torre e $O$ il piede. I punti $A$ e $B$ giacciono sulla stessa semiretta uscente da $O$, con $OA < OB$. Gli angoli di depressione da $T$ coincidono con gli angoli $\angle TAO = \alpha$ e $\angle TBO = \beta$ nei triangoli rettangoli $TOA$ e $TOB$.
 
-Nel triangolo rettangolo $OTA$ si ha $\tan\alpha = h/OA$, quindi $OA = h/\tan\alpha$. Analogamente, in $OTB$, $OB = h/\tan\beta$.
+Da $\tan\alpha = \frac{h}{OA}$ e $\tan\beta = \frac{h}{OB}$ si ottiene
 
-La distanza $AB$ è data da $d = OB - OA$ (perché $\alpha > \beta$, $\tan\alpha > \tan\beta$, quindi $OA < OB$). Sostituendo:
-$$ d = \frac{h}{\tan\beta} - \frac{h}{\tan\alpha} = h \left( \frac{1}{\tan\beta} - \frac{1}{\tan\alpha} \right) = h \frac{\tan\alpha - \tan\beta}{\tan\alpha \tan\beta}. $$
+$$
+OA = \frac{h}{\tan\alpha}, \qquad OB = \frac{h}{\tan\beta}.
+$$
 
-Usando l'identità $\tan\alpha - \tan\beta = \frac{\sin(\alpha - \beta)}{\cos\alpha \cos\beta}$ e $\tan\alpha \tan\beta = \frac{\sin\alpha \sin\beta}{\cos\alpha \cos\beta}$, si ha:
-$$ d = h \frac{\sin(\alpha - \beta)}{\sin\alpha \sin\beta}. $$
+Poiché $\alpha > \beta > 0$ (angoli acuti di depressione), $\tan\alpha > \tan\beta$ e quindi $OA < OB$. La distanza tra i due punti è
 
-Da cui:
-$$ h = \frac{d \sin\alpha \sin\beta}{\sin(\alpha - \beta)}. $$
+$$
+d = OB - OA = h\left(\frac{1}{\tan\beta} - \frac{1}{\tan\alpha}\right) = h \cdot \frac{\tan\alpha - \tan\beta}{\tan\alpha \tan\beta}.
+$$
 
-La formula è dimostrata.
+Usando le identità
+
+$$
+\tan\alpha - \tan\beta = \frac{\sin(\alpha - \beta)}{\cos\alpha \cos\beta}, \qquad
+\tan\alpha \tan\beta = \frac{\sin\alpha \sin\beta}{\cos\alpha \cos\beta},
+$$
+
+si ottiene
+
+$$
+d = h \cdot \frac{\sin(\alpha - \beta)}{\sin\alpha \sin\beta},
+$$
+
+e infine
+
+$$
+h = \frac{d \sin\alpha \sin\beta}{\sin(\alpha - \beta)}.
+$$
+
+**Nota:** se $A$ e $B$ fossero da parti opposte rispetto a $O$, si avrebbe $d = OA + OB$ e la formula diventerebbe $h = \dfrac{d \sin\alpha \sin\beta}{\sin(\alpha + \beta)}$.

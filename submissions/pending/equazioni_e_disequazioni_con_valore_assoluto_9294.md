@@ -9,6 +9,7 @@ tags:
   - "disequazioni"
   - "studio del segno"
   - "quadratiche"
+  - "parametro"
 ---
 # Problem Text
 Determina tutti i valori del parametro reale $k$ per cui la disequazione
@@ -20,26 +21,50 @@ $$
 è verificata per ogni $x \in [0,4]$.
 
 # Solution
-Osserviamo che $|x^2 - 4x| = |x(x-4)|$. Poiché $x \in [0,4]$, $x \ge 0$ e $x-4 \le 0$, quindi il prodotto è non positivo, e il suo valore assoluto è $-x(x-4) = 4x - x^2$. Inoltre $|x-2| = x-2$ se $x \ge 2$, mentre $|x-2| = 2-x$ se $0 \le x < 2$. Distinguiamo due casi.
-
-**Caso 1: $0 \le x < 2$**  
-La disequazione diventa:
+Su $[0,4]$ si ha $x \ge 0$ e $x-4 \le 0$, quindi $x(x-4) \le 0$ e
 
 $$
-(4x - x^2) - (2-x) + k < 0 \quad \Rightarrow \quad 5x - x^2 - 2 + k < 0
+|x^2 - 4x| = |x(x-4)| = -x(x-4) = 4x - x^2.
 $$
 
-cioè $-x^2 + 5x - 2 + k < 0$. Il minimo di $f_1(x) = -x^2 + 5x - 2$ su $[0,2]$ si trova all'estremo sinistro, essendo una parabola con concavità verso il basso e vertice in $x=2.5$ (fuori dall'intervallo). Quindi $f_1(0) = -2$. Per avere $f_1(x) + k < 0$ per ogni $x$ nell'intervallo, dobbiamo richiedere che il minimo di $f_1+k$ sia negativo, cioè $-2 + k < 0$, quindi $k < 2$.
+Inoltre $|x-2| = 2-x$ se $0 \le x < 2$ e $|x-2| = x-2$ se $2 \le x \le 4$.
 
-**Caso 2: $2 \le x \le 4$**  
-La disequazione diventa:
+**Caso 1:** $0 \le x \le 2$. La disequazione diventa
 
 $$
-(4x - x^2) - (x-2) + k < 0 \quad \Rightarrow \quad 3x - x^2 + 2 + k < 0
+(4x - x^2) - (2-x) + k < 0 \quad \Rightarrow \quad f_1(x) + k < 0,
 $$
 
-cioè $-x^2 + 3x + 2 + k < 0$. La funzione $f_2(x) = -x^2 + 3x + 2$ ha vertice in $x=1.5$ (fuori da $[2,4]$) ed è decrescente su $[2,4]$, quindi il massimo è in $x=2$ e il minimo in $x=4$. Calcoliamo $f_2(4) = -16 + 12 + 2 = -2$. Affinché $f_2(x) + k < 0$ per ogni $x$ in $[2,4]$, dobbiamo richiedere $-2 + k < 0$, cioè $k < 2$.
+con $f_1(x) = -x^2 + 5x - 2$. La parabola ha concavità verso il basso e vertice in $x = \frac{5}{2} \notin [0,2]$, quindi su $[0,2]$ è crescente:
 
-Quindi entrambi i casi impongono $k < 2$. Inoltre, per $k < 2$, la disequazione è verificata per ogni $x$ in $[0,4]$.
+$$
+\min f_1 = f_1(0) = -2, \qquad \max f_1 = f_1(2) = 4.
+$$
 
-**Risposta:** $\boxed{k < 2}$.
+Perché $f_1(x) + k < 0$ valga per **ogni** $x \in [0,2]$ occorre che il **massimo** sia negativo:
+
+$$
+\max f_1 + k < 0 \quad \Rightarrow \quad 4 + k < 0 \quad \Rightarrow \quad k < -4.
+$$
+
+**Caso 2:** $2 \le x \le 4$. La disequazione diventa
+
+$$
+(4x - x^2) - (x-2) + k < 0 \quad \Rightarrow \quad f_2(x) + k < 0,
+$$
+
+con $f_2(x) = -x^2 + 3x + 2$. Il vertice è in $x = \frac{3}{2} \notin [2,4]$ e $f_2$ è decrescente su $[2,4]$:
+
+$$
+\max f_2 = f_2(2) = 4, \qquad \min f_2 = f_2(4) = -2.
+$$
+
+Di nuovo, la condizione per ogni $x \in [2,4]$ è
+
+$$
+\max f_2 + k < 0 \quad \Rightarrow \quad 4 + k < 0 \quad \Rightarrow \quad k < -4.
+$$
+
+I due casi danno la stessa condizione. Se $k = -4$, allora in $x = 2$ si ha $f_1(2)+k = 0$, quindi la disequazione stretta fallisce. Se $k < -4$, entrambi i massimi restano strettamente negativi.
+
+**Risposta:** $k < -4$.
