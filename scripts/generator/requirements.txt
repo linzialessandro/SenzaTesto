@@ -1,4 +1,4 @@
-google-antigravity
+openai>=1.0
 python-dotenv
 pydantic
 tenacity

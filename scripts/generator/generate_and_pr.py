@@ -7,26 +7,45 @@ import json
 import subprocess
 import sys
 from datetime import datetime
+from pathlib import Path
+
 from dotenv import load_dotenv
+from openai import APIConnectionError, APIError, AsyncOpenAI, RateLimitError
 from pydantic import BaseModel, Field
-from google.antigravity import Agent, LocalAgentConfig, types
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
-# Configure logging to WARNING to hide internal SDK/Agent verbose thoughts
+# Import shared LaTeX normalizer (repo root = scripts/generator/../..)
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+from lib.latex_utils import normalize_latex_for_site
+
+# Configure logging to WARNING to hide noisy library output
 logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # 1. Caricamento Sicuro delle Variabili d'Ambiente (BYOK & Admin Fallback)
-load_dotenv() # Prova a caricare dal .env locale nella cartella corrente o genitore
+load_dotenv()  # Prova a caricare dal .env locale nella cartella corrente o genitore
 
-if not os.environ.get("GEMINI_API_KEY"):
+if not os.environ.get("DEEPSEEK_API_KEY"):
     # Fallback per Alessandro (non viene committato alcun segreto, è solo un path locale)
     fallback_path = os.path.expanduser("~/secrets/SenzaTesto/.env")
     if os.path.exists(fallback_path):
         load_dotenv(fallback_path)
-    else:
-        print("Errore: GEMINI_API_KEY non trovata.")
-        print("Assicurati di aver impostato la variabile d'ambiente o di avere un file .env")
-        exit(1)
+
+if not os.environ.get("DEEPSEEK_API_KEY"):
+    print("Errore: DEEPSEEK_API_KEY non trovata.")
+    print("Assicurati di aver impostato la variabile d'ambiente o di avere un file .env")
+    print("Path consigliato: ~/secrets/SenzaTesto/.env oppure scripts/generator/.env")
+    exit(1)
+
+# DeepSeek OpenAI-compatible API (default: deepseek-v4-flash)
+DEEPSEEK_API_KEY = os.environ["DEEPSEEK_API_KEY"]
+DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com").rstrip("/")
+DEEPSEEK_MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash")
+MAX_OUTPUT_TOKENS = 2000
+
+# Shared async client for concurrent generation
+openai_client = AsyncOpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
 
 # Costanti dei path basati sulla root del progetto
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -216,35 +235,77 @@ def get_topics_by_year() -> dict[int, list[dict[str, str]]]:
     return topics_by_year
 
 
-def build_agent_configs() -> dict[int, LocalAgentConfig]:
-    """Crea un LocalAgentConfig specializzato per ogni anno scolastico."""
-    configs = {}
-    for year, instruction in YEAR_SYSTEM_INSTRUCTIONS.items():
-        configs[year] = LocalAgentConfig(
-            system_instructions=instruction,
-            response_schema=ExerciseOutput,
-            max_output_tokens=1000,
-        )
-    return configs
+# Esempio di payload atteso (oggetto dati flat — NON uno JSON Schema).
+# Mettere lo schema Pydantic completo confonde il modello, che riempie
+# "properties" invece di emettere i campi al top-level.
+_OUTPUT_EXAMPLE = {
+    "year": 2,
+    "macro_area": "Equazioni di secondo grado",
+    "topic": "Formula risolutiva",
+    "difficulty": 2,
+    "tags": ["equazioni", "discriminante"],
+    "problem_text": (
+        "Risolvi l'equazione $x^2 - 5x + 6 = 0$ con la formula risolutiva."
+    ),
+    "solution": (
+        "I coefficienti sono $a=1$, $b=-5$, $c=6$. Il discriminante è "
+        "$\\Delta = b^2 - 4ac = 1$. Le soluzioni sono:\n"
+        "$$\n"
+        "x = \\frac{5 \\pm 1}{2}\n"
+        "$$\n"
+        "Quindi $x_1 = 3$ e $x_2 = 2$."
+    ),
+    "generation_completed": "COMPLETED",
+}
+
+_LATEX_RULES = (
+    "\n\nLATEX (obbligatorio, il sito renderizza SOLO con remark-math/KaTeX):\n"
+    "- Inline: SOLO $...$  (es. $x \\in [0,4]$, $|2x-3|$, $k < 2$).\n"
+    "- Blocco: SOLO $$ su righe PROPRIE (apertura, formula, chiusura).\n"
+    "- VIETATO usare \\(...\\) e \\[...\\] (non vengono renderizzati).\n"
+    "- VIETATO scrivere comandi LaTeX fuori dai delimitatori $ o $$.\n"
+    "- Esempio blocco corretto:\n"
+    "$$\n"
+    "x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}\n"
+    "$$"
+)
 
 
-def fix_math_blocks(text: str) -> str:
-    if not text:
-        return text
-    def replacer(match):
-        content = match.group(1)
-        if '\n' in content or r'\begin{' in content:
-            return f"\n$$\n{content.strip()}\n$$\n"
-        return match.group(0)
-    
-    fixed = re.sub(r'(?<!\$)\$\$(.*?)\$\$(?!\$)', replacer, text, flags=re.DOTALL)
-    fixed = re.sub(r'\n{3,}', '\n\n', fixed)
-    return fixed.strip()
+def build_system_prompts() -> dict[int, str]:
+    """Crea il system prompt specializzato per ogni anno scolastico.
+
+    DeepSeek JSON mode richiede la parola "json" e un esempio del formato
+    atteso (oggetto dati, non JSON Schema).
+    """
+    example_json = json.dumps(_OUTPUT_EXAMPLE, ensure_ascii=False, indent=2)
+    schema_block = (
+        "\n\nOUTPUT: rispondi SOLO con un unico oggetto JSON valido "
+        "(nessun markdown, nessun testo fuori dal JSON).\n"
+        "L'oggetto DEVE avere esattamente queste chiavi top-level:\n"
+        "- year (int 1-5)\n"
+        "- macro_area (string)\n"
+        "- topic (string)\n"
+        "- difficulty (int 1-5)\n"
+        "- tags (array di stringhe)\n"
+        "- problem_text (string)\n"
+        "- solution (string)\n"
+        "- generation_completed (string, DEVE essere esattamente \"COMPLETED\")\n"
+        f"{_LATEX_RULES}\n\n"
+        "ESEMPIO DI FORMA (i valori vanno sostituiti con l'esercizio reale):\n"
+        f"{example_json}\n"
+        "NON restituire uno JSON Schema, NON avvolgere i campi in \"properties\"."
+    )
+    return {
+        year: instruction + schema_block
+        for year, instruction in YEAR_SYSTEM_INSTRUCTIONS.items()
+    }
+
 
 def format_markdown(data: ExerciseOutput) -> str:
     tags_str = "\n".join([f"  - {json.dumps(tag)}" for tag in data.tags])
-    problem_text = fix_math_blocks(data.problem_text)
-    solution = fix_math_blocks(data.solution)
+    # Post-process: converte \( \) / \[ \] → $ / $$ e sistema i blocchi multi-riga
+    problem_text = normalize_latex_for_site(data.problem_text)
+    solution = normalize_latex_for_site(data.solution)
     markdown = f"""---
 year: {data.year}
 macro_area: {json.dumps(data.macro_area)}
@@ -271,7 +332,6 @@ def run_cmd(cmd: str, cwd: str = PROJECT_ROOT, ignore_error: bool = False) -> bo
             print(f"Errore durante l'esecuzione di: {cmd}\n{e.stderr.decode()}")
         return False
 
-# Eccetto ValueError o eccezioni simili, riproviamo se ci sono problemi di connessione o l'output strutturato fallisce
 # 4. Profili di difficoltà espliciti per guidare l'IA
 # Ogni livello contiene istruzioni pedagogiche precise e vincola il campo `difficulty`.
 DIFFICULTY_PROFILES: dict[int, str] = {
@@ -304,12 +364,61 @@ DIFFICULTY_PROFILES: dict[int, str] = {
 }
 
 
+def _extract_json_object(text: str) -> dict:
+    """Parse model output into a dict, tolerating accidental markdown fences."""
+    if not text or not text.strip():
+        raise ValueError("Empty model response")
+
+    cleaned = text.strip()
+    fence = re.match(r"^```(?:json)?\s*([\s\S]*?)\s*```$", cleaned)
+    if fence:
+        cleaned = fence.group(1).strip()
+
+    try:
+        data = json.loads(cleaned)
+    except json.JSONDecodeError:
+        # Fallback: first {...} block in the response
+        start, end = cleaned.find("{"), cleaned.rfind("}")
+        if start == -1 or end <= start:
+            raise ValueError(f"Model did not return JSON: {cleaned[:200]!r}")
+        data = json.loads(cleaned[start : end + 1])
+
+    if not isinstance(data, dict):
+        raise ValueError(f"Expected JSON object, got {type(data).__name__}")
+
+    # Some models echo a JSON-Schema shell and put values under "properties".
+    if "properties" in data and "year" not in data:
+        props = data["properties"]
+        if isinstance(props, dict) and "year" in props:
+            unwrapped: dict = {}
+            for key, value in props.items():
+                if isinstance(value, dict) and "const" in value:
+                    unwrapped[key] = value["const"]
+                elif isinstance(value, dict) and "default" in value:
+                    unwrapped[key] = value["default"]
+                elif isinstance(value, dict) and set(value.keys()) <= {
+                    "type", "description", "title", "items"
+                }:
+                    continue
+                else:
+                    unwrapped[key] = value
+            if "year" in unwrapped:
+                data = unwrapped
+
+    return data
+
+
+# Riproviamo su errori di rete/rate-limit o output strutturato non valido
 @retry(
-    stop=stop_after_attempt(3), 
+    stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=2, max=10),
-    retry=retry_if_exception_type((types.AntigravityConnectionError, ValueError, Exception))
+    retry=retry_if_exception_type((APIConnectionError, APIError, RateLimitError, ValueError, Exception)),
 )
-async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topic: dict[str, str], difficulty_level: int) -> str:
+async def generate_single_exercise(
+    system_prompt: str,
+    selected_topic: dict[str, str],
+    difficulty_level: int,
+) -> str:
     difficulty_instructions = DIFFICULTY_PROFILES[difficulty_level]
 
     prompt = (
@@ -319,42 +428,58 @@ async def generate_single_exercise(agent_config: LocalAgentConfig, selected_topi
         "1. Domanda SINGOLA e focalizzata, NO multi-parte (no \"1. ... 2. ... 3. ...\").\n"
         "2. NO \"Problemi di Maturità\" lunghi o scenari esaustivi del mondo reale.\n"
         "3. Testo e soluzione in italiano, max 400 parole totali.\n"
-        "4. Usa LaTeX: i delimitatori $$ DEVONO stare su righe proprie per i blocchi.\n"
+        "4. LaTeX ready-to-use per KaTeX: SOLO $...$ inline e $$ su righe proprie per i blocchi. "
+        "MAI \\(...\\) o \\[...\\].\n"
         "5. `problem_text`: SOLO il problema. `solution`: SOLO i passaggi risolutivi.\n"
         "6. `generation_completed` = \"COMPLETED\"."
     )
-    
-    async with Agent(agent_config) as agent:
-        response = await agent.chat(prompt)
-        data_dict = await response.structured_output()
-        
-        if not data_dict:
-            raise ValueError("Structured output extraction failed (returned None)")
-            
-        exercise_data = ExerciseOutput(**data_dict)
-        md_content = format_markdown(exercise_data)
-        
-        safe_topic = re.sub(r'[^a-z0-9]+', '_', exercise_data.topic.lower()).strip('_')
-        filename_base = f"{safe_topic}_{random.randint(1000, 9999)}.md"
-        filepath = os.path.join(SUBMISSIONS_DIR, filename_base)
-        
-        with open(filepath, "w") as f:
-            f.write(md_content)
-            
-        return filepath
+
+    response = await openai_client.chat.completions.create(
+        model=DEEPSEEK_MODEL,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
+        ],
+        response_format={"type": "json_object"},
+        max_tokens=MAX_OUTPUT_TOKENS,
+        # Non-thinking: più economico e sufficiente per esercizi strutturati
+        extra_body={"thinking": {"type": "disabled"}},
+    )
+
+    content = response.choices[0].message.content
+    data_dict = _extract_json_object(content or "")
+
+    exercise_data = ExerciseOutput(**data_dict)
+    if exercise_data.generation_completed != "COMPLETED":
+        raise ValueError(
+            f"Sentinel field missing/invalid (got {exercise_data.generation_completed!r}); "
+            "likely truncated output"
+        )
+
+    md_content = format_markdown(exercise_data)
+
+    safe_topic = re.sub(r'[^a-z0-9]+', '_', exercise_data.topic.lower()).strip('_')
+    filename_base = f"{safe_topic}_{random.randint(1000, 9999)}.md"
+    filepath = os.path.join(SUBMISSIONS_DIR, filename_base)
+
+    with open(filepath, "w") as f:
+        f.write(md_content)
+
+    return filepath
+
 
 async def task_wrapper(
     sem: asyncio.Semaphore,
     index: int,
     num_exercises: int,
-    agent_configs: dict[int, LocalAgentConfig],
+    system_prompts: dict[int, str],
     topics_by_year: dict[int, list[dict[str, str]]],
 ) -> str | None:
     async with sem:
         # Selezione casuale dell'anno con probabilità uniforme (1/5 ciascuno)
         year = random.choice([1, 2, 3, 4, 5])
         selected_topic = random.choice(topics_by_year[year])
-        agent_config = agent_configs[year]
+        system_prompt = system_prompts[year]
 
         # Selezione pesata della difficoltà per garantire copertura completa dello spettro
         difficulty_level = random.choices(
@@ -365,36 +490,40 @@ async def task_wrapper(
 
         print(f"⏳ [{index}/{num_exercises}] Anno {year} | Diff. {difficulty_level} ⭐ — {selected_topic['macro_area']}: {selected_topic['topic']}...")
         try:
-            filepath = await generate_single_exercise(agent_config, selected_topic, difficulty_level)
+            filepath = await generate_single_exercise(system_prompt, selected_topic, difficulty_level)
             print(f"✅ [{index}/{num_exercises}] Completato e salvato: {os.path.basename(filepath)}")
             return filepath
         except Exception as e:
             print(f"❌ [{index}/{num_exercises}] Errore durante la generazione: {e}")
             return None
 
+
 async def main():
     topics_by_year = get_topics_by_year()
-    agent_configs = build_agent_configs()
+    system_prompts = build_system_prompts()
 
     # Stampa un riepilogo degli argomenti trovati per anno
     for year in sorted(topics_by_year.keys()):
         print(f"  📚 Anno {year}: {len(topics_by_year[year])} argomenti trovati")
 
     os.makedirs(SUBMISSIONS_DIR, exist_ok=True)
-    
+
     try:
         NUM_EXERCISES = int(sys.argv[1]) if len(sys.argv) > 1 else 10
     except ValueError:
         print("Errore: Il numero di esercizi deve essere un numero intero.")
         return
-        
-    print(f"\n🚀 === Inizio Generazione Parallela di {NUM_EXERCISES} esercizi (5 agenti specializzati) ===")
-    
+
+    print(
+        f"\n🚀 === Inizio Generazione Parallela di {NUM_EXERCISES} esercizi "
+        f"(DeepSeek {DEEPSEEK_MODEL} @ {DEEPSEEK_BASE_URL}) ==="
+    )
+
     # Use semaphore of 5 to balance concurrency speed and rate limits
     sem = asyncio.Semaphore(5)
-    
+
     tasks = [
-        task_wrapper(sem, i + 1, NUM_EXERCISES, agent_configs, topics_by_year)
+        task_wrapper(sem, i + 1, NUM_EXERCISES, system_prompts, topics_by_year)
         for i in range(NUM_EXERCISES)
     ]
     

@@ -125,7 +125,7 @@ export function ContributeModal({ isOpen, onClose }: ContributeModalProps) {
             <ol className="list-decimal list-inside space-y-3">
               <li>Clona o esegui il fork della <a href="https://github.com/linzialessandro/SenzaTesto" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline">repository GitHub</a>.</li>
               <li>Vai nella cartella <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">scripts/generator</code>.</li>
-              <li>Installa i requisiti e crea un file <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">.env</code> inserendo la tua <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">GEMINI_API_KEY</code>.</li>
+              <li>Installa i requisiti e crea un file <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">.env</code> inserendo la tua <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">DEEPSEEK_API_KEY</code>.</li>
               <li>Avvia <code className="bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-emerald-800 dark:text-emerald-200">python generate_and_pr.py</code>.</li>
               <li>Lo script creerà un branch locale, genererà gli esercizi e aprirà automaticamente una Pull Request!</li>
             </ol>

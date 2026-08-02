@@ -47,6 +47,7 @@ Si procede semplificando entrambi i membri.
 6. **Soluzione finale:**
    $$\cos 2x = -\frac{1}{2} \quad \Rightarrow \quad 2x = \pm \frac{2\pi}{3} + 2k\pi, \ k \in \mathbb{Z}$$
    
+
 $$
 x = \pm \frac{\pi}{3} + k\pi, \quad k \in \mathbb{Z}.
 $$
