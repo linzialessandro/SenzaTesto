@@ -18,8 +18,11 @@ from pathlib import Path
 
 import yaml
 
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+from lib.provenance import validate_provenance_metadata
+
 FRONTMATTER_PATTERN = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n(.*)\Z", re.DOTALL)
 REQUIRED_SECTIONS = ("Problem Text", "Solution")
 MAX_TEXT_LENGTH = 20_000
@@ -94,9 +97,8 @@ def validate_file(path: Path) -> tuple[list[ValidationIssue], str | None]:
     elif len(tags) > 12:
         issues.append(ValidationIssue(path, "tags must contain at most 12 values"))
 
-    ai_generated = metadata.get("ai_generated")
-    if ai_generated is not None and not isinstance(ai_generated, bool):
-        issues.append(ValidationIssue(path, "ai_generated must be true or false when supplied"))
+    for message in validate_provenance_metadata(metadata):
+        issues.append(ValidationIssue(path, message))
 
     body = match.group(2)
     sections: dict[str, str] = {}

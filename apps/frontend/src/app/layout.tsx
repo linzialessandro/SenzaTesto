@@ -24,10 +24,10 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "SenzaTesto | L'eccellenza matematica, accessibile a tutti",
-  description: "SenzaTesto è il primo database open-source di esercizi di matematica generati dall'Intelligenza Artificiale, gratuito per tutti gli studenti e professori italiani.",
+  description: "SenzaTesto è il database open-source di esercizi di matematica per la scuola superiore italiana. Contenuti spesso generati o assistiti da IA (etichettati), rivisti prima della pubblicazione. Gratuito per studenti e docenti.",
   openGraph: {
     title: "SenzaTesto",
-    description: "Database di matematica procedurale generato da IA.",
+    description: "Database open-source di esercizi di matematica. I contenuti generati da IA sono etichettati.",
     url: "https://senzatesto.it",
     siteName: "SenzaTesto",
     locale: "it_IT",

@@ -22,18 +22,21 @@ Quando l'agente esegue lo script per generare batch di esercizi (es. 50 o 100), 
 3. **Isolamento del Contesto (O(1) Cost):** L'istanza dell'agente LLM (`async with Agent(config) as agent:`) deve essere creata **all'interno** del ciclo di generazione di ogni singolo esercizio. Condividere l'agente significa accumulare l'intera cronologia, portando a costi O(N²) ed esaurendo rapidamente la finestra di contesto (dettagli in [Analisi Costi LLM](/agents/llm-pricing.md)).
 4. **Prevenzione Loop e Sentinel Field:** I modelli LLM possono talvolta incastrarsi in loop infiniti o divagare in problemi multi-parte estremamente lunghi. Bisogna impostare un limite stringente (es. `max_tokens=1000`) sulla chiamata API DeepSeek (`deepseek-v4-flash`). Poiché molti framework moderni tendono a *riparare* automaticamente il JSON troncato bypassando i nostri `try/except`, è **obbligatorio** includere uno speciale "campo sentinella" alla fine del Pydantic model (es. `generation_completed: str`). In questo modo, se il limite di token viene raggiunto, il campo finale sarà assente e lo script scarterà l'esercizio difettoso riprovando la generazione.
 
-Lo script scriverà l'output formattato in file Markdown seguendo lo [Standard Exercise Markdown Template](/architecture/exercise_template.md) nella cartella `submissions/pending/` e creerà in automatico un branch e una Pull Request. Preferire `ai_generated: true` nel frontmatter quando l'esercizio è prodotto da un modello. In caso di errori, utilizzerà il modulo `logging` standard di Python per tracciare i dettagli diagnostici.
+Lo script scriverà l'output formattato in file Markdown seguendo lo [Standard Exercise Markdown Template](/architecture/exercise_template.md) nella cartella `submissions/pending/` e creerà in automatico un branch e una Pull Request. Per output IA scrive sempre i metadati machine-readable (`ai_generated: true`, `content_origin: artificial`, blocco `provenance` via `lib/provenance.py`). In caso di errori, utilizzerà il modulo `logging` standard di Python per tracciare i dettagli diagnostici.
+
+**Gate umano (obbligatorio prima del DB pubblico):** la validazione automatica non sostituisce la revisione matematica. Vedi `docs/compliance/human-review-sop.md` e `docs/compliance/art50-pipeline-checklist.md`.
 
 ## Step 2: Validazione Deterministica (Gate)
 
 Prima di qualsiasi scrittura sul database (e in CI sul deploy), le submission passano da `scripts/validate_submissions.py`.
 
 Il validatore controlla, senza modificare i file:
-- Frontmatter YAML (`year` 1–5, `difficulty` 1–5, `macro_area`, `topic`, `tags`, opzionale `ai_generated` booleano)
+- Frontmatter YAML (`year` 1–5, `difficulty` 1–5, `macro_area`, `topic`, `tags`, opzionale `ai_generated` / `content_origin` / `provenance`)
 - Sezioni obbligatorie `# Problem Text` e `# Solution`
 - Delimitatori display-math `$$` bilanciati
 - Lunghezze massime di testo e tag
 - Duplicati esatti del payload (fingerprint SHA-256)
+- Coerenza dei campi di provenienza quando presenti
 
 ```bash
 python3 -m venv .venv

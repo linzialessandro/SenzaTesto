@@ -25,13 +25,19 @@ Per poter accettare le tue pull request, abbiamo bisogno che tu firmi il nostro 
 
 ## Come Contribuire agli Esercizi (SenzaTesto Database)
 
-Puoi contribuire ad arricchire il database di SenzaTesto in due modi:
+Puoi contribuire ad arricchire il database di SenzaTesto in due modi.
+
+**Trasparenza e qualità:** gli esercizi possono essere scritti da persone o generati/assistiti da modelli di IA.
+
+- I file **IA** devono avere `ai_generated: true` (e, per le nuove generazioni, blocco `provenance`). Sul sito pubblico compare il badge **IA**.
+- **Nessun esercizio entra nel database pubblico** senza validazione automatica e revisione umana (a campione sulle batch AI): correttezza matematica, curriculum, qualità didattica. Responsabilità editoriale: progetto / Alessandro Linzi (vedi `docs/compliance/human-review-sop.md` e `docs/compliance/art50-pipeline-checklist.md`).
+- SenzaTesto **non** fornisce il modello DeepSeek: lo script BYOK usa la **tua** chiave API.
 
 ### Metodo 1: Manualmente
-Aggiungi un nuovo file `.md` nella cartella `submissions/pending/` rispettando la struttura del frontmatter e usando LaTeX per la matematica. Consulta gli esercizi già presenti per prendere spunto!
+Aggiungi un nuovo file `.md` nella cartella `submissions/pending/` rispettando la struttura del frontmatter e usando LaTeX per la matematica. Consulta gli esercizi già presenti per prendere spunto! Per contributi interamente umani puoi omettere i campi IA oppure impostare `ai_generated: false` e `content_origin: human`.
 
 ### Metodo 2: Generazione Massiva con IA (BYOK)
-Se hai una chiave API di DeepSeek (Bring-Your-Own-Key), puoi generare automaticamente decine di esercizi e inviarli via Pull Request. Lo script usa il modello **deepseek-v4-flash** tramite l'API OpenAI-compatible di DeepSeek.
+Se hai una chiave API di DeepSeek (Bring-Your-Own-Key), puoi generare automaticamente decine di esercizi e inviarli via Pull Request. Lo script usa il modello **deepseek-v4-flash** tramite l'API OpenAI-compatible di DeepSeek e scrive automaticamente i metadati di provenienza (`ai_generated`, `content_origin`, `provenance`).
 
 1. Installa le dipendenze Python:
    ```bash

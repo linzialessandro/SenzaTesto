@@ -24,6 +24,14 @@ tags:
   - frazioni
   - verifica
 ai_generated: true
+content_origin: artificial
+provenance:
+  schema: senzatesto-provenance/v1
+  method: llm
+  provider: deepseek
+  model: deepseek-v4-flash
+  pipeline: generate_and_pr
+  generated_at: 2026-08-02T12:00:00+00:00
 ---
 # Problem Text
 Risolvi la seguente equazione lineare:
@@ -45,7 +53,9 @@ Moltiplicando per 2, il risultato è $x = 4$.
 | `topic` | String | L'argomento specifico (es. "triangoli", "sistemi lineari"). |
 | `difficulty` | Integer | Il livello di difficoltà dell'esercizio (1-5). |
 | `tags` | List[String] | Una lista di tag aggiuntivi per la ricerca (max 12). |
-| `ai_generated` | Boolean (opzionale) | `true` se prodotto da un modello LLM; default `false` in ingestione se assente. |
+| `ai_generated` | Boolean (opzionale) | `true` se prodotto da un modello LLM; default `false` in ingestione se assente. Flag DB/API. |
+| `content_origin` | String (opzionale) | `artificial` \| `human` \| `mixed` — classificazione machine-readable (EU AI Act Art. 50(2)). |
+| `provenance` | Mapping (opzionale) | Metadati di origine: `schema`, `method`, `provider`, `model`, `pipeline`, `generated_at`. Invisibili nel rendering dell'esercizio. Vedi `lib/provenance.py` e `docs/compliance/eu-ai-act-art50.md`. |
 
 ## 3. Headers (Body)
 

@@ -123,7 +123,11 @@ export function ExercisesGrid({
                             #{ex.short_code}
                           </a>
                           {ex.ai_generated && (
-                            <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-purple-100 text-purple-800 border border-purple-200 dark:bg-purple-900/40 dark:text-purple-400 dark:border-purple-700/50 uppercase flex items-center gap-1" title="Questo esercizio è stato generato tramite Intelligenza Artificiale">
+                            <span
+                              className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-purple-100 text-purple-800 border border-purple-200 dark:bg-purple-900/40 dark:text-purple-400 dark:border-purple-700/50 uppercase flex items-center gap-1"
+                              title="Testo generato o sostanzialmente prodotto con Intelligenza Artificiale (trasparenza EU AI Act Art. 50)"
+                              aria-label="Esercizio generato con intelligenza artificiale"
+                            >
                               <Sparkles size={10} /> IA
                             </span>
                           )}

@@ -1,6 +1,8 @@
 # SenzaTesto
 
-**La Matematica è di Tutti.** Un database infinito e open-source di esercizi di matematica, generato e curato dalla community, accessibile gratuitamente per tutti gli studenti italiani.
+**La Matematica è di Tutti.** Un database open-source di esercizi di matematica, curato dalla community e accessibile gratuitamente per tutti gli studenti italiani.
+
+**Trasparenza (EU AI Act Art. 50):** molti esercizi sono **generati o assistiti da IA** e sul sito sono etichettati con il badge **IA**. Prima della pubblicazione pubblica restano soggetti a validazione automatica e a revisione umana (a campione sulle batch). La generazione avviene offline con script BYOK (es. DeepSeek API del contributor); **non** c’è un chatbot sul sito. Dettagli: `docs/compliance/`.
 
 ## Visione del Progetto
 

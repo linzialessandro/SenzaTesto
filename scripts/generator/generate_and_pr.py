@@ -14,11 +14,12 @@ from openai import APIConnectionError, APIError, AsyncOpenAI, RateLimitError
 from pydantic import BaseModel, Field
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
-# Import shared LaTeX normalizer (repo root = scripts/generator/../..)
+# Import shared helpers (repo root = scripts/generator/../..)
 _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 from lib.latex_utils import normalize_latex_for_site
+from lib.provenance import build_ai_provenance, format_provenance_yaml
 
 # Configure logging to WARNING to hide noisy library output
 logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -324,12 +325,20 @@ def format_markdown(data: ExerciseOutput) -> str:
     # Post-process: converte \( \) / \[ \] → $ / $$ e sistema i blocchi multi-riga
     problem_text = normalize_latex_for_site(data.problem_text)
     solution = normalize_latex_for_site(data.solution)
+    # Machine-readable Art. 50(2) provenance (invisible on rendered pages)
+    prov_yaml = format_provenance_yaml(
+        build_ai_provenance(
+            provider="deepseek",
+            model=DEEPSEEK_MODEL,
+            pipeline="generate_and_pr",
+        )
+    )
     markdown = f"""---
 year: {data.year}
 macro_area: {json.dumps(data.macro_area)}
 topic: {json.dumps(data.topic)}
 difficulty: {data.difficulty}
-ai_generated: true
+{prov_yaml}
 tags:
 {tags_str}
 ---
@@ -586,7 +595,13 @@ async def main():
         push_success = run_cmd(f"git push -u origin {branch_name}", ignore_error=True)
         if push_success:
             import shlex
-            pr_body = "Esercizi generati automaticamente tramite lo script BYOK.\n\n> **\"Ho letto il documento CLA e con la presente accetto e firmo il Contributor License Agreement.\"**"
+            pr_body = (
+                "Esercizi generati automaticamente tramite lo script BYOK "
+                "(metadati di provenienza machine-readable nel frontmatter).\n\n"
+                "**Revisione umana richiesta prima del merge:** correttezza matematica "
+                "e qualità didattica (la CI non basta). Vedi docs/compliance/human-review-sop.md.\n\n"
+                "> **\"Ho letto il documento CLA e con la presente accetto e firmo il Contributor License Agreement.\"**"
+            )
             pr_cmd = f"gh pr create --title 'Nuovi Esercizi ({len(generated_files)})' --body {shlex.quote(pr_body)}"
             if run_cmd(pr_cmd):
                 print("✅ Pull Request creata con successo!")

@@ -413,6 +413,15 @@ export function PracticeSession({
                 <span className="text-xs font-mono font-bold text-amber-800 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 rounded">
                   #{current.short_code}
                 </span>
+                {current.ai_generated && (
+                  <span
+                    className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-purple-100 text-purple-800 border border-purple-200 dark:bg-purple-900/40 dark:text-purple-400 dark:border-purple-700/50 uppercase flex items-center gap-1"
+                    title="Testo generato o sostanzialmente prodotto con Intelligenza Artificiale (trasparenza EU AI Act Art. 50)"
+                    aria-label="Esercizio generato con intelligenza artificiale"
+                  >
+                    <Sparkles size={10} /> IA
+                  </span>
+                )}
               </div>
               <h3 className="font-semibold text-lg">{current.topic_macro_area}</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">{current.topic_name}</p>

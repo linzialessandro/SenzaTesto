@@ -12,3 +12,4 @@ Benvenuto nel grafo OKF per la piattaforma matematica educativa.
 - [Database](./database/index.md) - Schemi del database e logica di inizializzazione
 - [Curriculum](./curriculum/index.md) - Contesto e regole per il curriculum di matematica delle scuole superiori italiane
 - [Agenti](./agents/index.md) - Prompt e flussi di lavoro per gli agenti LLM che popolano il database
+- [Compliance (EU AI Act Art. 50)](../compliance/eu-ai-act-art50.md) - Trasparenza, provenance machine-readable, revisione umana
