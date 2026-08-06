@@ -477,14 +477,25 @@ async def generate_single_exercise(
     )
 
     content = response.choices[0].message.content
-    data_dict = _extract_json_object(content or "")
-
-    exercise_data = ExerciseOutput(**data_dict)
-    if exercise_data.generation_completed != "COMPLETED":
-        raise ValueError(
-            f"Sentinel field missing/invalid (got {exercise_data.generation_completed!r}); "
-            "likely truncated output"
-        )
+    
+    try:
+        data_dict = _extract_json_object(content or "")
+        exercise_data = ExerciseOutput(**data_dict)
+        if exercise_data.generation_completed != "COMPLETED":
+            raise ValueError(
+                f"Sentinel field missing/invalid (got {exercise_data.generation_completed!r}); "
+                "likely truncated output"
+            )
+    except Exception as parse_exc:
+        # Write the raw output to rejected folder before failing
+        REJECTED_DIR = os.path.join(PROJECT_ROOT, "submissions", "rejected")
+        os.makedirs(REJECTED_DIR, exist_ok=True)
+        safe_topic = re.sub(r'[^a-z0-9]+', '_', selected_topic['topic'].lower()).strip('_')
+        fail_filepath = os.path.join(REJECTED_DIR, f"failed_{safe_topic}_{random.randint(1000, 9999)}.md")
+        with open(fail_filepath, "w") as f:
+            f.write(f"<!-- FAILED GENERATION: {parse_exc} -->\n")
+            f.write(content or "")
+        raise parse_exc
 
     md_content = format_markdown(exercise_data)
 
