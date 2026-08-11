@@ -43,7 +43,9 @@ if not os.environ.get("DEEPSEEK_API_KEY"):
 DEEPSEEK_API_KEY = os.environ["DEEPSEEK_API_KEY"]
 DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com").rstrip("/")
 DEEPSEEK_MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash")
-MAX_OUTPUT_TOKENS = 2000
+# Thinking (high) + JSON answer share this budget. 2k was too low: most
+# high-effort calls returned empty/truncated content. 8k leaves room for both.
+MAX_OUTPUT_TOKENS = int(os.environ.get("DEEPSEEK_MAX_OUTPUT_TOKENS", "8000"))
 
 # Shared async client for concurrent generation
 openai_client = AsyncOpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
@@ -239,22 +241,31 @@ def get_topics_by_year() -> dict[int, list[dict[str, str]]]:
 # Esempio di payload atteso (oggetto dati flat — NON uno JSON Schema).
 # Mettere lo schema Pydantic completo confonde il modello, che riempie
 # "properties" invece di emettere i campi al top-level.
+# IMPORTANTE: l'esempio è di difficoltà 3 (non banale). DeepSeek si ancora
+# fortemente all'esempio: un problema da libro elementare qui produce
+# batch interi di esercizi troppo facili.
 _OUTPUT_EXAMPLE = {
     "year": 2,
     "macro_area": "Equazioni di secondo grado",
-    "topic": "Formula risolutiva",
-    "difficulty": 2,
-    "tags": ["equazioni", "discriminante"],
+    "topic": "Equazioni parametriche e discussione",
+    "difficulty": 3,
+    "tags": ["equazioni", "parametriche", "discriminante", "discussione"],
     "problem_text": (
-        "Risolvi l'equazione $x^2 - 5x + 6 = 0$ con la formula risolutiva."
+        "Al variare del parametro reale $k$, determina per quali valori "
+        "l'equazione $x^2 - (k+1)x + k = 0$ ammette due soluzioni reali "
+        "distinte e positive."
     ),
     "solution": (
-        "I coefficienti sono $a=1$, $b=-5$, $c=6$. Il discriminante è "
-        "$\\Delta = b^2 - 4ac = 1$. Le soluzioni sono:\n"
-        "$$\n"
-        "x = \\frac{5 \\pm 1}{2}\n"
-        "$$\n"
-        "Quindi $x_1 = 3$ e $x_2 = 2$."
+        "I coefficienti sono $a=1$, $b=-(k+1)$, $c=k$. "
+        "Il discriminante è "
+        "$\\Delta = (k+1)^2 - 4k = k^2 + 2k + 1 - 4k = k^2 - 2k + 1 = (k-1)^2$. "
+        "Si ha $\\Delta > 0$ per $k \\neq 1$ (due radici reali distinte); "
+        "per $k=1$ c'è una radice doppia $x=1$.\n"
+        "Per $k \\neq 1$ le radici sono "
+        "$x = \\dfrac{(k+1) \\pm |k-1|}{2}$. "
+        "Se $k>1$: $x_1 = k$, $x_2 = 1$. Entrambe positive $\\iff k>1$. "
+        "Se $k<1$: $x_1 = 1$, $x_2 = k$. Entrambe positive $\\iff 0 < k < 1$.\n"
+        "Quindi due soluzioni reali distinte e positive per $k \\in (0,1) \\cup (1,+\\infty)$."
     ),
     "generation_completed": "COMPLETED",
 }
@@ -288,6 +299,28 @@ _MATH_PRECISION_RULES = (
     "- La soluzione deve essere autocontenuta e concludere con la risposta finale chiara."
 )
 
+# DeepSeek-v4-flash tende a collassare verso esercizi da "prima pagina del libro".
+# Queste regole alzano il pavimento di qualità senza imporre multi-parte o maturità.
+_HARDNESS_RULES = (
+    "\n\nQUALITÀ E DIFFICOLTÀ (critico — calibra in alto rispetto al default):\n"
+    "- Scrivi esercizi da compito in classe / verifica italiana, NON da ripasso "
+    "immediato della definizione.\n"
+    "- Preferisci numeri e coefficienti che NON diano soluzioni intere ovvie "
+    "(evita pattern tipo $x^2-5x+6=0$, $x=2$ e $x=3$, $\\sin 30^\\circ$, "
+    "disequazioni già scomposte con radici consecutive intere).\n"
+    "- Per difficulty ≥ 2: almeno un passaggio non banale (insidia su segni, "
+    "CE da imporre, caso da scartare, sostituzione non immediata, o coefficienti "
+    "che richiedono attenzione).\n"
+    "- Per difficulty ≥ 3: combina DUE idee dell'argomento (es. parametro + "
+    "discussione; CE + disequazione; geometria + equazione; limite + condizione).\n"
+    "- Risultati in forma esatta (radicali, frazioni, $\\pi$, logaritmi) quando naturale.\n"
+    "- VIETATO (salvo difficulty = 1): equazione monomia banale, applicazione "
+    "diretta di una sola formula su valori notevoli standard, integrale/limite "
+    "immediato senza manipolazione, testo copiabile da qualsiasi scheda base.\n"
+    "- UNA sola domanda focalizzata resta obbligatoria: la difficoltà sta nel "
+    "ragionamento, non nella lunghezza del testo."
+)
+
 
 def build_system_prompts() -> dict[int, str]:
     """Crea il system prompt specializzato per ogni anno scolastico.
@@ -309,8 +342,10 @@ def build_system_prompts() -> dict[int, str]:
         "- solution (string)\n"
         "- generation_completed (string, DEVE essere esattamente \"COMPLETED\")\n"
         f"{_LATEX_RULES}\n"
-        f"{_MATH_PRECISION_RULES}\n\n"
-        "ESEMPIO DI FORMA (i valori vanno sostituiti con l'esercizio reale):\n"
+        f"{_MATH_PRECISION_RULES}\n"
+        f"{_HARDNESS_RULES}\n\n"
+        "ESEMPIO DI FORMA (i valori vanno sostituiti con l'esercizio reale; "
+        "l'esempio è difficulty 3 — non copiarne i numeri, replica il livello di impegno):\n"
         f"{example_json}\n"
         "NON restituire uno JSON Schema, NON avvolgere i campi in \"properties\"."
     )
@@ -360,35 +395,62 @@ def run_cmd(cmd: str, cwd: str = PROJECT_ROOT, ignore_error: bool = False) -> bo
         return False
 
 # 4. Profili di difficoltà espliciti per guidare l'IA
-# Ogni livello contiene istruzioni pedagogiche precise e vincola il campo `difficulty`.
+# Calibrati in alto: DeepSeek-v4-flash sotto-interpreta le descrizioni soft
+# e collassa su esercizi da "prima pagina". Ogni livello ha requisiti minimi
+# e anti-esempi concreti; il campo `difficulty` resta vincolato.
 DIFFICULTY_PROFILES: dict[int, str] = {
     1: (
-        "DIFFICOLTÀ: 1/5 (Base). Esercizio elementare di applicazione diretta di una definizione "
-        "o di una formula. Nessun passaggio intermedio complesso. "
+        "DIFFICOLTÀ: 1/5 (Base — consolidamento). Una sola idea, 2–4 passaggi chiari. "
+        "ANCORA così deve essere un esercizio di verifica breve, non un ripasso "
+        "banale: evita coefficienti tutti ±1 e soluzioni intere consecutive ovvie "
+        "se l'argomento lo consente. "
         "Il campo `difficulty` DEVE essere 1."
     ),
     2: (
-        "DIFFICOLTÀ: 2/5 (Facile). Esercizio standard che richiede 2-3 passaggi algebrici "
-        "o l'applicazione di una singola tecnica risolutiva nota. "
+        "DIFFICOLTÀ: 2/5 (Standard da compito). 4–7 passaggi; tecnica principale "
+        "dell'argomento applicata con coefficienti non banali o una piccola insidia "
+        "(segno, CE, dominio, caso da scartare). "
+        "VIETATO: equazioni tipo $x^2-5x+6=0$, $\\sin 75^\\circ$ da scheda, "
+        "integrali/limiti immediati senza manipolazione. "
+        "Uno studente medio del corso ci mette ~5–10 minuti. "
         "Il campo `difficulty` DEVE essere 2."
     ),
     3: (
-        "DIFFICOLTÀ: 3/5 (Medio). Esercizio che richiede la combinazione di due tecniche "
-        "o un ragionamento in più passaggi con qualche insidia (segni, casi particolari). "
+        "DIFFICOLTÀ: 3/5 (Medio — livello atteso in verifica completa). "
+        "Combina DUE tecniche o richiede discussione (parametro, casi, segni, "
+        "posizioni reciproche, CE non banali). Numeri non “troppo belli”. "
+        "Uno studente medio ci mette ~10–15 minuti; non risolvibile a colpo d'occhio. "
         "Il campo `difficulty` DEVE essere 3."
     ),
     4: (
-        "DIFFICOLTÀ: 4/5 (Impegnativo). Esercizio che richiede padronanza sicura dell'argomento, "
-        "combina più concetti, e presenta almeno un passaggio non banale o un caso limite. "
+        "DIFFICOLTÀ: 4/5 (Impegnativo). Padronanza sicura: più concetti dell'anno, "
+        "almeno un passaggio non standard (caso limite, parametro con più condizioni, "
+        "scelta del metodo non ovvia, collegamento algebra↔geometria). "
+        "Destinato ai più preparati della classe (~15–25 minuti). "
         "Il campo `difficulty` DEVE essere 4."
     ),
     5: (
-        "DIFFICOLTÀ: 5/5 (Massimo). Esercizio sfidante anche per gli studenti più preparati. "
-        "Richiede intuizione, collegamenti tra argomenti diversi, o una dimostrazione rigorosa. "
-        "Può includere parametri, casi da discutere, o generalizzazioni. "
+        "DIFFICOLTÀ: 5/5 (Massimo da liceo). Sfidante per i migliori: intuizione, "
+        "collegamento tra argomenti, dimostrazione breve, o discussione completa "
+        "con parametri/generalizzazione. UNA sola domanda, non un tema di maturità "
+        "multi-punto. ~20–30 minuti per uno studente forte. "
         "Il campo `difficulty` DEVE essere 5."
     ),
 }
+
+# reasoning_effort DeepSeek V4: solo low | high | xhigh | max (no "medium").
+# high brucia il budget di max_tokens sul thinking e tronca il JSON (finish_reason=length).
+# La durezza la alziamo con i prompt; low resta affidabile per output strutturato.
+_REASONING_BY_DIFFICULTY: dict[int, str] = {
+    1: "low",
+    2: "low",
+    3: "low",
+    4: "low",
+    5: "low",
+}
+
+# Pesi campionamento: meno base/facile, più medio-impegnativo (ex 15/30/30/15/10).
+DIFFICULTY_WEIGHTS: list[float] = [0.08, 0.18, 0.34, 0.25, 0.15]
 
 
 def _extract_json_object(text: str) -> dict:
@@ -447,20 +509,26 @@ async def generate_single_exercise(
     difficulty_level: int,
 ) -> str:
     difficulty_instructions = DIFFICULTY_PROFILES[difficulty_level]
+    reasoning_effort = _REASONING_BY_DIFFICULTY[difficulty_level]
 
     prompt = (
         f"Genera un esercizio per: {selected_topic['macro_area']} — {selected_topic['topic']}\n"
         f"{difficulty_instructions}\n\n"
+        "OBIETTIVO DIDATTICO: esercizio credibile da verifica italiana sullo stesso "
+        "argomento; se ti viene in mente la versione da scheda elementare, alza "
+        "il livello finché rispetta il profilo di difficoltà sopra.\n\n"
         "REGOLE DI FORMATO:\n"
         "1. Domanda SINGOLA e focalizzata, NO multi-parte (no \"1. ... 2. ... 3. ...\").\n"
-        "2. NO \"Problemi di Maturità\" lunghi o scenari esaustivi del mondo reale.\n"
-        "3. Testo e soluzione in italiano, max 400 parole totali.\n"
+        "2. NO temi di Maturità multi-punto né scenari lunghi di contesto reale.\n"
+        "3. Testo e soluzione in italiano, max 450 parole totali "
+        "(la difficoltà è nel ragionamento, non nella prolissità).\n"
         "4. LaTeX ready-to-use per KaTeX: SOLO $...$ inline e $$ su righe proprie per i blocchi. "
         "MAI \\(...\\) o \\[...\\].\n"
         "5. `problem_text`: SOLO il problema. `solution`: SOLO i passaggi risolutivi.\n"
         "6. `generation_completed` = \"COMPLETED\".\n"
-        "7. PRIMA di rispondere: esegui mentalmente un controllo numerico/algebrico "
-        "di ogni passaggio e della risposta finale; se qualcosa non torna, riscrivi la soluzione."
+        "7. PRIMA di rispondere: (a) verifica che l'esercizio non sia banale rispetto "
+        "al profilo di difficoltà richiesto; (b) esegui un controllo numerico/algebrico "
+        "di ogni passaggio e della risposta finale; se qualcosa non torna, riscrivi."
     )
 
     response = await openai_client.chat.completions.create(
@@ -471,15 +539,31 @@ async def generate_single_exercise(
         ],
         response_format={"type": "json_object"},
         max_tokens=MAX_OUTPUT_TOKENS,
-        # Thinking low: migliora la precisione algebrica a costo contenuto
-        reasoning_effort="low",
+        # high su difficoltà ≥3: meno collasso su template facili
+        reasoning_effort=reasoning_effort,
         extra_body={"thinking": {"type": "enabled"}},
     )
 
-    content = response.choices[0].message.content
-    
+    message = response.choices[0].message
+    content = message.content
+    # Surface finish_reason / empty content early (common when thinking
+    # exhausts max_tokens before the JSON answer is written).
+    finish_reason = getattr(response.choices[0], "finish_reason", None)
+    usage = getattr(response, "usage", None)
+    if not (content or "").strip():
+        usage_hint = ""
+        if usage is not None:
+            usage_hint = (
+                f" usage={{completion={getattr(usage, 'completion_tokens', '?')}, "
+                f"reasoning={getattr(usage, 'completion_tokens_details', None)}}}"
+            )
+        raise ValueError(
+            f"Empty model response (finish_reason={finish_reason!r}, "
+            f"reasoning_effort={reasoning_effort}){usage_hint}"
+        )
+
     try:
-        data_dict = _extract_json_object(content or "")
+        data_dict = _extract_json_object(content)
         exercise_data = ExerciseOutput(**data_dict)
         if exercise_data.generation_completed != "COMPLETED":
             raise ValueError(
@@ -494,6 +578,7 @@ async def generate_single_exercise(
         fail_filepath = os.path.join(REJECTED_DIR, f"failed_{safe_topic}_{random.randint(1000, 9999)}.md")
         with open(fail_filepath, "w") as f:
             f.write(f"<!-- FAILED GENERATION: {parse_exc} -->\n")
+            f.write(f"<!-- finish_reason={finish_reason!r} reasoning_effort={reasoning_effort} -->\n")
             f.write(content or "")
         raise parse_exc
 
@@ -522,10 +607,10 @@ async def task_wrapper(
         selected_topic = random.choice(topics_by_year[year])
         system_prompt = system_prompts[year]
 
-        # Selezione pesata della difficoltà per garantire copertura completa dello spettro
+        # Selezione pesata: più peso su 3–5 (DeepSeek tende a generare troppo facile)
         difficulty_level = random.choices(
             [1, 2, 3, 4, 5],
-            weights=[0.15, 0.30, 0.30, 0.15, 0.10],
+            weights=DIFFICULTY_WEIGHTS,
             k=1
         )[0]
 
