@@ -1,5 +1,10 @@
 # Registro degli Aggiornamenti della Knowledge Base
 
+## 2026-08-11
+* **Agenti / Generazione**: Aggiornato `agents/database-population-workflow.md` per DeepSeek BYOK — pesi difficoltà `3/15/35/30/17`, forced difficulty post-parse, profili e anti-pattern di durezza, esempio JSON a difficulty 3, `max_tokens` default 8000, `reasoning_effort=low` (high tronca il JSON). Documentato il ciclo di vita di `submissions/rejected/` (dump falliti → riciclo salvabili con `pipeline: recycle_rejected` → wipe dump vuoti; **non** gitignore) e l'igiene `pending/` vs `accepted/` dopo `populate_from_md`.
+* **Template / Provenance**: In `architecture/exercise_template.md` notati i `pipeline` `generate_and_pr` e `recycle_rejected`, e la priorità del livello di difficoltà campionato dallo script.
+* **Architettura (superseded)**: Nota allineata su `architecture/population_workflow.md` per il ruolo di `rejected/` come riciclo, rimandando al workflow agenti come fonte di verità.
+
 ## 2026-07-31
 * **Frontend / Practice**: Aggiunto il concetto `architecture/practice-session.md` (MVP sessione 5–10 esercizi, autovalutazione prima della soluzione, `localStorage`, raccomandazioni). Estesi discovery (`mode`/`size`), indice architettura, `setup.md` e `apps/frontend/CONTEXT.md`; rigenerato il grafo OKF.
 * **Frontend / Discovery**: Aggiunto il concetto `architecture/exercise-discovery.md` per documentare i filtri basati su URL (`q`, `topic`, `year`, `difficulty`, `exercise`), i permalink per short code e la condivisione per-esercizio (Web Share, WhatsApp, copia link) su static export GitHub Pages.

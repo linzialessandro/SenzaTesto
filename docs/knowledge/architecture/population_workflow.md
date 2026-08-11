@@ -25,9 +25,9 @@ Invece di inserire gli esercizi direttamente via codice (Python dict hardcoded),
 Ogni esercizio è rappresentato da un file `.md` (es. `es_limite_01.md`). Il formato dettagliato di questo file è documentato in [`exercise_template.md`](./exercise_template.md).
 
 La cartella `submissions` è organizzata in tre sottocartelle per un workflow "frictionless":
-- **`pending/`**: Inserisci qui i nuovi esercizi da pubblicare.
-- **`accepted/`**: Gli esercizi elaborati con successo dallo script verranno spostati qui automaticamente.
-- **`rejected/`**: Puoi spostare qui manualmente i file che contengono errori irrisolvibili.
+- **`pending/`**: Inserisci qui i nuovi esercizi da pubblicare (coda di review; dopo populate non deve restare duplicata rispetto ad `accepted/`).
+- **`accepted/`**: Gli esercizi elaborati con successo dallo script verranno spostati qui automaticamente (fonte di verità repo post-ingest).
+- **`rejected/`**: Dump di generazioni fallite (`failed_*.md`: JSON troncato, risposta vuota) **e** area di **riciclo** (ricostruire esercizi salvabili → `pending/`, poi pulire i dump inutili). Non gitignorare questa cartella; tenere almeno `.gitkeep`. Dettaglio canonico: [Flusso di Popolamento Database](/agents/database-population-workflow.md).
 
 ### 2. Lo Script di Popolamento (`scripts/populate_from_md.py`)
 Uno script Python autonomo, che utilizza la libreria `PyYAML`, analizza tutti i file presenti in `submissions/pending/`.

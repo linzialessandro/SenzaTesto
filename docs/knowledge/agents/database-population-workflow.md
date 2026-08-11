@@ -2,29 +2,53 @@
 type: Concept
 title: Flusso di Popolamento Database
 description: Pipeline di generazione, validazione deterministica e ingestione degli esercizi Markdown verso PostgreSQL.
-tags: [agents, workflow, database, population, seeding, llm-costs, validation]
-timestamp: 2026-07-31T12:00:00Z
+tags: [agents, workflow, database, population, seeding, llm-costs, validation, difficulty, recycle]
+timestamp: 2026-08-11T16:00:00Z
 supersedes: architecture/population_workflow
 ---
 
 # Flusso di Popolamento Database (Pipeline Automatica)
 
-Questo documento delinea il flusso di lavoro che ogni agente delegato alla generazione degli esercizi deve seguire. La pipeline ha **tre passaggi**: generazione automatizzata con Git PR, validazione deterministica, e popolamento a valle.
+Questo documento delinea il flusso di lavoro che ogni agente delegato alla generazione degli esercizi deve seguire. La pipeline ha **tre passaggi**: generazione automatizzata con Git PR, validazione deterministica, e popolamento a valle. In più: gestione di `submissions/rejected/` come magazzino di riciclo (non come cestino da gitignore).
 
 ## Step 1: Generazione degli Esercizi (Agenti LLM)
 
-Gli esercizi vengono generati tramite lo script `scripts/generator/generate_and_pr.py`.
+Gli esercizi vengono generati tramite lo script `scripts/generator/generate_and_pr.py` (BYOK DeepSeek OpenAI-compatible API, default `deepseek-v4-flash`).
 
 ### Sicurezza, Concorrenza e Costi (Best Practices)
 Quando l'agente esegue lo script per generare batch di esercizi (es. 50 o 100), è fondamentale rispettare queste regole critiche per evitare costi astronomici, crash delle API e colli di bottiglia:
 1. **Concorrenza ad Alte Prestazioni:** Invece di eseguire le richieste sequenzialmente, la generazione avviene in parallelo utilizzando `asyncio.Semaphore(5)` (o simile) per gestire il rate limiting senza sacrificare il throughput. Lo script storico `generate_parallel.py` è stato deprecato e la logica unificata in `generate_and_pr.py`.
 2. **Resilienza (Tenacity):** Per prevenire l'interruzione della generazione in batch a causa di instabilità di rete, limiti API (429 Too Many Requests) o parsing fallito, le chiamate all'SDK sono wrappate con la libreria `tenacity` (es. backoff esponenziale).
-3. **Isolamento del Contesto (O(1) Cost):** L'istanza dell'agente LLM (`async with Agent(config) as agent:`) deve essere creata **all'interno** del ciclo di generazione di ogni singolo esercizio. Condividere l'agente significa accumulare l'intera cronologia, portando a costi O(N²) ed esaurendo rapidamente la finestra di contesto (dettagli in [Analisi Costi LLM](/agents/llm-pricing.md)).
-4. **Prevenzione Loop e Sentinel Field:** I modelli LLM possono talvolta incastrarsi in loop infiniti o divagare in problemi multi-parte estremamente lunghi. Bisogna impostare un limite stringente (es. `max_tokens=1000`) sulla chiamata API DeepSeek (`deepseek-v4-flash`). Poiché molti framework moderni tendono a *riparare* automaticamente il JSON troncato bypassando i nostri `try/except`, è **obbligatorio** includere uno speciale "campo sentinella" alla fine del Pydantic model (es. `generation_completed: str`). In questo modo, se il limite di token viene raggiunto, il campo finale sarà assente e lo script scarterà l'esercizio difettoso riprovando la generazione.
+3. **Isolamento del Contesto (O(1) Cost):** Ogni esercizio è una chiamata chat indipendente (nessuna cronologia accumulata tra item). Condividere il contesto tra esercizi porterebbe a costi O(N²). Dettagli storici in [Analisi Costi LLM](/agents/llm-pricing.md).
+4. **Prevenzione Loop e Sentinel Field:** Limite di output generoso ma finito (`MAX_OUTPUT_TOKENS`, default **8000** — configurabile con `DEEPSEEK_MAX_OUTPUT_TOKENS`). Thinking mode DeepSeek condivide il budget di completion: valori troppo bassi (es. 1000–2000) con `reasoning_effort=high` producono risposte vuote o JSON troncato (`finish_reason=length`). È **obbligatorio** il campo sentinella `generation_completed: "COMPLETED"` in coda al modello Pydantic: se assente, lo script scarta l'output e riprova, scrivendo il grezzo in `submissions/rejected/`.
 
-Lo script scriverà l'output formattato in file Markdown seguendo lo [Standard Exercise Markdown Template](/architecture/exercise_template.md) nella cartella `submissions/pending/` e creerà in automatico un branch e una Pull Request. Per output IA scrive sempre i metadati machine-readable (`ai_generated: true`, `content_origin: artificial`, blocco `provenance` via `lib/provenance.py`). In caso di errori, utilizzerà il modulo `logging` standard di Python per tracciare i dettagli diagnostici.
+### Calibrazione difficoltà (DeepSeek vs Gemini)
+DeepSeek-v4-flash tende a collassare su esercizi da “prima pagina del libro” se non spinto. Lo script applica:
+
+| Meccanismo | Valore / comportamento |
+|---|---|
+| **Pesi campionamento** `DIFFICULTY_WEIGHTS` | `[0.03, 0.15, 0.35, 0.30, 0.17]` per livelli 1–5 (poca base, spinta su 3–5) |
+| **Forced difficulty** | Dopo il parse JSON, `exercise_data.difficulty` viene **sovrascritto** con il livello campionato (il modello etichetta spesso troppo basso) |
+| **Profili `DIFFICULTY_PROFILES`** | Requisiti minimi + anti-esempi (es. vietato $x^2-5x+6=0$ a livello ≥ 2) |
+| **Regole di durezza** | Blocco system: esercizi da verifica, non ripasso; ≥2 un passaggio non banale; ≥3 due idee combinate |
+| **Esempio JSON** | Difficulty **3** (parametrico), non un drill banale — il modello si ancora all'esempio |
+| **`reasoning_effort`** | `low` su tutti i livelli (affidabile per JSON); `high` brucia token di thinking e tronca l'answer |
+| **LaTeX / YAML** | Solo `$` / `$$`; `json.dumps(..., ensure_ascii=False)` per accenti leggibili |
+
+### Output e cartelle
+Lo script scrive Markdown secondo lo [Standard Exercise Markdown Template](/architecture/exercise_template.md) in `submissions/pending/` e può aprire branch + PR. Per output IA scrive sempre i metadati machine-readable (`ai_generated: true`, `content_origin: artificial`, blocco `provenance` via `lib/provenance.py`, tipicamente `pipeline: generate_and_pr`).
 
 **Gate umano (obbligatorio prima del DB pubblico):** la validazione automatica non sostituisce la revisione matematica. Vedi `docs/compliance/human-review-sop.md` e `docs/compliance/art50-pipeline-checklist.md`.
+
+### `submissions/rejected/` — riciclo, non gitignore
+- Le generazioni fallite (JSON troncato, risposta vuota, parse error) finiscono come `failed_*.md` con un commento HTML di errore e il body grezzo.
+- **Non** aggiungere `submissions/rejected` a `.gitignore`: la cartella resta versionata (almeno `.gitkeep`).
+- **Riciclo:** i file con `problem_text` completo (anche se `solution` è troncata) si possono ricostruire a mano o con un pass dedicato, scrivere in `pending/`, e marcare provenance con `pipeline: recycle_rejected`.
+- I dump **vuoti** (solo `Empty model response`) non hanno contenuto utile: si eliminano dopo il pass di riciclo.
+- Dopo il riciclo, `rejected/` deve tornare pulita (solo `.gitkeep` o pochi fallimenti ancora da ispezionare).
+
+### Igiene `pending/` vs `accepted/`
+Dopo `populate_from_md.py` i file validi **devono** sparire da `pending/` e comparire solo in `accepted/`. Non lasciare copie byte-identiche in entrambe le cartelle (rischio di doppia coda e confusione operativa). Se `pending/` si riempie di file già in DB/accepted, verificare con hash/`generated_hash` e rimuovere i duplicati da `pending/`.
 
 ## Step 2: Validazione Deterministica (Gate)
 
@@ -66,3 +90,5 @@ Lo script:
 ```
 
 Lo schema di destinazione è descritto in [Schema del Database](/database/schema.md).
+
+**Commit operativo:** dopo un populate riuscito, committare i rename `pending/ → accepted/` sul branch di lavoro così il repo riflette lo stato live del DB.

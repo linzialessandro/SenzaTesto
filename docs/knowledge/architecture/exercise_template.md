@@ -3,7 +3,7 @@ type: Concept
 title: Exercise Markdown Template
 description: Standard format for defining new exercises using Markdown and YAML frontmatter.
 tags: [architecture, markdown, template, exercises, validation]
-timestamp: 2026-07-31T12:00:00Z
+timestamp: 2026-08-11T16:00:00Z
 ---
 
 # Standard Exercise Markdown Template
@@ -51,11 +51,11 @@ Moltiplicando per 2, il risultato è $x = 4$.
 | `year` | Integer | L'anno scolastico di riferimento 1-5 (vedi il [Curriculum Italiano](/curriculum/curriculum-italiano.md)). |
 | `macro_area` | String | L'area tematica generale (es. "Geometria", "Algebra Base"). |
 | `topic` | String | L'argomento specifico (es. "triangoli", "sistemi lineari"). |
-| `difficulty` | Integer | Il livello di difficoltà dell'esercizio (1-5). |
+| `difficulty` | Integer | Livello 1–5. In generazione automatica (`generate_and_pr.py`) il valore **campionato** dallo script ha priorità: viene forzato dopo il parse JSON se il modello etichetta diversamente. |
 | `tags` | List[String] | Una lista di tag aggiuntivi per la ricerca (max 12). |
 | `ai_generated` | Boolean (opzionale) | `true` se prodotto da un modello LLM; default `false` in ingestione se assente. Flag DB/API. |
 | `content_origin` | String (opzionale) | `artificial` \| `human` \| `mixed` — classificazione machine-readable (EU AI Act Art. 50(2)). |
-| `provenance` | Mapping (opzionale) | Metadati di origine: `schema`, `method`, `provider`, `model`, `pipeline`, `generated_at`. Invisibili nel rendering dell'esercizio. Vedi `lib/provenance.py` e `docs/compliance/eu-ai-act-art50.md`. |
+| `provenance` | Mapping (opzionale) | Metadati di origine: `schema`, `method`, `provider`, `model`, `pipeline`, `generated_at` (opzionali extra es. `source`). Invisibili nel rendering. `pipeline` tipici: `generate_and_pr` (BYOK generator) oppure `recycle_rejected` (ricostruzione da dump in `submissions/rejected/`). Vedi `lib/provenance.py` e `docs/compliance/eu-ai-act-art50.md`. |
 
 ## 3. Headers (Body)
 
