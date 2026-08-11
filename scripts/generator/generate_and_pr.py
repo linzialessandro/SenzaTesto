@@ -356,7 +356,10 @@ def build_system_prompts() -> dict[int, str]:
 
 
 def format_markdown(data: ExerciseOutput) -> str:
-    tags_str = "\n".join([f"  - {json.dumps(tag)}" for tag in data.tags])
+    # ensure_ascii=False: YAML leggibile con accenti reali (à, è, …), non \u00e0
+    tags_str = "\n".join(
+        [f"  - {json.dumps(tag, ensure_ascii=False)}" for tag in data.tags]
+    )
     # Post-process: converte \( \) / \[ \] → $ / $$ e sistema i blocchi multi-riga
     problem_text = normalize_latex_for_site(data.problem_text)
     solution = normalize_latex_for_site(data.solution)
@@ -370,8 +373,8 @@ def format_markdown(data: ExerciseOutput) -> str:
     )
     markdown = f"""---
 year: {data.year}
-macro_area: {json.dumps(data.macro_area)}
-topic: {json.dumps(data.topic)}
+macro_area: {json.dumps(data.macro_area, ensure_ascii=False)}
+topic: {json.dumps(data.topic, ensure_ascii=False)}
 difficulty: {data.difficulty}
 {prov_yaml}
 tags:
@@ -449,8 +452,9 @@ _REASONING_BY_DIFFICULTY: dict[int, str] = {
     5: "low",
 }
 
-# Pesi campionamento: meno base/facile, più medio-impegnativo (ex 15/30/30/15/10).
-DIFFICULTY_WEIGHTS: list[float] = [0.08, 0.18, 0.34, 0.25, 0.15]
+# Pesi campionamento: pavimento basso su 1, spinta su 3–5 (ex 15/30/30/15/10).
+# La somma è 1.0; random.choices normalizza comunque.
+DIFFICULTY_WEIGHTS: list[float] = [0.03, 0.15, 0.35, 0.30, 0.17]
 
 
 def _extract_json_object(text: str) -> dict:
@@ -570,6 +574,9 @@ async def generate_single_exercise(
                 f"Sentinel field missing/invalid (got {exercise_data.generation_completed!r}); "
                 "likely truncated output"
             )
+        # Il modello etichetta spesso troppo basso: la difficoltà è quella
+        # campionata/richiesta nello script, non quella auto-assegnata.
+        exercise_data.difficulty = difficulty_level
     except Exception as parse_exc:
         # Write the raw output to rejected folder before failing
         REJECTED_DIR = os.path.join(PROJECT_ROOT, "submissions", "rejected")

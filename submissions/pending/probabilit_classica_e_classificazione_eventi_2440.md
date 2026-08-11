@@ -1,7 +1,7 @@
 ---
 year: 2
-macro_area: "Calcolo delle Probabilit\u00e0"
-topic: "Probabilit\u00e0 classica e classificazione eventi"
+macro_area: "Calcolo delle Probabilità"
+topic: "Probabilità classica e classificazione eventi"
 difficulty: 1
 ai_generated: true
 content_origin: artificial
@@ -13,7 +13,7 @@ provenance:
   pipeline: generate_and_pr
   generated_at: "2026-08-11T15:10:43+00:00"
 tags:
-  - "probabilit\u00e0"
+  - "probabilità"
   - "eventi"
   - "classica"
 ---

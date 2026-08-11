@@ -1,7 +1,7 @@
 ---
 year: 3
 macro_area: "Geometria Analitica"
-topic: "Ellisse: eccentricit\u00e0 e parametri"
+topic: "Ellisse: eccentricità e parametri"
 difficulty: 3
 ai_generated: true
 content_origin: artificial
@@ -14,7 +14,7 @@ provenance:
   generated_at: "2026-08-11T15:21:38+00:00"
 tags:
   - "ellisse"
-  - "eccentricit\u00e0"
+  - "eccentricità"
   - "parametro"
   - "disequazioni"
 ---
