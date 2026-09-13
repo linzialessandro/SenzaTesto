@@ -96,6 +96,8 @@ export function HomeClient() {
   // Seed from the URL so shared ?q= / ?exercise= links do not flash the collections grid.
   const [searchQuery, setSearchQuery] = useState(urlFilters.query);
   const [debouncedQuery, setDebouncedQuery] = useState(urlFilters.query);
+  // Traccia l'ultimo valore di ricerca sincronizzato con l'URL per evitare sovrascritture durante la digitazione.
+  const lastSyncedQueryRef = useRef(urlFilters.query);
   // Remount PracticeSession when a new session is requested with the same filters.
   const [practiceNonce, setPracticeNonce] = useState(0);
   // Keep scroll stable when query-string filters change (selects are especially noisy).
@@ -187,9 +189,10 @@ export function HomeClient() {
       const currentUrl = searchParamsKey ? `${pathname}?${searchParamsKey}` : pathname;
       if (nextUrl === currentUrl) return;
 
-      // First year/difficulty choice also swaps Collections → Exercises (layout collapse).
-      // Hold scroll longer than a single paint so the swap cannot yank the viewport to top.
-      holdScrollPosition(window.scrollY);
+      // Mantieni la posizione di scroll solo per il cambio di anno o difficoltà (dove avviene lo scambio tra Collezioni ed Esercizi)
+      if ('year' in updates || 'difficulty' in updates) {
+        holdScrollPosition(window.scrollY);
+      }
       router.replace(nextUrl, { scroll: false });
     },
     [holdScrollPosition, pathname, router, searchParamsKey],
@@ -211,17 +214,24 @@ export function HomeClient() {
   }, [searchParamsKey]);
 
   useEffect(() => {
-    // Apply browser back/forward (or pasted URLs) immediately; keep debounce for typing.
-    if (searchQuery === urlFilters.query) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // Sincronizza lo stato locale solo in caso di navigazione esterna (es. tasti Avanti/Indietro del browser)
+    if (urlFilters.query === lastSyncedQueryRef.current) return;
+    lastSyncedQueryRef.current = urlFilters.query;
     setSearchQuery(urlFilters.query);
     setDebouncedQuery(urlFilters.query);
-  }, [searchQuery, urlFilters.query]);
+  }, [urlFilters.query]);
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setDebouncedQuery(searchQuery), 500);
+    const timeout = window.setTimeout(() => setDebouncedQuery(searchQuery), 400);
     return () => window.clearTimeout(timeout);
   }, [searchQuery]);
+
+  useEffect(() => {
+    const normalizedDebounced = debouncedQuery.trim();
+    if (normalizedDebounced === lastSyncedQueryRef.current) return;
+    lastSyncedQueryRef.current = normalizedDebounced;
+    replaceUrl({ q: normalizedDebounced || null, exercise: null, mode: null });
+  }, [debouncedQuery, replaceUrl]);
 
   useEffect(() => {
     let cancelled = false;
@@ -337,8 +347,16 @@ export function HomeClient() {
   const handleSearchChange = useCallback((value: string) => {
     const boundedValue = value.slice(0, 100);
     setSearchQuery(boundedValue);
-    replaceUrl({ q: boundedValue.trim() || null, exercise: null, mode: null });
-  }, [replaceUrl]);
+  }, []);
+
+  const handleSearchSubmit = useCallback(() => {
+    setDebouncedQuery(searchQuery);
+    const normalized = searchQuery.trim();
+    if (normalized !== lastSyncedQueryRef.current) {
+      lastSyncedQueryRef.current = normalized;
+      replaceUrl({ q: normalized || null, exercise: null, mode: null });
+    }
+  }, [replaceUrl, searchQuery]);
 
   const handleTopicChange = useCallback((topic: string | null) => {
     replaceUrl({ topic, exercise: null, mode: null });
@@ -354,6 +372,8 @@ export function HomeClient() {
 
   const resetFilters = useCallback(() => {
     setSearchQuery('');
+    setDebouncedQuery('');
+    lastSyncedQueryRef.current = '';
     saveActiveSession(null);
     replaceUrl({
       q: null,
@@ -444,6 +464,7 @@ export function HomeClient() {
         <SearchSection
           searchQuery={searchQuery}
           setSearchQuery={handleSearchChange}
+          onSubmit={handleSearchSubmit}
           selectedTopic={selectedTopic}
           selectedYear={selectedYear}
           selectedDifficulty={selectedDifficulty}

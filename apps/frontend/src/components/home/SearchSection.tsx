@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 interface SearchSectionProps {
   searchQuery: string;
   setSearchQuery: (val: string) => void;
+  onSubmit?: () => void;
   selectedTopic: string | null;
   selectedYear: number | null;
   selectedDifficulty: number | null;
@@ -90,6 +91,7 @@ function FilterSelect({
 export function SearchSection({
   searchQuery,
   setSearchQuery,
+  onSubmit,
   selectedTopic,
   selectedYear,
   selectedDifficulty,
@@ -127,6 +129,12 @@ export function SearchSection({
             placeholder="Esplora un argomento o inserisci il codice dell'esercizio..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                onSubmit?.();
+              }
+            }}
             maxLength={100}
             disabled={isPracticeActive}
             className="w-full py-3 sm:py-4 bg-transparent border-none focus:ring-0 text-lg font-medium text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none disabled:opacity-60"
